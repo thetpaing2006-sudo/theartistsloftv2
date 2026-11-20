@@ -32,8 +32,38 @@
     </script>
 
     <style>
+        /* Smooth Classic Cross-Fade Overlay for Light / Dark Mode */
+#theme-crossfade-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 35%, rgba(212, 180, 131, 0.22), rgba(18, 17, 15, 0.55));
+    backdrop-filter: blur(2px);
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#theme-crossfade-veil.is-fading {
+    opacity: 1;
+}
+
+body,
+header,
+footer,
+section,
+article,
+button,
+.page-section,
+#global-art-backdrop img {
+    transition: background-color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                background-image 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
         /* Classic Museum Warm Parchment & Fine Linen Paper Texture */
         body {
+        
             background-color: #F3EFE6;
             background-image:
                 radial-gradient(circle at 20% 15%, rgba(255, 252, 245, 0.75) 0%, transparent 55%),
@@ -240,10 +270,24 @@
             opacity: 1;
             animation: classicMotifReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
+        /* Smooth Classic Cross-Fade Overlay for Light / Dark Mode */
+#theme-crossfade-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at 50% 35%, rgba(212, 180, 131, 0.22), rgba(18, 17, 15, 0.55));
+    backdrop-filter: blur(2px);
+    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#theme-crossfade-veil.is-fading {
+    opacity: 1;
+}
     </style>
 </head>
 <body class="bg-[#F3EFE6] dark:bg-[#12110F] text-[#26231F] dark:text-[#EDE7DA] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F] dark:selection:text-[#EDE7DA]">
-
+    <div id="theme-crossfade-veil" aria-hidden="true"></div>
     <!-- Global Soft Background Lotus Paintings Across All Pages -->
     <div id="global-art-backdrop" class="fixed inset-0 z-0 flex w-full h-full pointer-events-none select-none overflow-hidden" aria-hidden="true">
         <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)"
@@ -867,13 +911,29 @@
             if (labelEl) labelEl.textContent = isDark ? 'Light' : 'Dark';
         }
 
-        function toggleThemeMode() {
-            const currentlyDark = document.documentElement.classList.contains('dark');
-            applyThemeMode(currentlyDark ? 'light' : 'dark');
-            if (typeof playSoftGalleryChime === 'function') {
-                playSoftGalleryChime('select');
-            }
-        }
+  let themeFadeTimer = null;
+function toggleThemeMode() {
+    const currentlyDark = document.documentElement.classList.contains('dark');
+    const nextMode = currentlyDark ? 'light' : 'dark';
+    const veil = document.getElementById('theme-crossfade-veil');
+
+    if (typeof playSoftGalleryChime === 'function') {
+        playSoftGalleryChime('select');
+    }
+
+    if (veil) {
+        clearTimeout(themeFadeTimer);
+        veil.classList.add('is-fading');
+        setTimeout(() => {
+            applyThemeMode(nextMode);
+        }, 220);
+        themeFadeTimer = setTimeout(() => {
+            veil.classList.remove('is-fading');
+        }, 680);
+    } else {
+        applyThemeMode(nextMode);
+    }
+}
 
         (function initSavedTheme() {
             try {
@@ -2971,60 +3031,88 @@
             } catch (e) {}
         }
 
-        async function playWhisperChord() {
-            if (!isSoundEnabled) return;
-            try {
-                const ctx = await ensureAudioContext();
-                if (!ctx || ctx.state !== 'running') return;
-                const chords = [
-                    [261.63, 329.63, 392.00],
-                    [220.00, 261.63, 329.63],
-                    [174.61, 220.00, 261.63],
-                    [196.00, 246.94, 293.66]
-                ];
-                const chord = chords[Math.floor(Math.random() * chords.length)];
+        const GALLERY_MELODIES = [
+    {
+        name: 'Moonlit Salon',
+        tempoMs: 520,
+        notes: [261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 293.66, 392.00]
+    },
+    {
+        name: 'Quiet Courtyard',
+        tempoMs: 580,
+        notes: [220.00, 261.63, 329.63, 440.00, 392.00, 329.63, 261.63, 220.00]
+    },
+    {
+        name: 'Morning Linen',
+        tempoMs: 490,
+        notes: [293.66, 369.99, 440.00, 587.33, 440.00, 369.99, 329.63, 293.66]
+    },
+    {
+        name: 'Amber Dusk',
+        tempoMs: 620,
+        notes: [196.00, 246.94, 293.66, 392.00, 329.63, 293.66, 246.94, 196.00]
+    }
+];
 
-                chord.forEach((freq, i) => {
-                    triggerClassicalNote(freq, i * 0.22, 4.5, 0.028, 1600);
-                });
-            } catch (e) {}
-        }
+let lastMelodyIndex = -1;
+let melodyStepTimer = null;
 
-        function startAmbientSoundscape() {
-            if (!isSoundEnabled) return;
-            const customBgAudio = document.getElementById('gallery-bg-audio');
+function pickRandomMelody() {
+    if (GALLERY_MELODIES.length <= 1) return GALLERY_MELODIES[0];
+    let idx = Math.floor(Math.random() * GALLERY_MELODIES.length);
+    if (idx === lastMelodyIndex) {
+        idx = (idx + 1) % GALLERY_MELODIES.length;
+    }
+    lastMelodyIndex = idx;
+    return GALLERY_MELODIES[idx];
+}
 
-            if (customBgAudio) {
-                customBgAudio.volume = 0.06;
-                const playPromise = customBgAudio.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        if (ambientInterval) {
-                            clearInterval(ambientInterval);
-                            ambientInterval = null;
-                        }
-                        fadeAudioVolume(customBgAudio, 0.06, 1500);
-                    }).catch(() => {
-                        if (!ambientInterval) {
-                            ambientInterval = setInterval(playWhisperChord, 7200);
-                        }
-                    });
-                }
-            } else if (!ambientInterval) {
-                ambientInterval = setInterval(playWhisperChord, 7200);
-            }
-        }
+async function playRandomGalleryMelody() {
+    if (!isSoundEnabled) return;
+    clearTimeout(melodyStepTimer);
 
-        function stopAmbientSoundscape() {
-            const customBgAudio = document.getElementById('gallery-bg-audio');
-            if (customBgAudio && !customBgAudio.paused) {
-                customBgAudio.pause();
-            }
-            if (ambientInterval) {
-                clearInterval(ambientInterval);
-                ambientInterval = null;
-            }
-        }
+    const melody = pickRandomMelody();
+    const notes = melody.notes;
+
+    for (let i = 0; i < notes.length; i++) {
+        if (!isSoundEnabled) return;
+        const freq = notes[i];
+        const isLast = i === notes.length - 1;
+        await triggerClassicalNote(
+            freq,
+            0,
+            isLast ? 2.1 : 1.15,
+            isLast ? 0.032 : 0.026,
+            1750
+        ).catch(() => {});
+
+        await new Promise((resolve) => {
+            melodyStepTimer = setTimeout(resolve, melody.tempoMs);
+        });
+    }
+
+    if (isSoundEnabled) {
+        melodyStepTimer = setTimeout(playRandomGalleryMelody, 2400);
+    }
+}
+
+function startAmbientSoundscape() {
+    if (!isSoundEnabled) return;
+    clearInterval(ambientInterval);
+    ambientInterval = null;
+    playRandomGalleryMelody();
+}
+
+function stopAmbientSoundscape() {
+    clearTimeout(melodyStepTimer);
+    melodyStepTimer = null;
+    clearInterval(ambientInterval);
+    ambientInterval = null;
+    const customBgAudio = document.getElementById('gallery-bg-audio');
+    if (customBgAudio && !customBgAudio.paused) {
+        customBgAudio.pause();
+    }
+}
 
         async function toggleGallerySound(event) {
             if (event) event.stopPropagation();
