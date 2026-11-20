@@ -33,33 +33,31 @@
 
     <style>
         /* Smooth Classic Cross-Fade Overlay for Light / Dark Mode */
+/* Glitch-Free Classic Cross-Fade Veil */
 #theme-crossfade-veil {
     position: fixed;
     inset: 0;
     z-index: 60;
     pointer-events: none;
     opacity: 0;
-    background: radial-gradient(circle at 50% 35%, rgba(212, 180, 131, 0.22), rgba(18, 17, 15, 0.55));
-    backdrop-filter: blur(2px);
-    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
+    transition: opacity 0.65s ease-in-out;
+}
+#theme-crossfade-veil.theme-veil--to-dark {
+    background: #12110F;
+}
+#theme-crossfade-veil.theme-veil--to-light {
+    background: #F3EFE6;
 }
 #theme-crossfade-veil.is-fading {
-    opacity: 1;
+    opacity: 0.72;
 }
 
 body,
-header,
-footer,
-section,
-article,
-button,
-.page-section,
 #global-art-backdrop img {
-    transition: background-color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                background-image 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: background-color 0.65s ease-in-out,
+                color 0.65s ease-in-out,
+                opacity 0.65s ease-in-out;
 }
         /* Classic Museum Warm Parchment & Fine Linen Paper Texture */
         body {
@@ -270,20 +268,7 @@ button,
             opacity: 1;
             animation: classicMotifReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        /* Smooth Classic Cross-Fade Overlay for Light / Dark Mode */
-#theme-crossfade-veil {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    pointer-events: none;
-    opacity: 0;
-    background: radial-gradient(circle at 50% 35%, rgba(212, 180, 131, 0.22), rgba(18, 17, 15, 0.55));
-    backdrop-filter: blur(2px);
-    transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-}
-#theme-crossfade-veil.is-fading {
-    opacity: 1;
-}
+
     </style>
 </head>
 <body class="bg-[#F3EFE6] dark:bg-[#12110F] text-[#26231F] dark:text-[#EDE7DA] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F] dark:selection:text-[#EDE7DA]">
