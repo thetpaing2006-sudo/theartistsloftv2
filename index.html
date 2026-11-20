@@ -696,7 +696,7 @@
 
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist Name *</label>
-                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Ba Nyan" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Ba" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
@@ -1153,7 +1153,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.getElementById('footer-year').textContent = new Date().getFullYear();
 
@@ -1301,6 +1301,7 @@
         let auth = null;
         let currentUser = null;
         let cloudReady = false;
+        let artworksSeededFlag = false;
 
         const LIVE_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAaT5T_BABWliAqxvNr_KADw-VItLSxWlc",
@@ -1341,6 +1342,10 @@
             return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'admin_security');
         }
 
+        function getGalleryMetaDocRef() {
+            return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'gallery_meta');
+        }
+
         async function recordEditLog(action, targetType, targetName, details = '') {
             const logEntry = {
                 id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
@@ -1379,6 +1384,16 @@
                 } else {
                     const cred = await signInAnonymously(auth);
                     currentUser = cred.user;
+                }
+
+                // Check persistent seed flag so deleted default artworks never re-appear
+                try {
+                    const metaSnap = await getDoc(getGalleryMetaDocRef());
+                    if (metaSnap.exists() && metaSnap.data().artworksSeeded === true) {
+                        artworksSeededFlag = true;
+                    }
+                } catch (err) {
+                    console.warn('Gallery meta check notice:', err);
                 }
 
                 // 1. Sync Passcode Security
@@ -1434,11 +1449,31 @@
                 const colRef = getArtworksCollectionRef();
                 onSnapshot(colRef, async (snapshot) => {
                     if (snapshot.empty) {
-                        updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Seeding initial collection...`);
-                        for (const item of DEFAULT_ARTWORKS) {
-                            await setDoc(doc(colRef, item.id), item);
+                        if (!artworksSeededFlag) {
+                            artworksSeededFlag = true;
+                            updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Seeding initial collection...`);
+                            await setDoc(getGalleryMetaDocRef(), { artworksSeeded: true, seededAt: Date.now() }, { merge: true });
+                            for (const item of DEFAULT_ARTWORKS) {
+                                await setDoc(doc(colRef, item.id), item);
+                            }
+                            return;
+                        }
+                        // User intentionally deleted all artworks — keep collection empty without re-seeding
+                        artworks = [];
+                        updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Live Sync Active`);
+                        renderSelectedArtistProfile();
+                        renderCategoryFilterBar();
+                        renderArtworksGrid();
+                        if (isAdminUnlocked) {
+                            populateAdminCategoryDropdown();
+                            renderAdminArtworksList();
                         }
                         return;
+                    }
+
+                    if (!artworksSeededFlag) {
+                        artworksSeededFlag = true;
+                        setDoc(getGalleryMetaDocRef(), { artworksSeeded: true }, { merge: true }).catch(() => {});
                     }
 
                     const loaded = [];
@@ -2315,7 +2350,11 @@
 
         async function deleteArtworkFromAdmin(id) {
             const target = artworks.find(a => a.id === id);
+            artworksSeededFlag = true;
             if (cloudReady && currentUser) {
+                try {
+                    await setDoc(getGalleryMetaDocRef(), { artworksSeeded: true }, { merge: true });
+                } catch (e) {}
                 await deleteDoc(doc(getArtworksCollectionRef(), id));
             } else {
                 artworks = artworks.filter(a => a.id !== id);
