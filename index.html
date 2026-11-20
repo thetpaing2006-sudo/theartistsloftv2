@@ -13,6 +13,7 @@
     <!-- Google Fonts: Playfair Display & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
@@ -32,36 +33,46 @@
     </script>
 
     <style>
-        /* Smooth Classic Cross-Fade Overlay for Light / Dark Mode */
-/* Glitch-Free Classic Cross-Fade Veil */
-#theme-crossfade-veil {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    pointer-events: none;
-    opacity: 0;
-    will-change: opacity;
-    transition: opacity 0.65s ease-in-out;
-}
-#theme-crossfade-veil.theme-veil--to-dark {
-    background: #12110F;
-}
-#theme-crossfade-veil.theme-veil--to-light {
-    background: #F3EFE6;
-}
-#theme-crossfade-veil.is-fading {
-    opacity: 0.72;
-}
+        /* MS PowerPoint Morph-Style Zero-Glitch View Transition */
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: 0.85s;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            mix-blend-mode: normal;
+        }
+        ::view-transition-old(root) {
+            z-index: 1;
+        }
+        ::view-transition-new(root) {
+            z-index: 2;
+        }
 
-body,
-#global-art-backdrop img {
-    transition: background-color 0.65s ease-in-out,
-                color 0.65s ease-in-out,
-                opacity 0.65s ease-in-out;
-}
+        /* Ultra-Smooth Fallback Cross-Fade Veil (for browsers without View Transitions API) */
+        #theme-crossfade-veil {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            pointer-events: none;
+            opacity: 0;
+            background-color: #F3EFE6;
+            will-change: opacity, background-color;
+            transition: opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+                        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #theme-crossfade-veil.veil-light {
+            background-color: #F3EFE6;
+        }
+        #theme-crossfade-veil.veil-dark {
+            background-color: #12110F;
+        }
+        #theme-crossfade-veil.is-fading {
+            opacity: 0.96;
+            transition: opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                        background-color 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
         /* Classic Museum Warm Parchment & Fine Linen Paper Texture */
         body {
-        
             background-color: #F3EFE6;
             background-image:
                 radial-gradient(circle at 20% 15%, rgba(255, 252, 245, 0.75) 0%, transparent 55%),
@@ -69,7 +80,6 @@ body,
                 repeating-linear-gradient(0deg, rgba(156, 130, 101, 0.025) 0px, rgba(156, 130, 101, 0.025) 1px, transparent 1px, transparent 4px),
                 repeating-linear-gradient(90deg, rgba(156, 130, 101, 0.02) 0px, rgba(156, 130, 101, 0.02) 1px, transparent 1px, transparent 4px);
             color: #26231F;
-            transition: background-color 0.45s ease, color 0.45s ease;
         }
 
         /* World-Class Midnight Gallery Dark Mode */
@@ -268,11 +278,10 @@ body,
             opacity: 1;
             animation: classicMotifReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-
     </style>
 </head>
 <body class="bg-[#F3EFE6] dark:bg-[#12110F] text-[#26231F] dark:text-[#EDE7DA] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F] dark:selection:text-[#EDE7DA]">
-    <div id="theme-crossfade-veil" aria-hidden="true"></div>
+
     <!-- Global Soft Background Lotus Paintings Across All Pages -->
     <div id="global-art-backdrop" class="fixed inset-0 z-0 flex w-full h-full pointer-events-none select-none overflow-hidden" aria-hidden="true">
         <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)"
@@ -548,7 +557,7 @@ body,
             <!-- Modal Header -->
             <div class="px-6 py-4 md:px-8 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 flex justify-between items-center bg-white/80 dark:bg-[#141210]/90 flex-shrink-0">
                 <div>
-                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#A69076] dark:text-[#D4B483] block">Gallery Management • Cloudflare D1 &amp; R2</span>
+                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#A69076] dark:text-[#D4B483] block">Gallery Management</span>
                     <h3 class="font-serif text-2xl text-[#2C2C2C] dark:text-[#EDE7DA]">Admin Console</h3>
                 </div>
                 <button type="button" onclick="closeAdminModal()" class="text-3xl text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 hover:text-[#2C2C2C] dark:hover:text-white leading-none">&times;</button>
@@ -557,7 +566,7 @@ body,
             <!-- Modal Body -->
             <div id="admin-modal-body" class="p-5 md:p-8 overflow-y-auto overscroll-contain space-y-8 flex-1 min-h-0">
                 
-                <!-- Step 1: Admin Token Gate -->
+                <!-- Step 1: Secure Passcode Gate -->
                 <div id="admin-login-view" class="max-w-sm mx-auto py-8 text-center space-y-5">
                     <div class="w-12 h-12 rounded-full bg-[#A69076]/15 text-[#A69076] dark:text-[#D4B483] flex items-center justify-center mx-auto">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -566,15 +575,21 @@ body,
                     </div>
                     <div>
                         <h4 id="admin-gate-title" class="font-serif text-xl mb-1">Curator Access</h4>
-                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Enter your Cloudflare <code>ADMIN_API_TOKEN</code> to manage D1 &amp; R2.</p>
+                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Enter your private security passcode to manage the gallery.</p>
                     </div>
                     <form onsubmit="verifyAdminPin(event)" class="space-y-4">
-                        <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter ADMIN_API_TOKEN" class="w-full text-center tracking-[0.18em] text-base py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
-                        <p id="admin-pin-error" class="hidden text-xs text-red-600">Invalid Admin API Token. Please check Cloudflare Pages secrets.</p>
+                        <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter Passcode" class="w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
+                        <input id="admin-pin-confirm-input" type="password" minlength="4" autocomplete="new-password" placeholder="Confirm New Passcode" class="hidden w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
+                        <p id="admin-pin-error" class="hidden text-xs text-red-600">Incorrect passcode. Please try again.</p>
                         <button id="admin-gate-submit-btn" type="submit" class="w-full py-3 bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#A69076] transition-colors">
                             Unlock Console
                         </button>
                     </form>
+                    <div class="pt-2">
+                        <button type="button" onclick="resetForgottenAdminPin()" class="text-[11px] underline text-[#9C8265] dark:text-[#D4B483] hover:text-[#2C2C2C] transition-colors">
+                            Forgot / Reset Passcode
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Step 2: Unlocked Dashboard -->
@@ -584,11 +599,11 @@ body,
                     <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#141210] p-4 rounded-2xl border border-[#A69076]/20 dark:border-[#D4B483]/20">
                         <div class="text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 flex items-center gap-2">
                             <span id="cloud-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
-                            <span id="cloud-status-text">Connecting to Cloudflare D1 &amp; R2...</span>
+                            <span id="cloud-status-text">Connecting to live cloud gallery...</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" onclick="lockAdminSession()" class="px-4 py-2 rounded-xl border border-[#2C2C2C]/30 dark:border-[#D4B483]/30 hover:bg-[#2C2C2C] hover:text-white text-xs uppercase tracking-wider transition-colors">
-                                Lock / Change Token
+                            <button type="button" onclick="toggleChangePinBox()" class="px-4 py-2 rounded-xl border border-[#2C2C2C]/30 dark:border-[#D4B483]/30 hover:bg-[#2C2C2C] hover:text-white text-xs uppercase tracking-wider transition-colors">
+                                Change Passcode
                             </button>
                             <button type="button" onclick="exportArtworksJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] dark:border-[#D4B483]/50 hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider transition-colors">
                                 Export Backup
@@ -599,28 +614,39 @@ body,
                     <!-- Admin Status Banner -->
                     <div id="admin-publish-feedback" class="hidden p-4 rounded-2xl text-xs font-medium"></div>
 
-                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Visitor Activity | Edit Log -->
+                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Edit Log -->
                     <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-3">
-                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
-                            Artworks
+                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
+                            Manage Artworks
                         </button>
-                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
-                            Artists
+                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Manage Artists
                         </button>
-                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
-                            Gallery About
+                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Gallery About Page
                         </button>
-                        <button type="button" onclick="switchAdminTab('visitors')" id="admin-tab-btn-visitors" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
-                            Visitors (30d)
-                        </button>
-                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Edit Log (<span id="admin-log-count">0</span>)
                         </button>
                     </div>
 
+                    <!-- Change Passcode Box -->
+                    <div id="change-pin-box" class="hidden bg-white dark:bg-[#141210] p-5 rounded-2xl border border-[#A69076]/30 shadow-sm">
+                        <h4 class="font-serif text-lg mb-1">Update Curator Passcode</h4>
+                        <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 mb-4">Your passcode is encrypted (SHA-256) and never stored in plain text or source code.</p>
+                        <form onsubmit="saveNewAdminPin(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <input id="current-pin-verify-input" type="password" required placeholder="Current passcode" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                            <input id="new-pin-input" type="password" required minlength="4" placeholder="New passcode (min 4 chars)" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
+                                Save Passcode
+                            </button>
+                        </form>
+                        <p id="change-pin-feedback" class="hidden text-xs mt-2.5 font-medium"></p>
+                    </div>
+
                     <!-- ==================== ADMIN TAB 1: ARTWORKS ==================== -->
                     <div id="admin-panel-artworks" class="space-y-8">
-                        <div id="admin-form-container" class="scroll-mt-4 bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm transition-all duration-300">
+                        <div id="admin-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm transition-all duration-300">
                             <h4 id="admin-form-heading" class="font-serif text-xl mb-5">Add New Artwork</h4>
                             <form id="admin-artwork-form" onsubmit="saveArtworkFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artwork-id" value="">
@@ -684,13 +710,13 @@ body,
 
                                 <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Image to R2 Bucket</label>
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Image File</label>
                                         <input id="art-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'art-file-status')" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
                                         <p id="art-file-status" class="hidden text-[11px] text-[#9C8265] mt-1.5 font-medium"></p>
                                     </div>
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Image URL or Local Filename</label>
-                                        <input id="art-url-input" type="text" placeholder="e.g., https://pub-....r2.dev/... or my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Local Filename / Image URL</label>
+                                        <input id="art-url-input" type="text" placeholder="e.g., my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
@@ -720,7 +746,7 @@ body,
 
                     <!-- ==================== ADMIN TAB 2: ARTISTS ==================== -->
                     <div id="admin-panel-artists" class="hidden space-y-8">
-                        <div id="admin-artist-form-container" class="scroll-mt-4 bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
+                        <div id="admin-artist-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <h4 id="admin-artist-form-heading" class="font-serif text-xl mb-5">Add New Artist Profile</h4>
                             <form id="admin-artist-form" onsubmit="saveArtistFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artist-id" value="">
@@ -737,13 +763,13 @@ body,
 
                                 <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Portrait to R2 Bucket</label>
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Portrait Photo</label>
                                         <input id="artist-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'artist-file-status')" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
                                         <p id="artist-file-status" class="hidden text-[11px] text-[#9C8265] mt-1.5 font-medium"></p>
                                     </div>
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Portrait URL or Filename</label>
-                                        <input id="artist-url-input" type="text" placeholder="e.g., artist.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Portrait Filename / URL</label>
+                                        <input id="artist-url-input" type="text" placeholder="e.g., artist2.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
@@ -798,57 +824,13 @@ body,
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB 4: VISITOR ACTIVITY (30D + EMAIL REPORT) ==================== -->
-                    <div id="admin-panel-visitors" class="hidden space-y-6">
-                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm space-y-5">
-                            <div class="flex flex-wrap items-center justify-between gap-3">
-                                <div>
-                                    <h4 class="font-serif text-xl">Visitor Activity (Rolling 30 Days • IP-Free)</h4>
-                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Automatically emails a readable report + CSV via Web3Forms before purging logs older than 30 days.</p>
-                                </div>
-                                <div class="flex flex-wrap gap-2">
-                                    <button type="button" onclick="loadVisitorActivityFromCloud()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
-                                        Refresh
-                                    </button>
-                                    <button type="button" id="archive-report-now-btn" onclick="triggerMonthlyReportNow()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider font-medium transition-colors">
-                                        Email Report &amp; Purge Now
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Top Viewed Artworks & Top Countries -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div class="p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
-                                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Top Viewed Artworks</span>
-                                    <div id="visitor-top-artworks" class="space-y-1.5 text-xs">
-                                        <p class="opacity-60">Loading...</p>
-                                    </div>
-                                </div>
-                                <div class="p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
-                                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Top Countries &amp; Devices</span>
-                                    <div id="visitor-top-countries" class="space-y-1.5 text-xs">
-                                        <p class="opacity-60">Loading...</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Recent Anonymous Visitor Log List -->
-                            <div>
-                                <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Recent Events</span>
-                                <div id="admin-visitor-logs-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                                    <p class="text-xs opacity-60 py-4 text-center">No visitor activity recorded yet.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ==================== ADMIN TAB 5: EDIT LOG (PERSISTENT D1) ==================== -->
+                    <!-- ==================== ADMIN TAB 4: EDIT LOG ==================== -->
                     <div id="admin-panel-logs" class="hidden space-y-5">
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
                                 <div>
                                     <h4 class="font-serif text-xl">Curatorial Activity &amp; Edit Log</h4>
-                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Saved in Cloudflare D1 for artwork, artist, and about changes.</p>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Chronological history of artwork, artist, about, and security changes.</p>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" onclick="downloadEditLogsCSV()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
@@ -872,10 +854,9 @@ body,
 
     <!-- Minimalist Footer (Double-click copyright text to open Admin Console) -->
     <footer class="relative z-10 w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-sm text-center">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
+        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
             <span ondblclick="openAdminModal()" class="cursor-pointer select-none hover:text-[#26231F] dark:hover:text-[#EDE7DA] transition-colors" title="Double-click for Gallery Management">&copy; <span id="footer-year">2026</span> The Artist's Loft</span>
             <span>Curated Myanmar Fine Art Gallery</span>
-            <span id="visitor-counter-badge" class="text-[11px] tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483]">Visits: —</span>
         </div>
     </footer>
 
@@ -883,8 +864,6 @@ body,
     <audio id="gallery-bg-audio" loop preload="auto" src="ambience.mp3"></audio>
 
     <script>
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-
         // Theme Mode (Light Warm Parchment / Midnight Gallery Dark)
         function applyThemeMode(mode) {
             const isDark = mode === 'dark';
@@ -896,42 +875,69 @@ body,
             if (labelEl) labelEl.textContent = isDark ? 'Light' : 'Dark';
         }
 
-  let themeFadeTimer = null;
-let themeSwapTimer = null;
+        let themeFadeTimer = null;
+        let themeSwapTimer = null;
+        let isThemeMorphing = false;
 
-function toggleThemeMode() {
-    const currentlyDark = document.documentElement.classList.contains('dark');
-    const nextMode = currentlyDark ? 'light' : 'dark';
-    const veil = document.getElementById('theme-crossfade-veil');
+        function toggleThemeMode() {
+            if (isThemeMorphing) return;
+            const currentlyDark = document.documentElement.classList.contains('dark');
+            const nextMode = currentlyDark ? 'light' : 'dark';
 
-    if (typeof playSoftGalleryChime === 'function') {
-        playSoftGalleryChime('select');
-    }
+            if (typeof playSoftGalleryChime === 'function') {
+                playSoftGalleryChime('select');
+            }
 
-    if (!veil) {
-        applyThemeMode(nextMode);
-        return;
-    }
+            // 1. Primary: True View Transitions API Cross-Dissolve Morph (MS PowerPoint Morph style)
+            if (typeof document.startViewTransition === 'function' &&
+                !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                isThemeMorphing = true;
+                try {
+                    const transition = document.startViewTransition(() => {
+                        applyThemeMode(nextMode);
+                    });
+                    transition.finished.finally(() => {
+                        isThemeMorphing = false;
+                    });
+                    return;
+                } catch (e) {
+                    isThemeMorphing = false;
+                }
+            }
 
-    clearTimeout(themeFadeTimer);
-    clearTimeout(themeSwapTimer);
+            // 2. Fallback: Zero-Glitch Veil Cross-Dissolve for browsers without View Transitions API
+            const veil = document.getElementById('theme-crossfade-veil');
+            if (!veil) {
+                applyThemeMode(nextMode);
+                return;
+            }
 
-    veil.classList.remove('theme-veil--to-dark', 'theme-veil--to-light', 'is-fading');
-    veil.classList.add(nextMode === 'dark' ? 'theme-veil--to-dark' : 'theme-veil--to-light');
+            isThemeMorphing = true;
+            clearTimeout(themeFadeTimer);
+            clearTimeout(themeSwapTimer);
 
-    requestAnimationFrame(() => {
-        veil.classList.add('is-fading');
-    });
+            veil.classList.remove('veil-light', 'veil-dark', 'is-fading');
+            veil.classList.add(currentlyDark ? 'veil-dark' : 'veil-light');
+            void veil.offsetWidth;
 
-    themeSwapTimer = setTimeout(() => {
-        applyThemeMode(nextMode);
-        veil.classList.remove('is-fading');
-    }, 300);
+            requestAnimationFrame(() => {
+                veil.classList.add('is-fading');
+            });
 
-    themeFadeTimer = setTimeout(() => {
-        veil.classList.remove('theme-veil--to-dark', 'theme-veil--to-light');
-    }, 980);
-}
+            themeSwapTimer = setTimeout(() => {
+                applyThemeMode(nextMode);
+                veil.classList.remove('veil-light', 'veil-dark');
+                veil.classList.add(nextMode === 'dark' ? 'veil-dark' : 'veil-light');
+                requestAnimationFrame(() => {
+                    veil.classList.remove('is-fading');
+                });
+            }, 390);
+
+            themeFadeTimer = setTimeout(() => {
+                veil.classList.remove('veil-light', 'veil-dark', 'is-fading');
+                isThemeMorphing = false;
+            }, 940);
+        }
 
         (function initSavedTheme() {
             try {
@@ -984,8 +990,8 @@ function toggleThemeMode() {
             return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
         }
 
-        // Compress & resize uploaded images cleanly before sending to R2
-        function compressImageFile(file, maxDimension = 1280, quality = 0.82) {
+        // Compress & resize uploaded images cleanly
+        function compressImageFile(file, maxDimension = 840, quality = 0.72) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -1011,15 +1017,15 @@ function toggleThemeMode() {
                         ctx.drawImage(img, 0, 0, width, height);
 
                         const aspect = height > width ? '3/4' : '4/3';
-                        canvas.toBlob((blob) => {
-                            if (!blob) {
-                                reject(new Error('Unable to compress image file.'));
-                                return;
-                            }
-                            const cleanName = (file.name || 'artwork').replace(/\.[^/.]+$/, '') + '.jpg';
-                            const compressedFile = new File([blob], cleanName, { type: 'image/jpeg' });
-                            resolve({ file: compressedFile, aspect });
-                        }, 'image/jpeg', quality);
+                        let currentQuality = quality;
+                        let compressedDataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+
+                        while (compressedDataUrl.length > 260000 && currentQuality > 0.32) {
+                            currentQuality -= 0.08;
+                            compressedDataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+                        }
+
+                        resolve({ dataUrl: compressedDataUrl, aspect });
                     };
                     img.onerror = () => reject(new Error('Unable to decode selected image file.'));
                     img.src = e.target.result;
@@ -1035,7 +1041,7 @@ function toggleThemeMode() {
             if (input.files && input.files[0]) {
                 const f = input.files[0];
                 const kb = Math.round(f.size / 1024);
-                statusEl.textContent = `Selected: ${f.name} (${kb} KB) — Ready to upload to R2`;
+                statusEl.textContent = `Selected: ${f.name} (${kb} KB) — Ready to optimize & save`;
                 statusEl.classList.remove('hidden');
             } else {
                 statusEl.classList.add('hidden');
@@ -1112,7 +1118,11 @@ function toggleThemeMode() {
                 'ALlogo.jpg',
                 'allogo.jpg',
                 'Logo.png',
-                'logo.png'
+                'logo.png',
+                'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/brand-logo.jpg',
+                'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/Logo.jpg',
+                'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/logo.jpg',
+                'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/ALlogo.jpg'
             ];
 
             let idx = 0;
@@ -1215,9 +1225,6 @@ function toggleThemeMode() {
                 btn.classList.toggle('text-[#26231F]/70', !isTarget);
                 btn.classList.toggle('dark:text-[#EDE7DA]/70', !isTarget);
             });
-            if (typeof trackVisitorEvent === 'function') {
-                trackVisitorEvent('page_view', sectionId);
-            }
             requestAnimationFrame(() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
                 if (sectionId === 'artworks' && typeof initGalleryCardAnimations === 'function') {
@@ -1229,21 +1236,26 @@ function toggleThemeMode() {
         window.addEventListener('load', verifyAllImagesLoaded);
     </script>
 
-    <!-- Application Logic Connected to Cloudflare Pages Functions (/api/*), D1 & R2 -->
-    <script>
-        const API_ENDPOINTS = {
-            gallery: '/api/gallery',
-            artists: '/api/artists',
-            artworks: '/api/artworks',
-            settings: '/api/settings',
-            upload: '/api/upload',
-            contact: '/api/contact',
-            visit: '/api/visit',
-            logs: '/api/logs',
-            activity: '/api/activity'
-        };
-        const ADMIN_TOKEN_STORAGE_KEY = 'artistsloft_admin_token';
-        const GALLERY_BUILD_TAG = 'Cloudflare D1 + R2';
+    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, initializeFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        let storedPinHash = null;
+        let isPinInitialized = false;
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft-v3';
+        const GALLERY_BUILD_TAG = 'v3.2 • Classic Salon & Fast Sync';
+
+        async function hashPasscode(plainText) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(String(plainText));
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         // Default Artist Profile (MT. Oung)
         const DEFAULT_ARTISTS = [
@@ -1264,47 +1276,30 @@ function toggleThemeMode() {
             body: "Founded in Yangon, The Artist's Loft is an independent curatorial platform and private art space dedicated to presenting original fine artworks by distinguished and emerging artists from Myanmar.\n\nRooted in a deep respect for traditional craftsmanship and contemporary visual storytelling, our collection highlights works that capture the spiritual tranquility, cultural heritage, and poetic landscapes of Myanmar.\n\nEvery painting presented in our gallery is carefully curated directly from the artists' studios, ensuring authenticity, provenance, and a meaningful connection between creator and collector worldwide."
         };
 
-        // Live State
+        // Live State (starts with 0 artworks so deleted artworks never auto-reappear)
         let artists = [...DEFAULT_ARTISTS];
         let artworks = [];
         let galleryAbout = { ...DEFAULT_GALLERY_ABOUT };
         let editLogs = [];
-        let visitorActivityData = { logs: [], topArtworks: [], topCountries: [] };
         let activeArtistId = 'mt-oung';
         let activeCategory = 'All';
         let isArtistSwitching = false;
         let isAdminUnlocked = false;
         let isLoadingArtworks = true;
+        let db = null;
+        let auth = null;
+        let currentUser = null;
         let cloudReady = false;
 
-        function getSavedAdminToken() {
-            try {
-                return (sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '').trim();
-            } catch {
-                return '';
-            }
-        }
-
-        function setSavedAdminToken(token) {
-            const clean = (token || '').trim();
-            try {
-                if (clean) {
-                    sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
-                    localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
-                } else {
-                    sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
-                    localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
-                }
-            } catch {}
-        }
-
-        function getAdminAuthHeaders(extraHeaders = {}) {
-            const token = getSavedAdminToken();
-            return {
-                ...extraHeaders,
-                ...(token ? { 'x-admin-token': token, Authorization: `Bearer ${token}` } : {})
-            };
-        }
+        const LIVE_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAaT5T_BABWliAqxvNr_KADw-VItLSxWlc",
+            authDomain: "theartist-sloft.firebaseapp.com",
+            projectId: "theartist-sloft",
+            storageBucket: "theartist-sloft.firebasestorage.app",
+            messagingSenderId: "922602203077",
+            appId: "1:922602203077:web:99977308aec4186e4bcdac",
+            measurementId: "G-MBZTTH72RX"
+        };
 
         function updateCloudStatus(isConnected, label) {
             cloudReady = isConnected;
@@ -1315,88 +1310,24 @@ function toggleThemeMode() {
             text.textContent = label;
         }
 
-        function normalizeArtistRow(row) {
-            return {
-                id: row.id,
-                name: row.name || '',
-                subtitle: row.subtitle || 'Represented Artist • Myanmar',
-                image: row.portrait_url || row.image || 'artist.jpg',
-                bio: row.bio || '',
-                order: Number(row.sort_order ?? row.order ?? 999)
-            };
+        function getArtworksCollectionRef() {
+            return collection(db, 'artifacts', APP_ID, 'public', 'data', 'artworks');
         }
 
-        function normalizeArtworkRow(row) {
-            return {
-                id: row.id,
-                artistId: row.artist_id || row.artistId || 'mt-oung',
-                title: row.title || 'Untitled',
-                category: row.category || 'Fine Art',
-                medium: row.medium || 'Oil on Canvas',
-                size: row.dimensions || row.size || '',
-                year: row.year || '',
-                provenance: row.provenance || '',
-                status: row.status || 'Available',
-                price: row.price || '',
-                image: row.image_url || row.image || '',
-                aspect: row.aspect || '3/4',
-                description: row.description || '',
-                order: Number(row.sort_order ?? row.order ?? 999)
-            };
+        function getArtistsCollectionRef() {
+            return collection(db, 'artifacts', APP_ID, 'public', 'data', 'artists');
         }
 
-        // Visitor Counter (Footer)
-        async function initVisitorCounter() {
-            const badge = document.getElementById('visitor-counter-badge');
-            const sessionKey = 'tal_visit_counted_v1';
-            try {
-                const alreadyCounted = sessionStorage.getItem(sessionKey) === '1';
-                const res = await fetch(API_ENDPOINTS.visit, {
-                    method: alreadyCounted ? 'GET' : 'POST',
-                    cache: 'no-store'
-                });
-                const data = await res.json();
-                if (res.ok && data.ok) {
-                    if (!alreadyCounted) sessionStorage.setItem(sessionKey, '1');
-                    if (badge) badge.textContent = `Visits: ${Number(data.total_visits || 0).toLocaleString()}`;
-                }
-            } catch (e) {
-                if (badge) badge.textContent = 'Visits: —';
-            }
+        function getEditLogsCollectionRef() {
+            return collection(db, 'artifacts', APP_ID, 'public', 'data', 'edit_logs');
         }
 
-        // Anonymous IP-Free Visitor Activity Tracking
-        function trackVisitorEvent(eventType, itemName = '') {
-            try {
-                fetch(API_ENDPOINTS.activity, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    keepalive: true,
-                    body: JSON.stringify({ event_type: eventType, item_name: itemName })
-                }).catch(() => {});
-            } catch {}
+        function getGalleryAboutDocRef() {
+            return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'gallery_about');
         }
 
-        // Load Persistent Edit Logs from D1 (/api/logs)
-        async function loadEditLogsFromCloud() {
-            try {
-                const res = await fetch(API_ENDPOINTS.logs, {
-                    headers: getAdminAuthHeaders(),
-                    cache: 'no-store'
-                });
-                const data = await res.json();
-                if (res.ok && data.ok && Array.isArray(data.logs)) {
-                    editLogs = data.logs.map(l => ({
-                        id: l.id,
-                        timestamp: l.timestamp,
-                        action: l.action,
-                        targetType: l.target_type,
-                        targetName: l.target_name,
-                        details: l.details
-                    }));
-                    renderAdminEditLogsList();
-                }
-            } catch (e) {}
+        function getSettingsDocRef() {
+            return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'admin_security');
         }
 
         async function recordEditLog(action, targetType, targetName, details = '') {
@@ -1409,86 +1340,254 @@ function toggleThemeMode() {
                 details
             };
             editLogs.unshift(logEntry);
-            if (editLogs.length > 200) editLogs.length = 200;
             renderAdminEditLogsList();
 
             try {
-                await fetch(API_ENDPOINTS.logs, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        id: logEntry.id,
-                        timestamp: logEntry.timestamp,
-                        action: logEntry.action,
-                        target_type: logEntry.targetType,
-                        target_name: logEntry.targetName,
-                        details: logEntry.details
-                    })
-                });
+                if (db && currentUser) {
+                    await setDoc(doc(getEditLogsCollectionRef(), logEntry.id), logEntry);
+                }
             } catch (err) {
                 console.warn('Edit log cloud sync notice:', err);
             }
         }
 
-        // Load Gallery Data from Cloudflare D1 via /api/gallery
-        async function loadCloudGallery(showSpinner = false) {
-            if (showSpinner && artworks.length === 0) {
-                isLoadingArtworks = true;
-                renderArtworksGrid();
+        // Fast REST Bootstrap for instant first paint on new devices
+        function parseFirestoreValue(val) {
+            if (!val || typeof val !== 'object') return null;
+            if ('stringValue' in val) return val.stringValue;
+            if ('integerValue' in val) return Number(val.integerValue);
+            if ('doubleValue' in val) return Number(val.doubleValue);
+            if ('booleanValue' in val) return Boolean(val.booleanValue);
+            if ('nullValue' in val) return null;
+            if ('arrayValue' in val) {
+                return (val.arrayValue.values || []).map(parseFirestoreValue);
             }
+            if ('mapValue' in val) {
+                const obj = {};
+                const fields = val.mapValue.fields || {};
+                for (const k of Object.keys(fields)) {
+                    obj[k] = parseFirestoreValue(fields[k]);
+                }
+                return obj;
+            }
+            return null;
+        }
+
+        function parseFirestoreDoc(docJson, fallbackId = '') {
+            const fields = docJson.fields || {};
+            const obj = {};
+            for (const key of Object.keys(fields)) {
+                obj[key] = parseFirestoreValue(fields[key]);
+            }
+            if (!obj.id) {
+                const nameParts = String(docJson.name || '').split('/');
+                obj.id = nameParts[nameParts.length - 1] || fallbackId;
+            }
+            return obj;
+        }
+
+        async function fastBootstrapFromFirestoreREST(projectId) {
+            if (!projectId) return;
+            const baseRestUrl = `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(projectId)}/databases/(default)/documents/artifacts/${encodeURIComponent(APP_ID)}/public/data`;
 
             try {
-                const res = await fetch(API_ENDPOINTS.gallery, { cache: 'no-store' });
-                const data = await res.json();
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `HTTP ${res.status}`);
+                const [artRes, artistRes, aboutRes] = await Promise.all([
+                    fetch(`${baseRestUrl}/artworks?pageSize=100`, { cache: 'no-store' }).catch(() => null),
+                    fetch(`${baseRestUrl}/artists?pageSize=50`, { cache: 'no-store' }).catch(() => null),
+                    fetch(`${baseRestUrl}/settings/gallery_about`, { cache: 'no-store' }).catch(() => null)
+                ]);
+
+                if (aboutRes && aboutRes.ok) {
+                    const aboutJson = await aboutRes.json();
+                    if (aboutJson.fields) {
+                        galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...parseFirestoreDoc(aboutJson, 'gallery_about') };
+                        renderGalleryAboutSection();
+                    }
                 }
 
-                if (Array.isArray(data.artists) && data.artists.length > 0) {
-                    const loadedArtists = data.artists.map(normalizeArtistRow);
+                if (artistRes && artistRes.ok) {
+                    const artistJson = await artistRes.json();
+                    if (Array.isArray(artistJson.documents) && artistJson.documents.length > 0) {
+                        const loadedArtists = artistJson.documents.map(d => parseFirestoreDoc(d));
+                        loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                        artists = loadedArtists;
+                        if (!artists.some(a => a.id === activeArtistId)) {
+                            activeArtistId = artists[0]?.id || 'mt-oung';
+                        }
+                        renderArtistSelectorBar();
+                        renderSelectedArtistProfile();
+                    }
+                }
+
+                if (artRes && artRes.ok) {
+                    const artJson = await artRes.json();
+                    const loadedArt = Array.isArray(artJson.documents)
+                        ? artJson.documents.map(d => {
+                            const item = parseFirestoreDoc(d);
+                            if (!item.artistId) item.artistId = 'mt-oung';
+                            return item;
+                        })
+                        : [];
+                    loadedArt.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                    artworks = loadedArt;
+                    isLoadingArtworks = false;
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                }
+            } catch (e) {
+                // SDK snapshot listener will complete loading
+            }
+        }
+
+        // Initialize Firebase Cloud Connection
+        async function initCloudGallery() {
+            const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config)
+                ? JSON.parse(__firebase_config)
+                : LIVE_FIREBASE_CONFIG;
+
+            fastBootstrapFromFirestoreREST(firebaseConfig.projectId);
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                try {
+                    db = initializeFirestore(app, {
+                        experimentalForceLongPolling: true,
+                        useFetchStreams: false
+                    });
+                } catch (e) {
+                    db = getFirestore(app);
+                }
+
+                // 1. Sync Passcode Security
+                onSnapshot(getSettingsDocRef(), (docSnap) => {
+                    if (docSnap.exists() && docSnap.data().pinHash) {
+                        storedPinHash = String(docSnap.data().pinHash);
+                        isPinInitialized = true;
+                    } else {
+                        isPinInitialized = false;
+                    }
+                    updateAdminGateUI();
+                }, (err) => {
+                    if (err?.code !== 'permission-denied') {
+                        console.warn('Settings sync notice:', err);
+                    }
+                });
+
+                // 2. Sync Gallery About Page
+                onSnapshot(getGalleryAboutDocRef(), (docSnap) => {
+                    if (docSnap.exists()) {
+                        galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...docSnap.data() };
+                        renderGalleryAboutSection();
+                        if (isAdminUnlocked) populateGalleryAboutAdminForm();
+                    }
+                }, (err) => {
+                    if (err?.code !== 'permission-denied') {
+                        console.warn('Gallery About sync notice:', err);
+                    }
+                });
+
+                // 3. Sync Represented Artists
+                const artistsColRef = getArtistsCollectionRef();
+                onSnapshot(artistsColRef, async (snapshot) => {
+                    if (snapshot.empty) {
+                        artists = [...DEFAULT_ARTISTS];
+                        renderArtistSelectorBar();
+                        renderSelectedArtistProfile();
+                        if (currentUser) {
+                            for (const a of DEFAULT_ARTISTS) {
+                                await setDoc(doc(artistsColRef, a.id), a).catch(() => {});
+                            }
+                        }
+                        return;
+                    }
+                    const loadedArtists = [];
+                    snapshot.forEach((docSnap) => loadedArtists.push({ ...docSnap.data(), id: docSnap.id }));
                     loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
                     artists = loadedArtists;
-                } else {
-                    artists = [...DEFAULT_ARTISTS];
+
+                    if (!artists.some(a => a.id === activeArtistId)) {
+                        activeArtistId = artists[0]?.id || 'mt-oung';
+                    }
+
+                    renderArtistSelectorBar();
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    if (isAdminUnlocked) {
+                        populateAdminArtistDropdown();
+                        renderAdminArtistsList();
+                        renderAdminArtworksList();
+                    }
+                }, (err) => {
+                    if (err?.code !== 'permission-denied') {
+                        console.warn('Artists sync notice:', err);
+                    }
+                });
+
+                // 4. Sync Artworks (NO auto-seeding when empty)
+                const colRef = getArtworksCollectionRef();
+                onSnapshot(colRef, (snapshot) => {
+                    const loaded = [];
+                    snapshot.forEach((docSnap) => {
+                        const data = { ...docSnap.data(), id: docSnap.id };
+                        if (!data.artistId) data.artistId = 'mt-oung';
+                        loaded.push(data);
+                    });
+
+                    loaded.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                    artworks = loaded;
+                    isLoadingArtworks = false;
+                    updateCloudStatus(true, `Connected (${APP_ID}) • ${GALLERY_BUILD_TAG}`);
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    if (isAdminUnlocked) {
+                        populateAdminCategoryDropdown();
+                        renderAdminArtworksList();
+                    }
+                }, (error) => {
+                    isLoadingArtworks = false;
+                    if (error?.code === 'permission-denied') {
+                        updateCloudStatus(false, 'Firestore rules blocked read/write — check Firebase Console Rules');
+                    } else {
+                        console.error('Firestore listener error:', error);
+                        updateCloudStatus(false, `Sync issue (${error.code || 'check rules'}) • ${GALLERY_BUILD_TAG}`);
+                    }
+                    renderArtworksGrid();
+                });
+
+                // 5. Sync Edit Logs
+                onSnapshot(getEditLogsCollectionRef(), (snapshot) => {
+                    const loadedLogs = [];
+                    snapshot.forEach((docSnap) => loadedLogs.push({ ...docSnap.data(), id: docSnap.id }));
+                    loadedLogs.sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')));
+                    editLogs = loadedLogs;
+                    renderAdminEditLogsList();
+                }, (err) => {
+                    if (err?.code !== 'permission-denied') {
+                        console.warn('Edit logs sync notice:', err);
+                    }
+                });
+
+                // Sign in silently in background for write permissions
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        const cred = await signInWithCustomToken(auth, __initial_auth_token);
+                        currentUser = cred.user;
+                    } else {
+                        const cred = await signInAnonymously(auth);
+                        currentUser = cred.user;
+                    }
+                } catch (authErr) {
+                    console.warn('Anonymous auth sign-in notice:', authErr);
                 }
 
-                if (!artists.some(a => a.id === activeArtistId)) {
-                    activeArtistId = artists[0]?.id || 'mt-oung';
-                }
-
-                const loadedArtworks = Array.isArray(data.artworks)
-                    ? data.artworks.map(normalizeArtworkRow)
-                    : [];
-                loadedArtworks.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-                artworks = loadedArtworks;
-
-                if (data.settings && data.settings.gallery_about) {
-                    const aboutObj = typeof data.settings.gallery_about === 'string'
-                        ? JSON.parse(data.settings.gallery_about)
-                        : data.settings.gallery_about;
-                    galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...aboutObj };
-                }
-
+            } catch (error) {
                 isLoadingArtworks = false;
-                updateCloudStatus(true, `Connected • ${GALLERY_BUILD_TAG}`);
-
-                renderGalleryAboutSection();
-                renderArtistSelectorBar();
-                renderSelectedArtistProfile();
-                renderCategoryFilterBar();
-                renderArtworksGrid();
-
-                if (isAdminUnlocked) {
-                    populateAdminArtistDropdown();
-                    populateAdminCategoryDropdown();
-                    renderAdminArtworksList();
-                    renderAdminArtistsList();
-                    populateGalleryAboutAdminForm();
-                }
-            } catch (err) {
-                console.warn('Gallery API sync notice:', err);
-                isLoadingArtworks = false;
-                updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
+                console.error('Cloud initialization error:', error);
+                updateCloudStatus(false, 'Offline fallback mode');
                 renderArtworksGrid();
             }
         }
@@ -1503,7 +1602,7 @@ function toggleThemeMode() {
             box.classList.remove('hidden');
             box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             if (!isError) {
-                setTimeout(() => box.classList.add('hidden'), 5000);
+                setTimeout(() => box.classList.add('hidden'), 4500);
             }
         }
 
@@ -1567,7 +1666,6 @@ function toggleThemeMode() {
             const chosenArtist = artists.find(a => a.id === artistId);
             playSoftGalleryChime('artist');
             triggerClassicArtistMotif(chosenArtist ? chosenArtist.name : '');
-            trackVisitorEvent('select_artist', chosenArtist ? chosenArtist.name : artistId);
             isArtistSwitching = true;
             activeArtistId = artistId;
             activeCategory = 'All';
@@ -1795,7 +1893,6 @@ function toggleThemeMode() {
 
         function inquireAboutArtwork(artTitle, artistName) {
             playSoftGalleryChime('select');
-            trackVisitorEvent('inquire_artwork', `${artTitle} (${artistName})`);
             closeLightbox();
             showSection('contact');
             const msgBox = document.getElementById('contact-message');
@@ -1857,7 +1954,6 @@ function toggleThemeMode() {
             if (!art) return;
 
             playSoftGalleryChime('click');
-            trackVisitorEvent('view_artwork', art.title || id);
             currentLightboxId = art.id;
             const modal = document.getElementById('lightbox-modal');
             const img = document.getElementById('lightbox-img');
@@ -1891,7 +1987,6 @@ function toggleThemeMode() {
             const nextArt = list[nextIndex];
             if (!nextArt) return;
 
-            trackVisitorEvent('view_artwork', nextArt.title || nextArt.id);
             isLightboxTransitioning = true;
             currentLightboxId = nextArt.id;
 
@@ -1970,38 +2065,49 @@ function toggleThemeMode() {
             if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); openAdminModal(); }
         });
 
-        // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
+        // ==================== ADMIN CONSOLE LOGIC ====================
         function switchAdminTab(tabName) {
             playSoftGalleryChime('select');
-            ['artworks', 'artists', 'gallery', 'visitors', 'logs'].forEach(t => {
+            ['artworks', 'artists', 'gallery', 'logs'].forEach(t => {
                 const panel = document.getElementById('admin-panel-' + t);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 const isSelected = t === tabName;
                 if (panel) panel.classList.toggle('hidden', !isSelected);
                 if (btn) {
                     btn.className = isSelected
-                        ? 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
-                        : 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
+                        ? 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
+                        : 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
                 }
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
             if (tabName === 'artists') renderAdminArtistsList();
-            if (tabName === 'visitors') loadVisitorActivityFromCloud();
-            if (tabName === 'logs') {
-                loadEditLogsFromCloud();
-                renderAdminEditLogsList();
-            }
+            if (tabName === 'logs') renderAdminEditLogsList();
         }
 
         function updateAdminGateUI() {
             const titleEl = document.getElementById('admin-gate-title');
             const subEl = document.getElementById('admin-gate-subtitle');
+            const confirmInput = document.getElementById('admin-pin-confirm-input');
             const submitBtn = document.getElementById('admin-gate-submit-btn');
             const pinInput = document.getElementById('admin-pin-input');
-            if (titleEl) titleEl.textContent = 'Curator Access';
-            if (subEl) subEl.innerHTML = 'Enter your Cloudflare <code>ADMIN_API_TOKEN</code> to manage D1 &amp; R2.';
-            if (pinInput) pinInput.placeholder = 'Enter ADMIN_API_TOKEN';
-            if (submitBtn) submitBtn.textContent = 'Unlock Console';
+
+            if (!titleEl || !subEl || !confirmInput || !submitBtn || !pinInput) return;
+
+            if (!isPinInitialized) {
+                titleEl.textContent = 'Create Curator Passcode';
+                subEl.textContent = 'Set your private master passcode for the first time. It is encrypted and hidden from page source.';
+                pinInput.placeholder = 'Create Passcode (min 4 chars)';
+                confirmInput.classList.remove('hidden');
+                confirmInput.required = true;
+                submitBtn.textContent = 'Set Passcode & Unlock';
+            } else {
+                titleEl.textContent = 'Curator Access';
+                subEl.textContent = 'Enter your private security passcode to manage the gallery.';
+                pinInput.placeholder = 'Enter Passcode';
+                confirmInput.classList.add('hidden');
+                confirmInput.required = false;
+                submitBtn.textContent = 'Unlock Console';
+            }
         }
 
         function openAdminModal() {
@@ -2011,15 +2117,14 @@ function toggleThemeMode() {
             document.getElementById('admin-pin-error').classList.add('hidden');
             updateAdminGateUI();
 
-            const savedToken = getSavedAdminToken();
-            if (isAdminUnlocked && savedToken) {
+            if (isAdminUnlocked) {
                 showAdminDashboard();
             } else {
                 document.getElementById('admin-login-view').classList.remove('hidden');
                 document.getElementById('admin-dashboard-view').classList.add('hidden');
-                const pinInput = document.getElementById('admin-pin-input');
-                pinInput.value = savedToken;
-                setTimeout(() => pinInput.focus(), 100);
+                document.getElementById('admin-pin-input').value = '';
+                document.getElementById('admin-pin-confirm-input').value = '';
+                setTimeout(() => document.getElementById('admin-pin-input').focus(), 100);
             }
         }
 
@@ -2030,69 +2135,132 @@ function toggleThemeMode() {
             resetArtistForm();
         }
 
-        function lockAdminSession() {
-            isAdminUnlocked = false;
-            setSavedAdminToken('');
-            document.getElementById('admin-dashboard-view').classList.add('hidden');
-            document.getElementById('admin-login-view').classList.remove('hidden');
-            const pinInput = document.getElementById('admin-pin-input');
-            pinInput.value = '';
-            pinInput.focus();
-        }
+        let failedPinAttempts = 0;
+        let pinLockoutUntil = 0;
 
         async function verifyAdminPin(event) {
             event.preventDefault();
             const entered = document.getElementById('admin-pin-input').value.trim();
             const errorEl = document.getElementById('admin-pin-error');
-            const submitBtn = document.getElementById('admin-gate-submit-btn');
             errorEl.classList.add('hidden');
 
-            if (entered.length < 4) {
-                errorEl.textContent = 'Please enter a valid ADMIN_API_TOKEN.';
+            if (Date.now() < pinLockoutUntil) {
+                const secsLeft = Math.ceil((pinLockoutUntil - Date.now()) / 1000);
+                errorEl.textContent = `Too many failed attempts. Try again in ${secsLeft}s.`;
                 errorEl.classList.remove('hidden');
                 return;
             }
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Verifying Token...';
+            if (!isPinInitialized) {
+                const confirmed = document.getElementById('admin-pin-confirm-input').value.trim();
+                if (entered.length < 4) {
+                    errorEl.textContent = 'Passcode must be at least 4 characters.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                if (entered !== confirmed) {
+                    errorEl.textContent = 'Passcodes do not match. Please re-enter.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                const newHash = await hashPasscode(entered);
+                storedPinHash = newHash;
+                isPinInitialized = true;
+                try {
+                    if (currentUser) {
+                        await setDoc(getSettingsDocRef(), { pinHash: newHash, updatedAt: Date.now() }, { merge: true });
+                    }
+                } catch (err) {
+                    console.error('Failed to initialize passcode in cloud:', err);
+                }
+                await recordEditLog('Initialized', 'Security', 'Master Passcode', 'Created initial curator passcode');
+                failedPinAttempts = 0;
+                isAdminUnlocked = true;
+                showAdminDashboard();
+                return;
+            }
+
+            const enteredHash = await hashPasscode(entered);
+            if (enteredHash === storedPinHash) {
+                failedPinAttempts = 0;
+                isAdminUnlocked = true;
+                showAdminDashboard();
+            } else {
+                failedPinAttempts++;
+                if (failedPinAttempts >= 5) {
+                    pinLockoutUntil = Date.now() + 60000;
+                    failedPinAttempts = 0;
+                    errorEl.textContent = 'Too many failed attempts. Locked for 60 seconds.';
+                } else {
+                    errorEl.textContent = `Incorrect passcode (${5 - failedPinAttempts} attempts remaining).`;
+                }
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function toggleChangePinBox() {
+            const box = document.getElementById('change-pin-box');
+            const feedback = document.getElementById('change-pin-feedback');
+            box.classList.toggle('hidden');
+            feedback.classList.add('hidden');
+            document.getElementById('current-pin-verify-input').value = '';
+            document.getElementById('new-pin-input').value = '';
+        }
+
+        function resetForgottenAdminPin() {
+            storedPinHash = null;
+            isPinInitialized = false;
+            failedPinAttempts = 0;
+            pinLockoutUntil = 0;
+            document.getElementById('admin-pin-error').classList.add('hidden');
+            document.getElementById('admin-pin-input').value = '';
+            document.getElementById('admin-pin-confirm-input').value = '';
+            updateAdminGateUI();
+            document.getElementById('admin-pin-input').focus();
+        }
+
+        async function saveNewAdminPin(event) {
+            event.preventDefault();
+            const currentEntered = document.getElementById('current-pin-verify-input').value.trim();
+            const newPin = document.getElementById('new-pin-input').value.trim();
+            const feedback = document.getElementById('change-pin-feedback');
+
+            const currentHash = await hashPasscode(currentEntered);
+            if (storedPinHash && currentHash !== storedPinHash) {
+                feedback.textContent = 'Current passcode is incorrect.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-red-600';
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            if (newPin.length < 4) {
+                feedback.textContent = 'New passcode must be at least 4 characters.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-red-600';
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            const newHash = await hashPasscode(newPin);
+            storedPinHash = newHash;
+            isPinInitialized = true;
 
             try {
-                const checkRes = await fetch(API_ENDPOINTS.settings, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-admin-token': entered,
-                        Authorization: `Bearer ${entered}`
-                    },
-                    body: JSON.stringify({ key: 'token_check', value: { verifiedAt: Date.now() } })
-                });
-
-                if (checkRes.status === 401 || checkRes.status === 403) {
-                    errorEl.textContent = 'Invalid ADMIN_API_TOKEN. Check Cloudflare Pages Variables & Secrets.';
-                    errorEl.classList.remove('hidden');
-                    return;
+                if (currentUser) {
+                    await setDoc(getSettingsDocRef(), { pinHash: newHash, updatedAt: Date.now() }, { merge: true });
                 }
-
-                const checkData = await checkRes.json().catch(() => ({}));
-                if (!checkRes.ok || checkData.ok === false) {
-                    errorEl.textContent = checkData.error || 'Unable to verify token against /api/settings.';
-                    errorEl.classList.remove('hidden');
-                    return;
-                }
-
-                setSavedAdminToken(entered);
-                isAdminUnlocked = true;
-                await Promise.all([
-                    loadCloudGallery(false),
-                    loadEditLogsFromCloud()
-                ]);
-                showAdminDashboard();
+                await recordEditLog('Updated', 'Security', 'Master Passcode', 'Changed curator security passcode');
+                feedback.textContent = 'Passcode encrypted and updated in Cloud!';
+                feedback.className = 'text-xs mt-2.5 font-medium text-emerald-700';
+                feedback.classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('change-pin-box').classList.add('hidden');
+                    feedback.classList.add('hidden');
+                }, 2000);
             } catch (err) {
-                errorEl.textContent = 'Connection error: ' + (err.message || 'Check Cloudflare Pages deployment.');
-                errorEl.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Unlock Console';
+                feedback.textContent = 'Updated for this session.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-amber-700';
+                feedback.classList.remove('hidden');
             }
         }
 
@@ -2105,26 +2273,6 @@ function toggleThemeMode() {
             renderAdminArtistsList();
             renderAdminEditLogsList();
             populateGalleryAboutAdminForm();
-        }
-
-        async function uploadFileToR2(file, folder = 'artworks') {
-            const compressed = await compressImageFile(file, folder === 'artists' ? 768 : 1280, folder === 'artists' ? 0.84 : 0.82);
-            const formData = new FormData();
-            formData.append('file', compressed.file);
-            formData.append('folder', folder);
-
-            const res = await fetch(API_ENDPOINTS.upload, {
-                method: 'POST',
-                headers: getAdminAuthHeaders(),
-                body: formData
-            });
-
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok || !data.ok || !data.url) {
-                throw new Error(data.error || `R2 upload failed (${res.status})`);
-            }
-
-            return { url: data.url, key: data.key, aspect: compressed.aspect };
         }
 
         function populateAdminArtistDropdown(selectedArtistId = '') {
@@ -2198,17 +2346,35 @@ function toggleThemeMode() {
             }).join('');
         }
 
+        async function ensureCloudAuthReady() {
+            if (!auth) return null;
+            if (auth.currentUser) {
+                currentUser = auth.currentUser;
+                return currentUser;
+            }
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const cred = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = cred.user;
+                } else {
+                    const cred = await signInAnonymously(auth);
+                    currentUser = cred.user;
+                }
+                return currentUser;
+            } catch (authErr) {
+                throw new Error('Firebase Auth failed (' + (authErr.code || authErr.message || 'enable Anonymous Auth in Firebase Console') + ')');
+            }
+        }
+
         async function saveArtworkFromAdmin(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('save-artwork-btn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading & Saving...';
+            submitBtn.textContent = 'Processing Image...';
 
             try {
                 const editId = document.getElementById('edit-artwork-id').value;
                 const artistId = document.getElementById('art-artist-select').value || activeArtistId;
-                const artistObj = artists.find(a => a.id === artistId);
-                const artistName = artistObj ? artistObj.name : '';
                 const title = document.getElementById('art-title-input').value.trim();
                 const selectedCat = document.getElementById('art-category-select').value;
                 const newCat = document.getElementById('art-new-category-input').value.trim();
@@ -2227,10 +2393,9 @@ function toggleThemeMode() {
                 let aspect = '3/4';
 
                 if (fileInput.files && fileInput.files[0]) {
-                    submitBtn.textContent = 'Uploading to R2...';
-                    const uploaded = await uploadFileToR2(fileInput.files[0], 'artworks');
-                    imageSrc = uploaded.url;
-                    aspect = uploaded.aspect;
+                    const compressed = await compressImageFile(fileInput.files[0]);
+                    imageSrc = compressed.dataUrl;
+                    aspect = compressed.aspect;
                 } else if (!imageSrc && editId) {
                     const existing = artworks.find(a => a.id === editId);
                     if (existing) {
@@ -2244,35 +2409,60 @@ function toggleThemeMode() {
                 const docId = editId || ('art-' + Date.now());
                 const existingArt = artworks.find(a => a.id === docId);
                 const minOrder = artworks.reduce((min, item) => Math.min(min, typeof item.order === 'number' ? item.order : 0), 0);
-                const sortOrder = existingArt ? (typeof existingArt.order === 'number' ? existingArt.order : 0) : (minOrder - 1);
 
-                submitBtn.textContent = 'Saving to D1...';
-                const res = await fetch(API_ENDPOINTS.artworks, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        id: docId,
-                        title,
-                        artist_id: artistId,
-                        artist_name: artistName,
-                        category,
-                        medium,
-                        dimensions: size,
-                        year,
-                        price,
-                        status,
-                        image_url: imageSrc,
-                        description,
-                        sort_order: sortOrder
-                    })
-                });
+                const artworkPayload = {
+                    id: docId,
+                    artistId,
+                    title,
+                    category,
+                    medium,
+                    size,
+                    year,
+                    provenance,
+                    status,
+                    price,
+                    image: imageSrc,
+                    aspect,
+                    description,
+                    order: existingArt ? (typeof existingArt.order === 'number' ? existingArt.order : 0) : (minOrder - 1),
+                    updatedAt: Date.now()
+                };
 
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `D1 save failed (${res.status})`);
+                submitBtn.textContent = 'Saving to Cloud...';
+
+                if (db) {
+                    await ensureCloudAuthReady();
+                    const saveWithTimeout = Promise.race([
+                        setDoc(doc(getArtworksCollectionRef(), docId), artworkPayload),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Cloud save timed out after 25s. Check internet connection or Firestore rules.')), 25000)
+                        )
+                    ]);
+                    await saveWithTimeout;
+
+                    if (!artworks.some(a => a.id === docId)) {
+                        artworks.unshift(artworkPayload);
+                        artworks.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                        renderSelectedArtistProfile();
+                        renderCategoryFilterBar();
+                        renderArtworksGrid();
+                        renderAdminArtworksList();
+                    }
+                    showAdminFeedback(`"${title}" published to Live Cloud Gallery!`);
+                } else {
+                    if (editId) {
+                        const idx = artworks.findIndex(a => a.id === editId);
+                        if (idx !== -1) artworks[idx] = artworkPayload;
+                    } else {
+                        artworks.unshift(artworkPayload);
+                    }
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    renderAdminArtworksList();
+                    showAdminFeedback(`"${title}" saved locally.`);
                 }
 
-                await loadCloudGallery(false);
                 await recordEditLog(
                     editId ? 'Updated' : 'Added',
                     'Artwork',
@@ -2280,12 +2470,11 @@ function toggleThemeMode() {
                     `${category} • ${medium}${size ? ' • ' + size : ''} (${status})`
                 );
 
-                showAdminFeedback(`"${title}" saved to Cloudflare D1 & R2!`);
                 resetAdminForm();
                 populateAdminCategoryDropdown();
             } catch (err) {
                 console.error('Error publishing artwork:', err);
-                showAdminFeedback('Save failed: ' + (err.message || 'Check ADMIN_API_TOKEN & Bindings.'), true);
+                showAdminFeedback('Publish failed: ' + (err.message || 'Check Firebase Firestore Rules & Anonymous Auth.'), true);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Publish to Live Gallery';
@@ -2309,17 +2498,13 @@ function toggleThemeMode() {
             document.getElementById('art-status-select').value = art.status || 'Available';
             document.getElementById('art-price-input').value = art.price || '';
             const currentImg = String(art.image || '');
-            document.getElementById('art-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('art-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
             document.getElementById('art-desc-input').value = art.description || '';
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
 
-            const formContainer = document.getElementById('admin-form-container');
-            if (formContainer) {
-                setTimeout(() => {
-                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 60);
-            }
+            const modalBody = document.getElementById('admin-modal-body');
+            if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetAdminForm() {
@@ -2337,23 +2522,23 @@ function toggleThemeMode() {
         async function deleteArtworkFromAdmin(id) {
             const target = artworks.find(a => a.id === id);
             try {
-                const res = await fetch(`${API_ENDPOINTS.artworks}?id=${encodeURIComponent(id)}`, {
-                    method: 'DELETE',
-                    headers: getAdminAuthHeaders()
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `Delete failed (${res.status})`);
+                if (db) {
+                    await ensureCloudAuthReady();
+                    await deleteDoc(doc(getArtworksCollectionRef(), id));
+                    showAdminFeedback(`Deleted "${target?.title || 'Artwork'}" from Live Cloud.`);
+                } else {
+                    artworks = artworks.filter(a => a.id !== id);
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    renderAdminArtworksList();
                 }
-
-                await loadCloudGallery(false);
-                showAdminFeedback(`Deleted "${target?.title || 'Artwork'}" from D1.`);
                 if (target) {
                     await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
                 }
             } catch (err) {
                 console.error('Delete failed:', err);
-                showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+                showAdminFeedback('Delete failed: ' + (err.message || 'Check Firestore Rules & Anonymous Auth.'), true);
             }
         }
 
@@ -2416,9 +2601,8 @@ function toggleThemeMode() {
 
                 let imageSrc = urlInput;
                 if (fileInput.files && fileInput.files[0]) {
-                    submitBtn.textContent = 'Uploading Portrait to R2...';
-                    const uploaded = await uploadFileToR2(fileInput.files[0], 'artists');
-                    imageSrc = uploaded.url;
+                    const compressed = await compressImageFile(fileInput.files[0], 720, 0.8);
+                    imageSrc = compressed.dataUrl;
                 } else if (!imageSrc && editId) {
                     const existing = artists.find(a => a.id === editId);
                     if (existing) imageSrc = existing.image;
@@ -2428,34 +2612,46 @@ function toggleThemeMode() {
 
                 const docId = editId || ('artist-' + Date.now());
                 const existingArtist = artists.find(a => a.id === docId);
-                const sortOrder = existingArtist ? (existingArtist.order || 1) : (artists.length + 1);
-                const fullBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
 
-                submitBtn.textContent = 'Saving to D1...';
-                const res = await fetch(API_ENDPOINTS.artists, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        id: docId,
-                        name,
-                        bio: fullBio,
-                        portrait_url: imageSrc,
-                        sort_order: sortOrder
-                    })
-                });
+                const artistPayload = {
+                    id: docId,
+                    name,
+                    subtitle,
+                    image: imageSrc,
+                    bio,
+                    order: existingArtist ? (existingArtist.order || 1) : (artists.length + 1),
+                    updatedAt: Date.now()
+                };
 
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `Artist save failed (${res.status})`);
+                if (editId) {
+                    const idx = artists.findIndex(a => a.id === editId);
+                    if (idx !== -1) artists[idx] = artistPayload;
+                } else {
+                    artists.push(artistPayload);
+                }
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+                populateAdminArtistDropdown(docId);
+                renderAdminArtistsList();
+
+                if (db) {
+                    await ensureCloudAuthReady();
+                    await Promise.race([
+                        setDoc(doc(getArtistsCollectionRef(), docId), artistPayload),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Cloud timeout after 25s — check connection or Firestore rules.')), 25000)
+                        )
+                    ]);
+                    showAdminFeedback(`Artist "${name}" saved to Live Cloud!`);
+                } else {
+                    showAdminFeedback(`Artist "${name}" saved locally.`);
                 }
 
-                await loadCloudGallery(false);
-                showAdminFeedback(`Artist "${name}" saved to Cloudflare D1 & R2!`);
                 await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle || 'Artist profile updated');
                 resetArtistForm();
             } catch (err) {
                 console.error('Error saving artist:', err);
-                showAdminFeedback('Artist save failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+                showAdminFeedback('Artist updated locally, but cloud sync reported: ' + (err.message || 'Check connection.'), true);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Save Artist Profile';
@@ -2471,17 +2667,13 @@ function toggleThemeMode() {
             document.getElementById('artist-name-input').value = artist.name || '';
             document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
             const currentImg = String(artist.image || '');
-            document.getElementById('artist-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('artist-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
             document.getElementById('artist-bio-input').value = artist.bio || '';
             document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
             document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
 
-            const artistFormContainer = document.getElementById('admin-artist-form-container');
-            if (artistFormContainer) {
-                setTimeout(() => {
-                    artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 60);
-            }
+            const modalBody = document.getElementById('admin-modal-body');
+            if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetArtistForm() {
@@ -2497,125 +2689,21 @@ function toggleThemeMode() {
         async function deleteArtistFromAdmin(id) {
             if (artists.length <= 1) return;
             const target = artists.find(a => a.id === id);
-            try {
-                const res = await fetch(`${API_ENDPOINTS.artists}?id=${encodeURIComponent(id)}`, {
-                    method: 'DELETE',
-                    headers: getAdminAuthHeaders()
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `Delete failed (${res.status})`);
-                }
+            if (db) {
+                await ensureCloudAuthReady();
+                await deleteDoc(doc(getArtistsCollectionRef(), id));
+            } else {
+                artists = artists.filter(a => a.id !== id);
                 if (activeArtistId === id) activeArtistId = artists[0].id;
-                await loadCloudGallery(false);
-                showAdminFeedback(`Deleted artist "${target?.name || id}".`);
-                if (target) {
-                    await recordEditLog('Deleted', 'Artist', target.name, 'Removed artist profile');
-                }
-            } catch (err) {
-                showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+                renderCategoryFilterBar();
+                renderArtworksGrid();
+                populateAdminArtistDropdown();
+                renderAdminArtistsList();
             }
-        }
-
-        // ==================== ADMIN: VISITOR ACTIVITY & MONTHLY EMAIL REPORT ====================
-        async function loadVisitorActivityFromCloud() {
-            const topArtEl = document.getElementById('visitor-top-artworks');
-            const topCountryEl = document.getElementById('visitor-top-countries');
-            const listEl = document.getElementById('admin-visitor-logs-list');
-
-            try {
-                const res = await fetch(API_ENDPOINTS.activity, {
-                    headers: getAdminAuthHeaders(),
-                    cache: 'no-store'
-                });
-                const data = await res.json();
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `HTTP ${res.status}`);
-                }
-                visitorActivityData = {
-                    logs: data.logs || [],
-                    topArtworks: data.topArtworks || [],
-                    topCountries: data.topCountries || []
-                };
-            } catch (err) {
-                if (listEl) {
-                    listEl.innerHTML = `<p class="text-xs text-red-600 py-3 text-center">${escapeHTML(err.message || 'Unable to load visitor logs')}</p>`;
-                }
-                return;
-            }
-
-            if (topArtEl) {
-                topArtEl.innerHTML = visitorActivityData.topArtworks.length
-                    ? visitorActivityData.topArtworks.map((a, i) =>
-                        `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
-                            <span class="truncate pr-2">${i + 1}. ${escapeHTML(a.item_name)}</span>
-                            <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${Number(a.views || 0)} views</span>
-                        </div>`
-                    ).join('')
-                    : `<p class="opacity-60">No artwork view events yet.</p>`;
-            }
-
-            const mobileCount = visitorActivityData.logs.filter(l => l.device === 'Mobile').length;
-            const desktopCount = visitorActivityData.logs.filter(l => l.device !== 'Mobile').length;
-
-            if (topCountryEl) {
-                const countryHtml = visitorActivityData.topCountries.length
-                    ? visitorActivityData.topCountries.map(c =>
-                        `<span class="inline-block px-2 py-0.5 rounded bg-[#A69076]/15 mr-1.5 mb-1">${escapeHTML(c.country)}: <strong>${Number(c.count || 0)}</strong></span>`
-                    ).join('')
-                    : `<span class="opacity-60">No country data yet.</span>`;
-                topCountryEl.innerHTML = `
-                    <div class="mb-2">${countryHtml}</div>
-                    <div class="opacity-75">Devices (recent): Mobile <strong>${mobileCount}</strong> • Desktop <strong>${desktopCount}</strong></div>
-                `;
-            }
-
-            if (listEl) {
-                listEl.innerHTML = visitorActivityData.logs.length
-                    ? visitorActivityData.logs.map(row => `
-                        <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-                            <div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(row.event_type)}</span>
-                                <span class="font-medium">${escapeHTML(row.item_name || '-')}</span>
-                                <span class="opacity-65 ml-1.5">[${escapeHTML(row.country || 'XX')} • ${escapeHTML(row.device || 'Desktop')}]</span>
-                            </div>
-                            <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(row.timestamp || '')}</span>
-                        </div>
-                    `).join('')
-                    : `<p class="text-xs opacity-60 py-4 text-center">No visitor activity in the last 30 days.</p>`;
-            }
-        }
-
-        async function triggerMonthlyReportNow() {
-            const btn = document.getElementById('archive-report-now-btn');
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = 'Sending Report...';
-            }
-            try {
-                const res = await fetch(API_ENDPOINTS.activity, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ action: 'archive_now' })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `Failed (${res.status})`);
-                }
-                if (data.sent) {
-                    showAdminFeedback(`Emailed readable report + CSV (${data.count} events) and purged archived logs from D1!`);
-                    await recordEditLog('Archived & Purged', 'Visitor Logs', 'Monthly Report', `Sent ${data.count} events via Web3Forms`);
-                } else {
-                    showAdminFeedback(data.reason || 'No visitor logs to archive right now.');
-                }
-                await loadVisitorActivityFromCloud();
-            } catch (err) {
-                showAdminFeedback('Report failed: ' + (err.message || 'Check WEB3FORMS_ACCESS_KEY.'), true);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = 'Email Report & Purge Now';
-                }
+            if (target) {
+                await recordEditLog('Deleted', 'Artist', target.name, 'Removed artist profile');
             }
         }
 
@@ -2635,292 +2723,107 @@ function toggleThemeMode() {
             const subtitle = document.getElementById('about-subtitle-input').value.trim();
             const body = document.getElementById('about-body-input').value.trim();
 
-            const nextAbout = { heading, subtitle, body, updatedAt: Date.now() };
-
-            try {
-                const res = await fetch(API_ENDPOINTS.settings, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ key: 'gallery_about', value: nextAbout })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `Settings save failed (${res.status})`);
-                }
-                galleryAbout = nextAbout;
-                renderGalleryAboutSection();
-                showAdminFeedback('Gallery About page saved to Cloudflare D1!');
-                await recordEditLog('Updated', 'Gallery About', heading, 'Updated gallery curatorial statement');
-            } catch (err) {
-                showAdminFeedback('Update failed: ' + err.message, true);
-            }
-        }
-
-        function renderAdminEditLogsList() {
-            const list = document.getElementById('admin-edit-logs-list');
-            const countEl = document.getElementById('admin-log-count');
-            if (countEl) countEl.textContent = editLogs.length;
-            if (!list) return;
-
-            if (editLogs.length === 0) {
-                list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
-                return;
-            }
-
-            list.innerHTML = editLogs.map(log => {
-                const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString() : '';
-                const badgeColor = log.action === 'Deleted'
-                    ? 'bg-red-500/15 text-red-600'
-                    : (log.action === 'Added' || log.action === 'Initialized' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/15 text-amber-700 dark:text-amber-300');
-                return `
-                    <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-medium ${badgeColor}">${escapeHTML(log.action)}</span>
-                                <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(log.targetType)}</span>
-                                <span class="font-serif text-sm font-medium">${escapeHTML(log.targetName)}</span>
-                            </div>
-                            ${log.details ? `<p class="text-xs opacity-70">${escapeHTML(log.details)}</p>` : ''}
-                        </div>
-                        <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(dateStr)}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function downloadEditLogsCSV() {
-            const headers = ['Timestamp', 'Action', 'TargetType', 'TargetName', 'Details'];
-            const rows = editLogs.map(l => [
-                l.timestamp || '',
-                l.action || '',
-                l.targetType || '',
-                l.targetName || '',
-                l.details || ''
-            ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
-            const csv = [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function downloadEditLogsJSON() {
-            const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), editLogs }, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportArtworksJSON() {
-            const payload = {
-                exportedAt: new Date().toISOString(),
-                galleryAbout,
-                artists,
-                artworks,
-                editLogs
-            };
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `the-artists-loft-backup-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        async function handleContactSubmit(event) {
-            event.preventDefault();
-            const form = document.getElementById('contact-form');
-            const submitBtn = document.getElementById('contact-submit-btn');
-            const feedback = document.getElementById('contact-feedback');
-            const name = document.getElementById('contact-name').value.trim();
-            const email = document.getElementById('contact-email').value.trim();
-            const message = document.getElementById('contact-message').value.trim();
-            const botcheck = document.getElementById('contact-botcheck').checked;
-
-            if (botcheck) return;
-            if (!name || !email || !message) return;
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            feedback.classList.add('hidden');
-
-            try {
-                const res = await fetch(API_ENDPOINTS.contact, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, message, botcheck })
-                });
-                const data = await res.json();
-
-                if (res.ok && data.success) {
-                    playSoftGalleryChime('success');
-                    trackVisitorEvent('contact_submit', name);
-                    feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
-                    feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]';
-                    feedback.classList.remove('hidden');
-                    form.reset();
-                } else {
-                    throw new Error(data.message || 'Unable to send message right now.');
-                }
-            } catch (err) {
-                feedback.textContent = 'Notice: ' + (err.message || 'Please try again later.');
-                feedback.className = 'p-4 rounded-2xl bg-red-50 border border-red-200 text-center text-sm text-red-700';
-                feedback.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Message';
-            }
-        }
-
-        // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
-        let galleryScrollRaf = null;
-        let galleryScrollBound = false;
-
-        function getCardRandomSeed(card, idx) {
-            if (card.dataset.randSeeded === 'true') {
-                return {
-                    phase: parseFloat(card.dataset.randPhase),
-                    scaleMin: parseFloat(card.dataset.randScaleMin),
-                    yOffset: parseFloat(card.dataset.randYOffset)
-                };
-            }
-            const seed = (idx * 73 + 19) % 100 / 100;
-            const phase = (seed - 0.5) * 0.24;
-            const scaleMin = 0.81 + (seed * 0.055);
-            const yOffset = 26 + Math.round(seed * 18);
-            card.dataset.randSeeded = 'true';
-            card.dataset.randPhase = phase.toFixed(3);
-            card.dataset.randScaleMin = scaleMin.toFixed(3);
-            card.dataset.randYOffset = String(yOffset);
-            return { phase, scaleMin, yOffset };
-        }
-
-        function updateGalleryScrollPresence() {
-            galleryScrollRaf = null;
-            const artworksSection = document.getElementById('section-artworks');
-            if (!artworksSection || artworksSection.classList.contains('hidden')) return;
-
-            const cards = Array.from(document.querySelectorAll('#artworks-masonry-grid .reveal-item'));
-            if (cards.length === 0) return;
-
-            const vh = window.innerHeight || document.documentElement.clientHeight;
-            const headerHeight = 105;
-            const topFadeStart = headerHeight + 135;
-            const topFadeEnd = headerHeight - 80;
-            const bottomFadeStart = vh + 55;
-            const bottomFadeEnd = vh * 0.68;
-
-            cards.forEach((card, idx) => {
-                if (card.dataset.hovered === 'true') {
-                    card.style.opacity = '1';
-                    card.style.filter = 'none';
-                    return;
-                }
-
-                const rect = card.getBoundingClientRect();
-                const center = (rect.top + rect.bottom) * 0.5;
-                const { phase, scaleMin, yOffset } = getCardRandomSeed(card, idx);
-                const adjustedCenter = center + (phase * 155);
-
-                let progress = 1;
-                if (adjustedCenter < topFadeStart) {
-                    progress = (adjustedCenter - topFadeEnd) / (topFadeStart - topFadeEnd);
-                } else if (adjustedCenter > bottomFadeEnd) {
-                    progress = 1 - ((adjustedCenter - bottomFadeEnd) / (bottomFadeStart - bottomFadeEnd));
-                }
-
-                progress = Math.max(0, Math.min(1, progress));
-                const eased = progress * progress * (3 - 2 * progress);
-
-                const opacity = 0.06 + (0.94 * eased);
-                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -22 : yOffset);
-                const scale = scaleMin + ((1 - scaleMin) * eased);
-                const blurPx = (1 - eased) * 2.2;
-
-                card.style.opacity = opacity.toFixed(3);
-                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
-                card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
-            });
-        }
-
-        function requestGalleryScrollUpdate() {
-            if (galleryScrollRaf === null) {
-                galleryScrollRaf = requestAnimationFrame(updateGalleryScrollPresence);
-            }
-        }
-
-        function initGalleryCardAnimations() {
-            if (!galleryScrollBound) {
-                galleryScrollBound = true;
-                window.addEventListener('scroll', requestGalleryScrollUpdate, { passive: true });
-                window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
-            }
-
-            document.querySelectorAll('#artworks-masonry-grid .tilt-card').forEach(card => {
-                if (card.dataset.tiltBound === 'true') return;
-                card.dataset.tiltBound = 'true';
-                const glare = card.querySelector('.tilt-glare');
-
-                card.addEventListener('mouseenter', () => {
-                    card.dataset.hovered = 'true';
-                    card.style.opacity = '1';
-                    card.style.filter = 'none';
-                });
-
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -6.5;
-                    const rotateY = ((x - centerX) / centerX) * 6.5;
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
-                    if (glare) {
-                        const pctX = (x / rect.width) * 100;
-                        const pctY = (y / rect.height) * 100;
-                        glare.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0) 68%)`;
-                        glare.style.opacity = '1';
-                    }
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    card.dataset.hovered = 'false';
-                    if (glare) glare.style.opacity = '0';
-                    requestGalleryScrollUpdate();
-                });
-            });
-
-            updateGalleryScrollPresence();
-        }
-
-        // ==================== CLASSIC SALON & PARCHMENT WHISPER SOUNDSCAPE ====================
+        // ==================== POLYPHONIC CLASSICAL CHAMBER & SALON PIANO ENGINE ====================
         let audioCtx = null;
         let masterGain = null;
+        let chamberBus = null;
+        let reverbConvolver = null;
+        let reverbWetGain = null;
         let isSoundEnabled = true;
         let ambientInterval = null;
         let audioUnlockBound = false;
         let lastDragWhisperTime = 0;
 
+        // Track active oscillators/timers so muting stops everything cleanly & immediately
+        let activeChamberNodes = new Set();
+        let activeChamberTimers = new Set();
+        let piecePlaybackToken = 0;
+        let lastPieceIndex = -1;
+
+        function createConcertHallImpulse(ctx, durationSec = 2.6, decay = 2.4) {
+            const rate = ctx.sampleRate;
+            const length = Math.floor(rate * durationSec);
+            const impulse = ctx.createBuffer(2, length, rate);
+            for (let ch = 0; ch < 2; ch++) {
+                const channelData = impulse.getChannelData(ch);
+                for (let i = 0; i < length; i++) {
+                    const t = i / length;
+                    const env = Math.pow(1 - t, decay);
+                    // Subtle stereo early reflections + warm diffuse tail
+                    const early = i < rate * 0.045 && i % 430 === 0 ? 0.35 : 0;
+                    channelData[i] = ((Math.random() * 2 - 1) * 0.55 + early) * env;
+                }
+            }
+            return impulse;
+        }
+
         function ensureAudioContext() {
             if (!audioCtx) {
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContextClass();
+
                 masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.14, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+
+                // Warm master lowpass & gentle compressor for authentic concert-salon warmth
+                const compressor = audioCtx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-20, audioCtx.currentTime);
+                compressor.knee.setValueAtTime(18, audioCtx.currentTime);
+                compressor.ratio.setValueAtTime(3.2, audioCtx.currentTime);
+                compressor.attack.setValueAtTime(0.015, audioCtx.currentTime);
+                compressor.release.setValueAtTime(0.28, audioCtx.currentTime);
+
+                chamberBus = audioCtx.createGain();
+                chamberBus.gain.setValueAtTime(1.0, audioCtx.currentTime);
+
+                reverbConvolver = audioCtx.createConvolver();
+                reverbConvolver.buffer = createConcertHallImpulse(audioCtx, 2.8, 2.5);
+
+                reverbWetGain = audioCtx.createGain();
+                reverbWetGain.gain.setValueAtTime(0.34, audioCtx.currentTime);
+
+                chamberBus.connect(compressor);
+                chamberBus.connect(reverbConvolver);
+                reverbConvolver.connect(reverbWetGain);
+                reverbWetGain.connect(compressor);
+                compressor.connect(masterGain);
                 masterGain.connect(audioCtx.destination);
             }
             if (audioCtx.state === 'suspended') {
                 return audioCtx.resume().then(() => audioCtx).catch(() => audioCtx);
             }
             return Promise.resolve(audioCtx);
+        }
+
+        function registerChamberTimer(fn, delayMs) {
+            const id = setTimeout(() => {
+                activeChamberTimers.delete(id);
+                fn();
+            }, delayMs);
+            activeChamberTimers.add(id);
+            return id;
+        }
+
+        function clearAllChamberAudio() {
+            piecePlaybackToken++;
+            activeChamberTimers.forEach(id => clearTimeout(id));
+            activeChamberTimers.clear();
+
+            if (audioCtx) {
+                const now = audioCtx.currentTime;
+                activeChamberNodes.forEach(entry => {
+                    try {
+                        if (entry.gain && entry.gain.gain) {
+                            entry.gain.gain.cancelScheduledValues(now);
+                            entry.gain.gain.setTargetAtTime(0.0001, now, 0.04);
+                        }
+                        if (entry.osc) {
+                            entry.osc.stop(now + 0.14);
+                        }
+                    } catch (e) {}
+                });
+            }
+            activeChamberNodes.clear();
         }
 
         function updateSoundButtonUI() {
@@ -2950,43 +2853,135 @@ function toggleThemeMode() {
             }, stepTime);
         }
 
-        async function triggerClassicalNote(freq, startTimeOffset = 0, duration = 1.15, peakGain = 0.045, cutoffHz = 2800) {
+        // Expressive Salon Grand Piano Voice (Fundamental + 2nd/3rd Overtones + Soft Felt Hammer Transient)
+        async function triggerSalonPianoVoice(freq, startOffset = 0, duration = 2.2, velocity = 0.055, brightness = 2100, pan = 0) {
+            if (!isSoundEnabled && brightness !== 9999) return;
             const ctx = await ensureAudioContext();
             if (!ctx || ctx.state !== 'running') return;
-            const now = ctx.currentTime + startTimeOffset;
 
+            const now = ctx.currentTime + Math.max(0, startOffset);
+            const safeVel = Math.max(0.004, Math.min(0.11, velocity));
+
+            // Dynamic lowpass filter simulating felt hammer strike softening into warm sustain
             const filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(cutoffHz, now);
-            filter.Q.setValueAtTime(1.1, now);
+            const strikeCutoff = Math.min(4200, brightness * (0.85 + safeVel * 4.5));
+            filter.frequency.setValueAtTime(strikeCutoff, now);
+            filter.frequency.exponentialRampToValueAtTime(Math.max(480, brightness * 0.42), now + duration * 0.85);
+            filter.Q.setValueAtTime(0.85, now);
 
-            const noteGain = ctx.createGain();
-            noteGain.gain.setValueAtTime(0.0001, now);
-            noteGain.gain.linearRampToValueAtTime(peakGain, now + 0.025);
-            noteGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            const envGain = ctx.createGain();
+            envGain.gain.setValueAtTime(0.0001, now);
+            envGain.gain.linearRampToValueAtTime(safeVel, now + 0.018);
+            envGain.gain.exponentialRampToValueAtTime(safeVel * 0.46, now + Math.min(0.45, duration * 0.28));
+            envGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
-            const oscMain = ctx.createOscillator();
-            oscMain.type = 'triangle';
-            oscMain.frequency.setValueAtTime(freq, now);
+            // Fundamental warm triangle + slight detuned chorus sine for rich acoustic piano body
+            const oscFund = ctx.createOscillator();
+            oscFund.type = 'triangle';
+            oscFund.frequency.setValueAtTime(freq, now);
 
-            const oscHarmonic = ctx.createOscillator();
-            oscHarmonic.type = 'sine';
-            oscHarmonic.frequency.setValueAtTime(freq * 2, now);
+            const oscWarm = ctx.createOscillator();
+            oscWarm.type = 'sine';
+            oscWarm.frequency.setValueAtTime(freq * 1.0012, now);
+            const warmGain = ctx.createGain();
+            warmGain.gain.setValueAtTime(0.55, now);
 
-            const harmGain = ctx.createGain();
-            harmGain.gain.setValueAtTime(0.24, now);
-            harmGain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.7);
+            // Octave & fifth overtones (decaying faster than fundamental, like real piano strings)
+            const oscOctave = ctx.createOscillator();
+            oscOctave.type = 'sine';
+            oscOctave.frequency.setValueAtTime(freq * 2, now);
+            const octGain = ctx.createGain();
+            octGain.gain.setValueAtTime(0.22, now);
+            octGain.gain.exponentialRampToValueAtTime(0.008, now + duration * 0.55);
 
-            oscMain.connect(filter);
-            oscHarmonic.connect(harmGain);
-            harmGain.connect(filter);
-            filter.connect(noteGain);
-            noteGain.connect(masterGain);
+            const oscThirdHarm = ctx.createOscillator();
+            oscThirdHarm.type = 'sine';
+            oscThirdHarm.frequency.setValueAtTime(freq * 3, now);
+            const thirdGain = ctx.createGain();
+            thirdGain.gain.setValueAtTime(0.065, now);
+            thirdGain.gain.exponentialRampToValueAtTime(0.001, now + duration * 0.25);
 
-            oscMain.start(now);
-            oscHarmonic.start(now);
-            oscMain.stop(now + duration + 0.05);
-            oscHarmonic.stop(now + duration + 0.05);
+            // Subtle stereo placement (left hand slightly left, right hand slightly right)
+            let outputNode = filter;
+            if (typeof ctx.createStereoPanner === 'function') {
+                const panner = ctx.createStereoPanner();
+                panner.pan.setValueAtTime(Math.max(-0.45, Math.min(0.45, pan)), now);
+                filter.connect(panner);
+                outputNode = panner;
+            }
+
+            oscFund.connect(filter);
+            oscWarm.connect(warmGain);
+            warmGain.connect(filter);
+            oscOctave.connect(octGain);
+            octGain.connect(filter);
+            oscThirdHarm.connect(thirdGain);
+            thirdGain.connect(filter);
+
+            outputNode.connect(envGain);
+            envGain.connect(chamberBus || masterGain);
+
+            const stopAt = now + duration + 0.08;
+            [oscFund, oscWarm, oscOctave, oscThirdHarm].forEach(osc => {
+                const entry = { osc, gain: envGain };
+                activeChamberNodes.add(entry);
+                osc.onended = () => activeChamberNodes.delete(entry);
+                osc.start(now);
+                osc.stop(stopAt);
+            });
+        }
+
+        // Warm Sustained Chamber Cello / String Ensemble Pad Voice
+        async function triggerChamberStringPad(freqs, startOffset = 0, duration = 4.2, peakGain = 0.022) {
+            if (!isSoundEnabled) return;
+            const ctx = await ensureAudioContext();
+            if (!ctx || ctx.state !== 'running') return;
+
+            const now = ctx.currentTime + Math.max(0, startOffset);
+            const padFilter = ctx.createBiquadFilter();
+            padFilter.type = 'lowpass';
+            padFilter.frequency.setValueAtTime(920, now);
+            padFilter.Q.setValueAtTime(0.7, now);
+
+            const padGain = ctx.createGain();
+            padGain.gain.setValueAtTime(0.0001, now);
+            padGain.gain.linearRampToValueAtTime(peakGain, now + Math.min(1.1, duration * 0.3));
+            padGain.gain.setValueAtTime(peakGain * 0.9, now + duration * 0.68);
+            padGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            padFilter.connect(padGain);
+            padGain.connect(chamberBus || masterGain);
+
+            freqs.forEach((f, idx) => {
+                const oscA = ctx.createOscillator();
+                oscA.type = 'sine';
+                oscA.frequency.setValueAtTime(f * (idx % 2 === 0 ? 0.9988 : 1.0012), now);
+
+                const oscB = ctx.createOscillator();
+                oscB.type = 'triangle';
+                oscB.frequency.setValueAtTime(f, now);
+                const subGain = ctx.createGain();
+                subGain.gain.setValueAtTime(0.28, now);
+
+                oscA.connect(padFilter);
+                oscB.connect(subGain);
+                subGain.connect(padFilter);
+
+                const stopAt = now + duration + 0.1;
+                [oscA, oscB].forEach(osc => {
+                    const entry = { osc, gain: padGain };
+                    activeChamberNodes.add(entry);
+                    osc.onended = () => activeChamberNodes.delete(entry);
+                    osc.start(now);
+                    osc.stop(stopAt);
+                });
+            });
+        }
+
+        // Backward-compatible note helper for UI chimes
+        async function triggerClassicalNote(freq, startTimeOffset = 0, duration = 1.15, peakGain = 0.045, cutoffHz = 2800) {
+            return triggerSalonPianoVoice(freq, startTimeOffset, duration, peakGain, cutoffHz, 0.08);
         }
 
         async function playArtworkDragWhisper(intensity = 0.65) {
@@ -3029,88 +3024,151 @@ function toggleThemeMode() {
             } catch (e) {}
         }
 
-        const GALLERY_MELODIES = [
-    {
-        name: 'Moonlit Salon',
-        tempoMs: 520,
-        notes: [261.63, 329.63, 392.00, 493.88, 392.00, 329.63, 293.66, 392.00]
-    },
-    {
-        name: 'Quiet Courtyard',
-        tempoMs: 580,
-        notes: [220.00, 261.63, 329.63, 440.00, 392.00, 329.63, 261.63, 220.00]
-    },
-    {
-        name: 'Morning Linen',
-        tempoMs: 490,
-        notes: [293.66, 369.99, 440.00, 587.33, 440.00, 369.99, 329.63, 293.66]
-    },
-    {
-        name: 'Amber Dusk',
-        tempoMs: 620,
-        notes: [196.00, 246.94, 293.66, 392.00, 329.63, 293.66, 246.94, 196.00]
-    }
-];
+        // 5 Polyphonic Classical Salon & Chamber Pieces (Melody + Left-Hand Arpeggio + Cello/String Pad)
+        const CLASSICAL_CHAMBER_PIECES = [
+            {
+                title: 'Clair de Lune — Salon Reverie',
+                beatSec: 0.68,
+                rubato: 0.08,
+                brightness: 1950,
+                measures: [
+                    { pad: [174.61, 261.63], bass: [87.31, 130.81, 174.61, 220.00, 261.63, 220.00], melody: [{ t: 0.5, f: 440.00, d: 2.2, v: 0.052 }, { t: 2.5, f: 349.23, d: 3.2, v: 0.048 }] },
+                    { pad: [164.81, 246.94], bass: [82.41, 130.81, 164.81, 196.00, 261.63, 196.00], melody: [{ t: 0.0, f: 392.00, d: 1.6, v: 0.048 }, { t: 1.5, f: 349.23, d: 1.6, v: 0.045 }, { t: 3.0, f: 392.00, d: 2.6, v: 0.050 }] },
+                    { pad: [146.83, 220.00], bass: [73.42, 110.00, 146.83, 174.61, 220.00, 174.61], melody: [{ t: 0.0, f: 349.23, d: 1.8, v: 0.046 }, { t: 1.8, f: 329.63, d: 1.5, v: 0.044 }, { t: 3.2, f: 293.66, d: 2.5, v: 0.047 }] },
+                    { pad: [130.81, 196.00], bass: [65.41, 130.81, 164.81, 196.00, 261.63, 329.63], melody: [{ t: 0.0, f: 329.63, d: 4.4, v: 0.050 }] }
+                ]
+            },
+            {
+                title: 'Gymnopédie — Morning Light',
+                beatSec: 0.78,
+                rubato: 0.05,
+                brightness: 1750,
+                measures: [
+                    { pad: [196.00, 246.94], bass: [98.00, 196.00, 246.94, 293.66, 369.99], melody: [{ t: 1.0, f: 440.00, d: 1.5, v: 0.046 }, { t: 2.0, f: 493.88, d: 2.1, v: 0.050 }] },
+                    { pad: [146.83, 220.00], bass: [73.42, 146.83, 220.00, 277.18, 329.63], melody: [{ t: 0.0, f: 440.00, d: 1.4, v: 0.046 }, { t: 1.0, f: 369.99, d: 1.4, v: 0.044 }, { t: 2.0, f: 329.63, d: 2.0, v: 0.045 }] },
+                    { pad: [196.00, 246.94], bass: [98.00, 196.00, 246.94, 293.66, 369.99], melody: [{ t: 0.0, f: 293.66, d: 1.6, v: 0.044 }, { t: 1.0, f: 329.63, d: 1.4, v: 0.045 }, { t: 2.0, f: 369.99, d: 2.2, v: 0.048 }] },
+                    { pad: [146.83, 220.00], bass: [73.42, 146.83, 220.00, 293.66, 369.99], melody: [{ t: 0.0, f: 293.66, d: 3.8, v: 0.048 }] }
+                ]
+            },
+            {
+                title: 'Air on the G String — Baroque Courtyard',
+                beatSec: 0.72,
+                rubato: 0.03,
+                brightness: 2150,
+                measures: [
+                    { pad: [146.83, 220.00], bass: [73.42, 146.83, 138.59, 130.81], melody: [{ t: 0.0, f: 587.33, d: 3.4, v: 0.052 }, { t: 3.2, f: 659.25, d: 1.1, v: 0.045 }] },
+                    { pad: [123.47, 196.00], bass: [61.74, 123.47, 110.00, 98.00], melody: [{ t: 0.0, f: 493.88, d: 2.4, v: 0.050 }, { t: 2.2, f: 523.25, d: 1.0, v: 0.045 }, { t: 3.0, f: 493.88, d: 1.3, v: 0.046 }] },
+                    { pad: [130.81, 196.00], bass: [65.41, 130.81, 123.47, 110.00], melody: [{ t: 0.0, f: 440.00, d: 2.2, v: 0.048 }, { t: 2.0, f: 392.00, d: 1.2, v: 0.045 }, { t: 3.0, f: 369.99, d: 1.4, v: 0.046 }] },
+                    { pad: [146.83, 220.00], bass: [98.00, 110.00, 73.42, 146.83], melody: [{ t: 0.0, f: 392.00, d: 3.8, v: 0.050 }] }
+                ]
+            },
+            {
+                title: 'Nocturne in E-Flat — Twilight Gallery',
+                beatSec: 0.64,
+                rubato: 0.09,
+                brightness: 1900,
+                measures: [
+                    { pad: [155.56, 233.08], bass: [77.78, 155.56, 196.00, 233.08, 196.00, 155.56], melody: [{ t: 0.0, f: 392.00, d: 2.6, v: 0.052 }, { t: 2.4, f: 466.16, d: 1.3, v: 0.048 }, { t: 3.5, f: 415.30, d: 1.5, v: 0.047 }] },
+                    { pad: [130.81, 196.00], bass: [65.41, 130.81, 196.00, 233.08, 196.00, 130.81], melody: [{ t: 0.0, f: 392.00, d: 2.2, v: 0.049 }, { t: 2.1, f: 349.23, d: 1.3, v: 0.046 }, { t: 3.3, f: 392.00, d: 1.6, v: 0.048 }] },
+                    { pad: [138.59, 207.65], bass: [69.30, 138.59, 207.65, 261.63, 207.65, 138.59], melody: [{ t: 0.0, f: 523.25, d: 2.5, v: 0.051 }, { t: 2.4, f: 466.16, d: 1.4, v: 0.046 }, { t: 3.6, f: 415.30, d: 1.5, v: 0.045 }] },
+                    { pad: [155.56, 233.08], bass: [116.54, 174.61, 233.08, 77.78, 155.56, 233.08], melody: [{ t: 0.0, f: 392.00, d: 4.3, v: 0.052 }] }
+                ]
+            },
+            {
+                title: 'Vivaldi Largo — Autumn Mist',
+                beatSec: 0.70,
+                rubato: 0.04,
+                brightness: 2250,
+                measures: [
+                    { pad: [164.81, 246.94], bass: [82.41, 123.47, 164.81, 196.00, 246.94, 196.00], melody: [{ t: 0.0, f: 493.88, d: 2.2, v: 0.050 }, { t: 2.0, f: 523.25, d: 1.1, v: 0.046 }, { t: 3.0, f: 493.88, d: 1.6, v: 0.047 }] },
+                    { pad: [146.83, 220.00], bass: [73.42, 110.00, 146.83, 185.00, 220.00, 185.00], melody: [{ t: 0.0, f: 440.00, d: 2.2, v: 0.049 }, { t: 2.0, f: 493.88, d: 1.1, v: 0.045 }, { t: 3.0, f: 440.00, d: 1.6, v: 0.046 }] },
+                    { pad: [130.81, 196.00], bass: [65.41, 98.00, 130.81, 164.81, 196.00, 164.81], melody: [{ t: 0.0, f: 392.00, d: 2.2, v: 0.048 }, { t: 2.0, f: 369.99, d: 1.1, v: 0.045 }, { t: 3.0, f: 329.63, d: 1.7, v: 0.047 }] },
+                    { pad: [164.81, 246.94], bass: [123.47, 185.00, 246.94, 82.41, 164.81, 246.94], melody: [{ t: 0.0, f: 329.63, d: 4.2, v: 0.050 }] }
+                ]
+            }
+        ];
 
-let lastMelodyIndex = -1;
-let melodyStepTimer = null;
+        function pickNextClassicalPiece() {
+            if (CLASSICAL_CHAMBER_PIECES.length <= 1) return CLASSICAL_CHAMBER_PIECES[0];
+            let idx = Math.floor(Math.random() * CLASSICAL_CHAMBER_PIECES.length);
+            if (idx === lastPieceIndex) {
+                idx = (idx + 1) % CLASSICAL_CHAMBER_PIECES.length;
+            }
+            lastPieceIndex = idx;
+            return CLASSICAL_CHAMBER_PIECES[idx];
+        }
 
-function pickRandomMelody() {
-    if (GALLERY_MELODIES.length <= 1) return GALLERY_MELODIES[0];
-    let idx = Math.floor(Math.random() * GALLERY_MELODIES.length);
-    if (idx === lastMelodyIndex) {
-        idx = (idx + 1) % GALLERY_MELODIES.length;
-    }
-    lastMelodyIndex = idx;
-    return GALLERY_MELODIES[idx];
-}
+        async function playClassicalChamberSession() {
+            if (!isSoundEnabled) return;
+            const ctx = await ensureAudioContext();
+            if (!ctx || ctx.state !== 'running') return;
 
-async function playRandomGalleryMelody() {
-    if (!isSoundEnabled) return;
-    clearTimeout(melodyStepTimer);
+            clearAllChamberAudio();
+            const myToken = ++piecePlaybackToken;
+            const piece = pickNextClassicalPiece();
+            const beatSec = piece.beatSec || 0.70;
+            const measureBeats = 4.0;
+            let cursorSec = 0.08;
 
-    const melody = pickRandomMelody();
-    const notes = melody.notes;
+            piece.measures.forEach((m, mIdx) => {
+                const isFinalMeasure = mIdx === piece.measures.length - 1;
+                const rubatoFactor = 1 + (isFinalMeasure ? 0.14 : (Math.sin(mIdx * 1.4) * (piece.rubato || 0.05)));
+                const measureDurSec = measureBeats * beatSec * rubatoFactor;
 
-    for (let i = 0; i < notes.length; i++) {
-        if (!isSoundEnabled) return;
-        const freq = notes[i];
-        const isLast = i === notes.length - 1;
-        await triggerClassicalNote(
-            freq,
-            0,
-            isLast ? 2.1 : 1.15,
-            isLast ? 0.032 : 0.026,
-            1750
-        ).catch(() => {});
+                // 1. Warm sustained cello/string ensemble pad underneath the bar
+                if (Array.isArray(m.pad) && m.pad.length > 0) {
+                    triggerChamberStringPad(m.pad, cursorSec, measureDurSec * 1.08, 0.017).catch(() => {});
+                }
 
-        await new Promise((resolve) => {
-            melodyStepTimer = setTimeout(resolve, melody.tempoMs);
-        });
-    }
+                // 2. Flowing left-hand arpeggiated piano accompaniment (panned slightly left)
+                if (Array.isArray(m.bass) && m.bass.length > 0) {
+                    const stepSec = measureDurSec / m.bass.length;
+                    m.bass.forEach((bFreq, bIdx) => {
+                        const bOffset = cursorSec + (bIdx * stepSec);
+                        const bVel = bIdx === 0 ? 0.036 : 0.024;
+                        const bDur = bIdx === 0 ? measureDurSec * 0.92 : stepSec * 2.15;
+                        triggerSalonPianoVoice(bFreq, bOffset, bDur, bVel, piece.brightness * 0.78, -0.22).catch(() => {});
+                    });
+                }
 
-    if (isSoundEnabled) {
-        melodyStepTimer = setTimeout(playRandomGalleryMelody, 2400);
-    }
-}
+                // 3. Expressive cantabile right-hand melody (panned slightly right)
+                if (Array.isArray(m.melody)) {
+                    m.melody.forEach((note, nIdx) => {
+                        const noteOffset = cursorSec + ((note.t / measureBeats) * measureDurSec);
+                        const isPhraseEnd = isFinalMeasure && nIdx === m.melody.length - 1;
+                        const noteDur = (note.d * beatSec) * (isPhraseEnd ? 1.35 : 1.05);
+                        triggerSalonPianoVoice(note.f, noteOffset, noteDur, note.v || 0.048, piece.brightness, 0.2).catch(() => {});
+                    });
+                }
 
-function startAmbientSoundscape() {
-    if (!isSoundEnabled) return;
-    clearInterval(ambientInterval);
-    ambientInterval = null;
-    playRandomGalleryMelody();
-}
+                cursorSec += measureDurSec;
+            });
 
-function stopAmbientSoundscape() {
-    clearTimeout(melodyStepTimer);
-    melodyStepTimer = null;
-    clearInterval(ambientInterval);
-    ambientInterval = null;
-    const customBgAudio = document.getElementById('gallery-bg-audio');
-    if (customBgAudio && !customBgAudio.paused) {
-        customBgAudio.pause();
-    }
-}
+            // Schedule the next random classical piece gracefully after a serene gallery breath
+            const totalPieceMs = Math.round((cursorSec + 2.6) * 1000);
+            registerChamberTimer(() => {
+                if (isSoundEnabled && myToken === piecePlaybackToken) {
+                    playClassicalChamberSession();
+                }
+            }, totalPieceMs);
+        }
+
+        function startAmbientSoundscape() {
+            if (!isSoundEnabled) return;
+            clearInterval(ambientInterval);
+            ambientInterval = null;
+            playClassicalChamberSession();
+        }
+
+        function stopAmbientSoundscape() {
+            clearAllChamberAudio();
+            clearInterval(ambientInterval);
+            ambientInterval = null;
+            const customBgAudio = document.getElementById('gallery-bg-audio');
+            if (customBgAudio && !customBgAudio.paused) {
+                customBgAudio.pause();
+            }
+        }
 
         async function toggleGallerySound(event) {
             if (event) event.stopPropagation();
@@ -3132,6 +3190,7 @@ function stopAmbientSoundscape() {
                 if (!ctx || ctx.state !== 'running') return;
 
                 if (type === 'artist') {
+                    // Classic salon arpeggio when choosing an artist
                     const notes = [523.25, 659.25, 783.99, 1046.50];
                     notes.forEach((freq, idx) => {
                         triggerClassicalNote(freq, idx * 0.11, 1.35, 0.045, 2600);
@@ -3140,12 +3199,14 @@ function stopAmbientSoundscape() {
                 }
 
                 if (type === 'select' || type === 'filter') {
+                    // Gentle classic cadence when selecting categories or items
                     triggerClassicalNote(587.33, 0, 0.65, 0.038, 2200);
                     triggerClassicalNote(880.00, 0.07, 0.8, 0.035, 2500);
                     return;
                 }
 
                 if (type === 'click' || type === 'open') {
+                    // Warm classical pluck when clicking an artwork
                     triggerClassicalNote(392.00, 0, 0.85, 0.04, 2100);
                     triggerClassicalNote(587.33, 0.05, 1.0, 0.036, 2400);
                     return;
@@ -3189,8 +3250,10 @@ function stopAmbientSoundscape() {
         window.closeLightbox = closeLightbox;
         window.openAdminModal = openAdminModal;
         window.closeAdminModal = closeAdminModal;
-        window.lockAdminSession = lockAdminSession;
         window.verifyAdminPin = verifyAdminPin;
+        window.resetForgottenAdminPin = resetForgottenAdminPin;
+        window.toggleChangePinBox = toggleChangePinBox;
+        window.saveNewAdminPin = saveNewAdminPin;
         window.switchAdminTab = switchAdminTab;
         window.saveArtworkFromAdmin = saveArtworkFromAdmin;
         window.editArtworkInAdmin = editArtworkInAdmin;
@@ -3201,8 +3264,6 @@ function stopAmbientSoundscape() {
         window.resetArtistForm = resetArtistForm;
         window.deleteArtistFromAdmin = deleteArtistFromAdmin;
         window.saveGalleryAboutFromAdmin = saveGalleryAboutFromAdmin;
-        window.loadVisitorActivityFromCloud = loadVisitorActivityFromCloud;
-        window.triggerMonthlyReportNow = triggerMonthlyReportNow;
         window.downloadEditLogsCSV = downloadEditLogsCSV;
         window.downloadEditLogsJSON = downloadEditLogsJSON;
         window.exportArtworksJSON = exportArtworksJSON;
@@ -3211,9 +3272,8 @@ function stopAmbientSoundscape() {
         window.playSoftGalleryChime = playSoftGalleryChime;
         window.playArtworkDragWhisper = playArtworkDragWhisper;
         window.initGalleryCardAnimations = initGalleryCardAnimations;
-        window.trackVisitorEvent = trackVisitorEvent;
 
-        // Initial Render & Cloudflare D1 Startup
+        // Initial Render & Cloud Sync Startup
         renderGalleryAboutSection();
         renderArtistSelectorBar();
         renderSelectedArtistProfile();
@@ -3222,9 +3282,7 @@ function stopAmbientSoundscape() {
         updateSoundButtonUI();
         bindFirstInteractionAudioUnlock();
         startAmbientSoundscape();
-        initVisitorCounter();
-        trackVisitorEvent('page_view', 'home');
-        loadCloudGallery(true);
+        initCloudGallery();
     </script>
 </body>
 </html>
