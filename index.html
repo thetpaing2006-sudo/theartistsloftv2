@@ -681,7 +681,12 @@
                         </div>
 
                         <div>
-                            <h4 class="font-serif text-xl mb-4">Current Collection (<span id="admin-total-count">0</span>)</h4>
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <h4 class="font-serif text-xl">Current Collection (<span id="admin-total-count">0</span>)</h4>
+                                <button type="button" onclick="clearAllArtworksFromAdmin()" class="px-3.5 py-1.5 rounded-lg border border-red-300 text-red-600 text-[11px] uppercase tracking-wider hover:bg-red-50 transition-colors">
+                                    Delete All Artworks
+                                </button>
+                            </div>
                             <div id="admin-artworks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <!-- Admin artwork cards populated via JS -->
                             </div>
@@ -1148,7 +1153,7 @@
         window.addEventListener('load', verifyAllImagesLoaded);
     </script>
 
-    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync (APP_ID = theartists-loft-v2, v2.2 No Auto-Seed) -->
+    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync (APP_ID = theartists-loft-v3, Clean Empty Start) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -1158,7 +1163,7 @@
 
         let storedPinHash = null;
         let isPinInitialized = false;
-        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft-v2';
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft-v3';
 
         async function hashPasscode(plainText) {
             const encoder = new TextEncoder();
@@ -1310,7 +1315,7 @@
                         return;
                     }
                     const loadedArtists = [];
-                    snapshot.forEach((docSnap) => loadedArtists.push(docSnap.data()));
+                    snapshot.forEach((docSnap) => loadedArtists.push({ ...docSnap.data(), id: docSnap.id }));
                     loadedArtists.sort((a, b) => (a.order || 999) - (b.order || 999));
                     artists = loadedArtists;
 
@@ -1329,19 +1334,19 @@
                     }
                 }, (err) => console.warn('Artists sync notice:', err));
 
-                // 4. Sync Artworks (Strictly NO auto-seeding when empty)
+                // 4. Sync Artworks (100% Clean — Zero Default Artworks, Zero Auto-Seeding)
                 const colRef = getArtworksCollectionRef();
                 onSnapshot(colRef, (snapshot) => {
                     const loaded = [];
                     snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
+                        const data = { ...docSnap.data(), id: docSnap.id };
                         if (!data.artistId) data.artistId = 'mt-oung';
                         loaded.push(data);
                     });
 
                     loaded.sort((a, b) => (a.order || 999) - (b.order || 999));
                     artworks = loaded;
-                    updateCloudStatus(true, `Connected (${APP_ID}) • v2.2 No Auto-Seed`);
+                    updateCloudStatus(true, `Connected (${APP_ID}) • v3.0 Clean Gallery`);
                     renderSelectedArtistProfile();
                     renderCategoryFilterBar();
                     renderArtworksGrid();
@@ -2215,13 +2220,42 @@
             if (db && currentUser) {
                 try {
                     await deleteDoc(doc(getArtworksCollectionRef(), id));
+                    showAdminFeedback(`"${target ? target.title : id}" permanently deleted from Cloud.`);
                 } catch (err) {
                     console.error('Failed to delete artwork from cloud:', err);
-                    showAdminFeedback('Delete failed in cloud: ' + (err.message || 'Check connection.'), true);
+                    showAdminFeedback('Delete failed in Cloud: ' + (err.message || 'Check Firestore Rules / Auth.'), true);
                 }
+            } else {
+                showAdminFeedback('Cloud Auth not ready — please refresh or check Firebase Authorized Domains.', true);
             }
             if (target) {
                 await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
+            }
+        }
+
+        async function clearAllArtworksFromAdmin() {
+            if (artworks.length === 0) {
+                showAdminFeedback('Collection is already empty.');
+                return;
+            }
+            const toDelete = [...artworks];
+            artworks = [];
+            renderSelectedArtistProfile();
+            renderCategoryFilterBar();
+            renderArtworksGrid();
+            renderAdminArtworksList();
+
+            if (db && currentUser) {
+                try {
+                    await Promise.all(toDelete.map(a => deleteDoc(doc(getArtworksCollectionRef(), a.id))));
+                    showAdminFeedback(`Deleted all ${toDelete.length} artworks from Cloud.`);
+                    await recordEditLog('Deleted', 'Artwork', 'All Artworks', `Cleared ${toDelete.length} artworks`);
+                } catch (err) {
+                    console.error('Clear all failed:', err);
+                    showAdminFeedback('Clear all failed in Cloud: ' + (err.message || 'Check Firestore Rules.'), true);
+                }
+            } else {
+                showAdminFeedback('Cloud Auth not ready — cleared locally only.', true);
             }
         }
 
@@ -2920,6 +2954,7 @@
         window.editArtworkInAdmin = editArtworkInAdmin;
         window.resetAdminForm = resetAdminForm;
         window.deleteArtworkFromAdmin = deleteArtworkFromAdmin;
+        window.clearAllArtworksFromAdmin = clearAllArtworksFromAdmin;
         window.saveArtistFromAdmin = saveArtistFromAdmin;
         window.editArtistInAdmin = editArtistInAdmin;
         window.resetArtistForm = resetArtistForm;
