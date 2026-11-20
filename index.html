@@ -10,7 +10,9 @@
     <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/jpeg" href="Logo.jpg">
     <link id="dynamic-apple-icon" rel="apple-touch-icon" href="Logo.jpg">
 
-    <!-- Google Fonts: Playfair Display & Inter -->
+    <!-- Preconnect to Firebase & Google Fonts for faster initial handshake -->
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -883,39 +885,48 @@
             return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
         }
 
-        // Compress & resize uploaded images cleanly
-        function compressImageFile(file, maxDimension = 960, quality = 0.78) {
+        // Compress & resize uploaded images cleanly (guaranteed under Firestore 1MB limit)
+        function compressImageFile(file, maxDimension = 900, quality = 0.76) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const img = new Image();
                     img.onload = () => {
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > maxDimension || height > maxDimension) {
-                            if (width > height) {
-                                height = Math.round((height * maxDimension) / width);
-                                width = maxDimension;
-                            } else {
-                                width = Math.round((width * maxDimension) / height);
-                                height = maxDimension;
-                            }
-                        }
-
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const aspect = height > width ? '3/4' : '4/3';
+                        const aspect = img.height > img.width ? '3/4' : '4/3';
+                        let dim = maxDimension;
                         let currentQuality = quality;
-                        let compressedDataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+                        let compressedDataUrl = '';
 
-                        while (compressedDataUrl.length > 450000 && currentQuality > 0.35) {
+                        const renderAt = (targetMax, q) => {
+                            let width = img.width;
+                            let height = img.height;
+                            if (width > targetMax || height > targetMax) {
+                                if (width > height) {
+                                    height = Math.round((height * targetMax) / width);
+                                    width = targetMax;
+                                } else {
+                                    width = Math.round((width * targetMax) / height);
+                                    height = targetMax;
+                                }
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            return canvas.toDataURL('image/jpeg', q);
+                        };
+
+                        compressedDataUrl = renderAt(dim, currentQuality);
+
+                        // Step down quality first, then dimensions if still large (fast upload & < 220KB)
+                        while (compressedDataUrl.length > 220000 && currentQuality > 0.35) {
                             currentQuality -= 0.1;
-                            compressedDataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+                            compressedDataUrl = renderAt(dim, currentQuality);
+                        }
+                        while (compressedDataUrl.length > 220000 && dim > 480) {
+                            dim = Math.round(dim * 0.78);
+                            compressedDataUrl = renderAt(dim, Math.max(0.45, currentQuality));
                         }
 
                         resolve({ dataUrl: compressedDataUrl, aspect });
@@ -1157,7 +1168,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeFirestore, getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.getElementById('footer-year').textContent = new Date().getFullYear();
 
@@ -1201,6 +1212,7 @@
         let activeCategory = 'All';
         let isArtistSwitching = false;
         let isAdminUnlocked = false;
+        let isCloudLoading = true;
         let db = null;
         let auth = null;
         let currentUser = null;
@@ -1266,7 +1278,99 @@
             }
         }
 
-        // Initialize Firebase Cloud Connection
+        // Convert Firestore REST API value objects into plain JavaScript values
+        function fromFirestoreValue(val) {
+            if (!val || typeof val !== 'object') return null;
+            if ('stringValue' in val) return val.stringValue;
+            if ('integerValue' in val) return Number(val.integerValue);
+            if ('doubleValue' in val) return Number(val.doubleValue);
+            if ('booleanValue' in val) return Boolean(val.booleanValue);
+            if ('nullValue' in val) return null;
+            if ('arrayValue' in val) {
+                return (val.arrayValue.values || []).map(fromFirestoreValue);
+            }
+            if ('mapValue' in val) {
+                const obj = {};
+                const fields = val.mapValue.fields || {};
+                Object.keys(fields).forEach(k => {
+                    obj[k] = fromFirestoreValue(fields[k]);
+                });
+                return obj;
+            }
+            return null;
+        }
+
+        function parseFirestoreRESTDoc(docObj) {
+            const data = {};
+            const fields = (docObj && docObj.fields) || {};
+            Object.keys(fields).forEach(k => {
+                data[k] = fromFirestoreValue(fields[k]);
+            });
+            if (docObj && docObj.name) {
+                data.id = docObj.name.split('/').pop();
+            }
+            return data;
+        }
+
+        // Ultra-Fast Initial Load via Firestore REST API (1–2s on brand-new devices & mobile networks)
+        async function fastBootstrapFromFirestoreREST() {
+            const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config)
+                ? JSON.parse(__firebase_config)
+                : LIVE_FIREBASE_CONFIG;
+            const projectId = firebaseConfig.projectId;
+            if (!projectId) return;
+
+            const base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/artifacts/${encodeURIComponent(APP_ID)}/public/data`;
+
+            const fetchJSON = async (url) => {
+                try {
+                    const res = await fetch(url, { cache: 'no-store' });
+                    if (!res.ok) return null;
+                    return await res.json();
+                } catch (e) {
+                    return null;
+                }
+            };
+
+            const [aboutRes, artistsRes, artworksRes] = await Promise.all([
+                fetchJSON(`${base}/settings/gallery_about`),
+                fetchJSON(`${base}/artists?pageSize=100`),
+                fetchJSON(`${base}/artworks?pageSize=100`)
+            ]);
+
+            if (aboutRes && aboutRes.fields) {
+                galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...parseFirestoreRESTDoc(aboutRes) };
+                renderGalleryAboutSection();
+            }
+
+            if (artistsRes && Array.isArray(artistsRes.documents) && artistsRes.documents.length > 0) {
+                const loadedArtists = artistsRes.documents.map(parseFirestoreRESTDoc);
+                loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                artists = loadedArtists;
+                if (!artists.some(a => a.id === activeArtistId)) {
+                    activeArtistId = artists[0]?.id || 'mt-oung';
+                }
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+            }
+
+            if (artworksRes) {
+                isCloudLoading = false;
+                const docs = Array.isArray(artworksRes.documents) ? artworksRes.documents : [];
+                const loaded = docs.map(d => {
+                    const item = parseFirestoreRESTDoc(d);
+                    if (!item.artistId) item.artistId = 'mt-oung';
+                    return item;
+                });
+                loaded.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                artworks = loaded;
+                renderSelectedArtistProfile();
+                renderCategoryFilterBar();
+                renderArtworksGrid();
+            }
+        }
+
+        // Initialize Firebase Cloud Connection (Force Long-Polling for reliable real-time sync)
         async function initCloudGallery() {
             try {
                 const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config)
@@ -1275,15 +1379,24 @@
 
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
-                db = getFirestore(app);
 
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    const cred = await signInWithCustomToken(auth, __initial_auth_token);
-                    currentUser = cred.user;
-                } else {
-                    const cred = await signInAnonymously(auth);
-                    currentUser = cred.user;
+                // Force long-polling avoids 30s-60s WebChannel timeouts on mobile/VPN networks
+                try {
+                    db = initializeFirestore(app, {
+                        experimentalForceLongPolling: true
+                    });
+                } catch (e) {
+                    db = getFirestore(app);
                 }
+
+                // Start Anonymous Auth in parallel (DO NOT block public reads!)
+                const authPromise = (typeof __initial_auth_token !== 'undefined' && __initial_auth_token)
+                    ? signInWithCustomToken(auth, __initial_auth_token)
+                    : signInAnonymously(auth);
+
+                authPromise
+                    .then((cred) => { currentUser = cred.user; })
+                    .catch((err) => console.warn('Background Auth notice:', err));
 
                 // 1. Sync Passcode Security
                 onSnapshot(getSettingsDocRef(), (docSnap) => {
@@ -1309,14 +1422,19 @@
                 const artistsColRef = getArtistsCollectionRef();
                 onSnapshot(artistsColRef, async (snapshot) => {
                     if (snapshot.empty) {
-                        for (const a of DEFAULT_ARTISTS) {
-                            await setDoc(doc(artistsColRef, a.id), a);
-                        }
+                        try {
+                            await authPromise;
+                            if (currentUser) {
+                                for (const a of DEFAULT_ARTISTS) {
+                                    await setDoc(doc(artistsColRef, a.id), a);
+                                }
+                            }
+                        } catch (e) {}
                         return;
                     }
                     const loadedArtists = [];
                     snapshot.forEach((docSnap) => loadedArtists.push({ ...docSnap.data(), id: docSnap.id }));
-                    loadedArtists.sort((a, b) => (a.order || 999) - (b.order || 999));
+                    loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
                     artists = loadedArtists;
 
                     if (!artists.some(a => a.id === activeArtistId)) {
@@ -1337,16 +1455,16 @@
                 // 4. Sync Artworks (100% Clean — Zero Default Artworks, Zero Auto-Seeding)
                 const colRef = getArtworksCollectionRef();
                 onSnapshot(colRef, (snapshot) => {
+                    isCloudLoading = false;
                     const loaded = [];
                     snapshot.forEach((docSnap) => {
                         const data = { ...docSnap.data(), id: docSnap.id };
                         if (!data.artistId) data.artistId = 'mt-oung';
                         loaded.push(data);
                     });
-
-                    loaded.sort((a, b) => (a.order || 999) - (b.order || 999));
+                    loaded.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
                     artworks = loaded;
-                    updateCloudStatus(true, `Connected (${APP_ID}) • v3.0 Clean Gallery`);
+                    updateCloudStatus(true, `Connected (${APP_ID}) • v3.2 Instant Load`);
                     renderSelectedArtistProfile();
                     renderCategoryFilterBar();
                     renderArtworksGrid();
@@ -1355,8 +1473,10 @@
                         renderAdminArtworksList();
                     }
                 }, (error) => {
+                    isCloudLoading = false;
                     console.error('Firestore listener error:', error);
-                    updateCloudStatus(false, 'Offline fallback mode (Check Firestore Rules)');
+                    updateCloudStatus(false, 'Cloud Error: ' + (error.code || 'Check Firestore Rules'));
+                    renderArtworksGrid();
                 });
 
                 // 5. Sync Edit Logs
@@ -1369,8 +1489,10 @@
                 }, (err) => console.warn('Edit logs sync notice:', err));
 
             } catch (error) {
+                isCloudLoading = false;
                 console.error('Cloud initialization error:', error);
-                updateCloudStatus(false, 'Offline fallback mode');
+                updateCloudStatus(false, 'Cloud Auth Error: ' + (error.code || error.message || 'Offline'));
+                renderArtworksGrid();
             }
         }
 
@@ -1382,8 +1504,9 @@
                 ? 'p-4 rounded-2xl text-xs font-medium bg-red-50 border border-red-200 text-red-700'
                 : 'p-4 rounded-2xl text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-800';
             box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             if (!isError) {
-                setTimeout(() => box.classList.add('hidden'), 4000);
+                setTimeout(() => box.classList.add('hidden'), 5000);
             }
         }
 
@@ -1563,6 +1686,16 @@
             }
 
             if (visibleWorks.length === 0) {
+                if (isCloudLoading) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-16 px-6 bg-[#FAF7F0]/70 dark:bg-[#1B1916]/80 rounded-3xl border border-[#9C8265]/20 dark:border-[#D4B483]/20">
+                            <div class="w-8 h-8 border-2 border-[#9C8265]/30 border-t-[#9C8265] dark:border-[#D4B483]/30 dark:border-t-[#D4B483] rounded-full animate-spin mx-auto mb-4"></div>
+                            <p class="font-serif text-xl text-[#26231F]/80 dark:text-[#EDE7DA]/80 mb-1.5">Loading Curated Collection...</p>
+                            <p class="text-xs uppercase tracking-widest text-[#9C8265] dark:text-[#D4B483]">Connecting to live gallery archive</p>
+                        </div>
+                    `;
+                    return;
+                }
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-16 px-6 bg-[#FAF7F0]/70 dark:bg-[#1B1916]/80 rounded-3xl border border-[#9C8265]/20 dark:border-[#D4B483]/20">
                         <p class="font-serif text-xl text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-2">No artworks listed in this category yet.</p>
@@ -2139,20 +2272,39 @@
                     image: imageSrc,
                     aspect,
                     description,
-                    order: existingArt ? (existingArt.order || 1) : 0,
+                    order: existingArt ? (existingArt.order ?? 1) : -Date.now(),
                     updatedAt: Date.now()
                 };
 
                 submitBtn.textContent = 'Saving to Cloud...';
 
+                // Retry Anonymous Auth automatically if initial sign-in wasn't ready
+                if (auth && !currentUser) {
+                    try {
+                        const cred = await signInAnonymously(auth);
+                        currentUser = cred.user;
+                    } catch (authErr) {
+                        throw new Error(`Firebase Auth failed (${authErr.code || authErr.message}). Check Authorized Domains & Anonymous Sign-in.`);
+                    }
+                }
+
                 if (db && currentUser) {
                     const saveWithTimeout = Promise.race([
                         setDoc(doc(getArtworksCollectionRef(), docId), artworkPayload),
                         new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error('Cloud timeout — check Firebase Firestore Rules or internet connection.')), 8000)
+                            setTimeout(() => reject(new Error('Cloud upload timed out (25s) — please check internet connection or image size.')), 25000)
                         )
                     ]);
                     await saveWithTimeout;
+
+                    // Ensure newly added painting is immediately visible under its artist
+                    activeArtistId = artistId;
+                    activeCategory = 'All';
+                    renderArtistSelectorBar();
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    renderAdminArtworksList();
                     showAdminFeedback(`"${title}" published to Live Cloud Gallery!`);
                 } else {
                     if (editId) {
@@ -2161,11 +2313,14 @@
                     } else {
                         artworks.unshift(artworkPayload);
                     }
+                    activeArtistId = artistId;
+                    activeCategory = 'All';
+                    renderArtistSelectorBar();
                     renderSelectedArtistProfile();
                     renderCategoryFilterBar();
                     renderArtworksGrid();
                     renderAdminArtworksList();
-                    showAdminFeedback(`"${title}" saved locally.`);
+                    showAdminFeedback(`"${title}" saved locally only (Cloud not connected).`, true);
                 }
 
                 await recordEditLog(
@@ -2993,6 +3148,7 @@
         updateSoundButtonUI();
         bindFirstInteractionAudioUnlock();
         startAmbientSoundscape();
+        fastBootstrapFromFirestoreREST();
         initCloudGallery();
     </script>
 </body>
