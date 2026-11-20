@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Artist's Loft | MT. Oung</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF9F6',
+                        charcoal: '#2C2C2C',
+                        taupe: '#A69076',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF9F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #A69076;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8c775e;
+        }
+
+        /* Bidirectional Scroll Reveal Animation */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(36px) scale(0.96);
+            filter: blur(10px);
+            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform, filter;
+        }
+        .reveal-item.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* 3D Tilt Card & Glare */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.25s cubic-bezier(0.03, 0.98, 0.52, 0.99), box-shadow 0.4s ease;
+            position: relative;
+        }
+        .tilt-glare {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+            z-index: 20;
+        }
+
+        /* Smooth Section Fade */
+        .page-section {
+            animation: fadeSection 0.45s ease-out forwards;
+        }
+        @keyframes fadeSection {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pronounced Gallery Lightbox Lift & Expand Transition (1.0s) */
+        #lightbox-modal {
+            opacity: 0;
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #lightbox-modal.is-open {
+            opacity: 1;
+        }
+        #lightbox-img {
+            opacity: 0;
+            transform: translateY(72px) scale(0.75);
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 1s ease;
+            will-change: transform, opacity;
+        }
+        #lightbox-modal.is-open #lightbox-img {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        #lightbox-caption {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.28s,
+                        opacity 0.7s ease 0.28s;
+            will-change: transform, opacity;
+        }
+        #lightbox-modal.is-open #lightbox-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Smooth Next / Previous Slide Transition inside Lightbox */
+        .lightbox-slide-out-left {
+            opacity: 0 !important;
+            transform: translateX(-48px) scale(0.95) !important;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease !important;
+        }
+        .lightbox-slide-out-right {
+            opacity: 0 !important;
+            transform: translateX(48px) scale(0.95) !important;
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease !important;
+        }
+        .lightbox-slide-in-from-right {
+            opacity: 0 !important;
+            transform: translateX(56px) scale(0.95) !important;
+            transition: none !important;
+        }
+        .lightbox-slide-in-from-left {
+            opacity: 0 !important;
+            transform: translateX(-56px) scale(0.95) !important;
+            transition: none !important;
+        }
+    </style>
+</head>
+<body class="bg-[#FAF9F6] text-[#2C2C2C] font-sans antialiased flex flex-col min-h-screen selection:bg-[#A69076]/20 selection:text-[#2C2C2C]">
+
+    <!-- Top Minimalist Navigation Header -->
+    <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#FAF9F6]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#A69076]/15 transition-all">
+        <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <!-- Left Navigation Links -->
+            <nav class="flex flex-wrap justify-center md:justify-start items-center gap-5 md:gap-7 md:w-1/3" aria-label="Main Navigation">
+                <button type="button" onclick="showSection('home')" class="nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="home">Home</button>
+                <button type="button" onclick="showSection('artworks')" class="nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
+                <button type="button" onclick="showSection('about')" class="nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="about">About</button>
+                <button type="button" onclick="showSection('contact')" class="nav-link md:hidden text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">Contact</button>
+            </nav>
+
+            <!-- Center Brand Title (5 taps opens hidden Admin Console) -->
+            <div class="md:w-1/3 text-center">
+                <button type="button" onclick="handleSecretBrandTap(event)" class="text-2xl md:text-3xl font-serif tracking-wide text-[#2C2C2C] font-medium hover:text-[#A69076] transition-colors select-none">
+                    The Artist's Loft
+                </button>
+            </div>
+
+            <!-- Right Links (Public Admin Button Hidden) -->
+            <div class="flex items-center justify-center md:justify-end gap-6 md:w-1/3">
+                <button type="button" onclick="showSection('contact')" class="hidden md:inline-block nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">
+                    Contact Us
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ==================== 1. HOME SECTION ==================== -->
+    <section id="section-home" class="page-section flex-grow relative flex flex-col justify-center items-center px-6 py-24 md:py-36 min-h-[84vh] text-center overflow-hidden">
+        
+        <!-- Side-by-side Background Lotus Paintings -->
+        <div class="absolute inset-0 z-0 flex w-full h-full pointer-events-none">
+            <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I by MT. Oung" onerror="handleBgFallback(this, 1)" class="w-1/2 h-full object-cover opacity-35 mix-blend-multiply">
+            <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II by MT. Oung" onerror="handleBgFallback(this, 2)" class="w-1/2 h-full object-cover opacity-35 mix-blend-multiply">
+        </div>
+
+        <!-- Soft Gradient Vignettes for Seamless Blending -->
+        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-[#FAF9F6] via-transparent to-[#FAF9F6]"></div>
+        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-r from-[#FAF9F6] via-transparent to-[#FAF9F6] opacity-50"></div>
+
+        <!-- Frosted-Glass Editorial Hero Card -->
+        <div class="relative z-10 bg-[#FAF9F6]/70 backdrop-blur-md border border-[#A69076]/25 shadow-2xl shadow-[#A69076]/10 px-7 py-12 md:px-16 md:py-16 rounded-3xl max-w-3xl mx-auto">
+            <p class="text-[11px] md:text-xs uppercase tracking-[0.35em] text-[#A69076] mb-4 font-medium">Curated Myanmar Fine Art</p>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-[#2C2C2C] mb-5 leading-tight">
+                The Artist's Loft
+            </h1>
+            <div class="w-12 h-[1px] bg-[#A69076] mx-auto mb-6"></div>
+            <p class="text-sm sm:text-base md:text-lg text-[#2C2C2C]/80 font-light leading-relaxed max-w-xl mx-auto mb-9">
+                The Artist's Loft — sharing unique artworks of artists from Myanmar
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button type="button" onclick="showSection('artworks')" class="px-8 py-3.5 bg-[#2C2C2C] text-[#FAF9F6] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:bg-[#A69076] transition-colors shadow-md">
+                    Explore Artworks
+                </button>
+                <button type="button" onclick="showSection('about')" class="px-8 py-3.5 border border-[#A69076]/60 text-[#2C2C2C] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:border-[#2C2C2C] transition-colors">
+                    Meet MT. Oung
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 2. ARTWORKS SECTION ==================== -->
+    <section id="section-artworks" class="page-section hidden flex-grow flex flex-col">
+        <!-- Gallery Header -->
+        <div class="w-full max-w-4xl mx-auto px-6 pt-14 pb-10 text-center">
+            <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] mb-3 font-medium">Featured Collection</p>
+            <h2 class="text-4xl md:text-5xl font-serif font-medium text-[#2C2C2C] mb-5">
+                MT. Oung
+            </h2>
+            <p class="text-sm md:text-base text-[#2C2C2C]/75 font-light max-w-2xl mx-auto leading-relaxed">
+                A master of contemporary realism and lyrical impressionism. Exploring the profound depths of Burmese spirituality, nature, and human emotion through oil on canvas.
+            </p>
+        </div>
+
+        <!-- Dynamic Category Filter Bar -->
+        <div class="w-full max-w-screen-xl mx-auto px-6 mb-12">
+            <div id="category-filter-bar" class="flex flex-wrap items-center justify-center gap-2.5 md:gap-4 border-b border-[#A69076]/20 pb-6">
+                <!-- Buttons injected dynamically via JS -->
+            </div>
+            <div class="text-center mt-4">
+                <span id="artwork-count-label" class="text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/50"></span>
+            </div>
+        </div>
+
+        <!-- Flowing Masonry Gallery Grid -->
+        <main class="w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-28">
+            <div id="artworks-masonry-grid" class="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+                <!-- Artwork Cards injected dynamically via JS -->
+            </div>
+        </main>
+    </section>
+
+    <!-- ==================== 3. ABOUT SECTION ==================== -->
+    <section id="section-about" class="page-section hidden flex-grow">
+        <div class="max-w-6xl mx-auto px-6 md:px-12 py-16 md:py-24">
+            <!-- Frameless Editorial Magazine Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                
+                <!-- Left Column: Frameless Natural Portrait -->
+                <div class="lg:col-span-5">
+                    <img src="artist.jpg" alt="Artist MT. Oung (Myoe Thant Oung)" onerror="handleArtistFallback(this)" class="w-full h-auto object-cover block">
+                    <p class="mt-4 text-xs uppercase tracking-[0.22em] text-[#A69076]">
+                        MT. Oung (Myoe Thant Oung) — Yangon, Myanmar
+                    </p>
+                </div>
+
+                <!-- Right Column: Editorial Biography -->
+                <div class="lg:col-span-7 flex flex-col justify-center">
+                    <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] mb-3 font-medium">Biography</p>
+                    <h2 class="text-4xl sm:text-5xl md:text-6xl font-serif font-medium text-[#2C2C2C] mb-4 leading-tight">
+                        MT. Oung
+                    </h2>
+                    <p class="text-lg font-serif italic text-[#2C2C2C]/70 mb-8">
+                        Myoe Thant Oung (b. 1965)
+                    </p>
+                    <div class="w-16 h-[1px] bg-[#A69076] mb-8"></div>
+
+                    <div class="space-y-6 text-[#2C2C2C]/85 font-light text-base md:text-lg leading-relaxed">
+                        <p>
+                            Artist MT. Oung was born on 6 May, 1965 at Ahlone Township, Yangon. His mentors are Maung Maung Ba (U), Tin Maung Oo (U), WPM and very great master Ko Shwe Oung Thame.
+                        </p>
+                        <p>
+                            He has participated in 60 group shows in Myanmar and also abroad.
+                        </p>
+                        <p>
+                            His Solo shows in Myanmar are at Artist and Artisans Show Room in 1990, Korea Ambassador residence Myanmar in 1990, Myanmar Art Centre entitled the Strength of Life, Bahan Gallery (Myanmar Japon). His Solo shows in Singapore are at Dynasties Art Gallery in 1996, Orchard Point Exhibition Hall in 1997 and J Gallery, The Oriental in 2000, 2001, and 2003. He has participated in Wind of Artist and Residence at the Fukuoka Asian Art Museum in Japan, 2004.
+                        </p>
+                        <p>
+                            His art works are collected in National Museum of Yangon, Myanmar and Fukuoka Asian Art Museum in Japan.
+                        </p>
+                    </div>
+
+                    <!-- Career Highlights Strip -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 mt-12 pt-8 border-t border-[#A69076]/25">
+                        <div>
+                            <span class="block font-serif text-2xl text-[#2C2C2C]">1965</span>
+                            <span class="text-xs uppercase tracking-widest text-[#A69076]">Born in Yangon</span>
+                        </div>
+                        <div>
+                            <span class="block font-serif text-2xl text-[#2C2C2C]">60+</span>
+                            <span class="text-xs uppercase tracking-widest text-[#A69076]">Group Exhibitions</span>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1">
+                            <span class="block font-serif text-2xl text-[#2C2C2C]">2004</span>
+                            <span class="text-xs uppercase tracking-widest text-[#A69076]">Fukuoka Museum Residency</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 4. CONTACT US SECTION ==================== -->
+    <section id="section-contact" class="page-section hidden flex-grow flex items-center justify-center">
+        <div class="max-w-2xl w-full mx-auto px-6 py-20 md:py-24">
+            <div class="text-center mb-12">
+                <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] mb-3 font-medium">Inquiries & Acquisitions</p>
+                <h2 class="text-4xl md:text-5xl font-serif font-medium text-[#2C2C2C] mb-4">Get in Touch</h2>
+                <p class="text-sm md:text-base text-[#2C2C2C]/70 font-light">
+                    For artwork availability, private viewings, or exhibition inquiries, please leave a message below.
+                </p>
+            </div>
+
+            <!-- Netlify-Compatible Contact Form -->
+            <form id="contact-form" name="contact" method="POST" data-netlify="true" onsubmit="handleContactSubmit(event)" class="space-y-8 bg-white/60 backdrop-blur-sm border border-[#A69076]/20 p-8 md:p-12 rounded-3xl shadow-sm">
+                <!-- Required hidden input for Netlify Forms -->
+                <input type="hidden" name="form-name" value="contact" />
+
+                <div>
+                    <label for="contact-name" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Full Name</label>
+                    <input id="contact-name" type="text" name="name" required placeholder="Your name" class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30">
+                </div>
+
+                <div>
+                    <label for="contact-email" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Email Address</label>
+                    <input id="contact-email" type="email" name="email" required placeholder="you@example.com" class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30">
+                </div>
+
+                <div>
+                    <label for="contact-message" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Message</label>
+                    <textarea id="contact-message" name="message" rows="4" required placeholder="Tell us about the artwork you are interested in..." class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30 resize-none"></textarea>
+                </div>
+
+                <div class="pt-2 text-center">
+                    <button type="submit" class="w-full sm:w-auto px-12 py-4 bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] rounded-full transition-colors uppercase tracking-[0.22em] text-xs font-medium shadow-sm">
+                        Send Message
+                    </button>
+                </div>
+
+                <!-- Instant Client-Side Confirmation Banner -->
+                <div id="contact-feedback" class="hidden p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C]">
+                    Thank you! Your message has been received. We will respond shortly.
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ==================== 5. FULL-SCREEN LIGHTBOX MODAL ==================== -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 hidden bg-[#2C2C2C]/95 backdrop-blur-md flex items-center justify-center p-4 md:p-10" onclick="closeLightbox(event)">
+        <button type="button" onclick="closeLightbox(event)" class="absolute top-5 right-6 md:top-8 md:right-10 text-[#FAF9F6]/80 hover:text-[#A69076] text-4xl md:text-5xl leading-none transition-colors z-20" aria-label="Close Lightbox">&times;</button>
+
+        <!-- Previous Painting Button -->
+        <button type="button" onclick="navigateLightbox(-1, event)" class="absolute left-3 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#2C2C2C]/60 hover:bg-[#A69076] hover:border-[#A69076] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Previous Painting">
+            <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Next Painting Button -->
+        <button type="button" onclick="navigateLightbox(1, event)" class="absolute right-3 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#2C2C2C]/60 hover:bg-[#A69076] hover:border-[#A69076] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Next Painting">
+            <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+        
+        <div id="lightbox-stage" class="max-w-5xl w-full flex flex-col items-center justify-center text-center px-10 sm:px-16" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" alt="Enlarged Artwork" class="max-h-[64vh] w-auto max-w-full object-contain rounded-lg shadow-2xl mb-5">
+            <div id="lightbox-caption" class="max-w-2xl px-4">
+                <div class="flex items-center justify-center gap-2 mb-1.5">
+                    <span id="lightbox-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                    <span id="lightbox-status-text" class="text-[10px] uppercase tracking-[0.25em] text-emerald-300 font-medium">Available</span>
+                    <span class="text-[#FAF9F6]/30">•</span>
+                    <span id="lightbox-counter" class="text-[10px] uppercase tracking-[0.3em] text-[#FAF9F6]/45"></span>
+                </div>
+                <span id="lightbox-category" class="inline-block text-[11px] uppercase tracking-[0.28em] text-[#A69076] mb-1.5"></span>
+                <h3 id="lightbox-title" class="font-serif text-2xl md:text-3xl text-[#FAF9F6] mb-2"></h3>
+                <p id="lightbox-desc" class="text-sm md:text-base text-[#FAF9F6]/75 font-light leading-relaxed"></p>
+                <div id="lightbox-price-row" class="mt-4 flex flex-wrap items-center justify-center gap-4">
+                    <span id="lightbox-price" class="text-sm font-medium text-[#FAF9F6] tracking-wide"></span>
+                    <button id="lightbox-inquiry-btn" type="button" class="px-5 py-2 rounded-full bg-[#A69076] text-[#FAF9F6] text-[11px] uppercase tracking-[0.22em] font-medium hover:bg-[#FAF9F6] hover:text-[#2C2C2C] transition-colors">
+                        Price Inquiry
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 6. BUILT-IN ADMIN CONSOLE MODAL ==================== -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-[#2C2C2C]/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#FAF9F6] border border-[#A69076]/30 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden text-[#2C2C2C]">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 md:px-8 border-b border-[#A69076]/20 flex justify-between items-center bg-white/80 flex-shrink-0">
+                <div>
+                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#A69076] block">Gallery Management</span>
+                    <h3 class="font-serif text-2xl text-[#2C2C2C]">Admin Console</h3>
+                </div>
+                <button type="button" onclick="closeAdminModal()" class="text-3xl text-[#2C2C2C]/60 hover:text-[#2C2C2C] leading-none">&times;</button>
+            </div>
+
+            <!-- Modal Body (Single unified scroll container with min-h-0 fix) -->
+            <div id="admin-modal-body" class="p-5 md:p-8 overflow-y-auto overscroll-contain space-y-8 flex-1 min-h-0">
+                
+                <!-- Step 1: Secure Passcode Gate (No plaintext PIN in source code) -->
+                <div id="admin-login-view" class="max-w-sm mx-auto py-8 text-center space-y-5">
+                    <div class="w-12 h-12 rounded-full bg-[#A69076]/15 text-[#A69076] flex items-center justify-center mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 id="admin-gate-title" class="font-serif text-xl mb-1">Curator Access</h4>
+                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60">Enter your private security passcode to manage the gallery.</p>
+                    </div>
+                    <form onsubmit="verifyAdminPin(event)" class="space-y-4">
+                        <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter Passcode" class="w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white outline-none focus:border-[#2C2C2C]">
+                        <input id="admin-pin-confirm-input" type="password" minlength="4" autocomplete="new-password" placeholder="Confirm New Passcode" class="hidden w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white outline-none focus:border-[#2C2C2C]">
+                        <p id="admin-pin-error" class="hidden text-xs text-red-600">Incorrect passcode. Please try again.</p>
+                        <button id="admin-gate-submit-btn" type="submit" class="w-full py-3 bg-[#2C2C2C] text-[#FAF9F6] text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#A69076] transition-colors">
+                            Unlock Console
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 2: Unlocked Dashboard -->
+                <div id="admin-dashboard-view" class="hidden space-y-8">
+                    
+                    <!-- Top Action Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-[#A69076]/20">
+                        <div class="text-xs text-[#2C2C2C]/70 flex items-center gap-2">
+                            <span id="cloud-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+                            <span id="cloud-status-text">Connecting to live cloud gallery...</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="toggleChangePinBox()" class="px-4 py-2 rounded-xl border border-[#2C2C2C]/30 text-[#2C2C2C] hover:bg-[#2C2C2C] hover:text-white text-xs uppercase tracking-wider transition-colors">
+                                Change Passcode
+                            </button>
+                            <button type="button" onclick="exportArtworksJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] text-[#2C2C2C] hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider transition-colors">
+                                Export Data (JSON)
+                            </button>
+                            <button type="button" onclick="resetToDefaultArtworks()" class="px-4 py-2 rounded-xl border border-red-300 text-red-700 hover:bg-red-50 text-xs uppercase tracking-wider transition-colors">
+                                Restore Defaults
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Change Passcode Box -->
+                    <div id="change-pin-box" class="hidden bg-white p-5 rounded-2xl border border-[#A69076]/30 shadow-sm">
+                        <h4 class="font-serif text-lg mb-1">Update Curator Passcode</h4>
+                        <p class="text-xs text-[#2C2C2C]/60 mb-4">Your passcode is encrypted (SHA-256) and never stored in plain text or source code.</p>
+                        <form onsubmit="saveNewAdminPin(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <input id="current-pin-verify-input" type="password" required placeholder="Current passcode" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            <input id="new-pin-input" type="password" required minlength="4" placeholder="New passcode (min 4 chars)" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
+                                Save Passcode
+                            </button>
+                        </form>
+                        <p id="change-pin-feedback" class="hidden text-xs mt-2.5 font-medium"></p>
+                    </div>
+
+                    <!-- Add / Edit Artwork Form -->
+                    <div id="admin-form-container" class="bg-white p-6 rounded-2xl border border-[#A69076]/25 shadow-sm transition-all duration-300">
+                        <h4 id="admin-form-heading" class="font-serif text-xl mb-5">Add New Artwork</h4>
+                        <form id="admin-artwork-form" onsubmit="saveArtworkFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="hidden" id="edit-artwork-id" value="">
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Painting Title *</label>
+                                <input id="art-title-input" type="text" required placeholder="e.g., Golden Pagoda Morning" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Category *</label>
+                                <div class="flex gap-2">
+                                    <select id="art-category-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                        <!-- Options populated by JS -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Create New Category (Optional)</label>
+                                <input id="art-new-category-input" type="text" placeholder="Type new category name..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Medium / Subtitle</label>
+                                <input id="art-medium-input" type="text" value="Oil on Canvas" placeholder="e.g., Oil on Canvas, 2024" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Availability Status</label>
+                                <select id="art-status-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <option value="Available">Available (Green Dot)</option>
+                                    <option value="Sold">Sold (Red Dot)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Price (Optional)</label>
+                                <input id="art-price-input" type="text" placeholder="e.g., $1,200 or Price on Request" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                            </div>
+
+                            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] border border-[#A69076]/20">
+                                <div>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option A: Upload Image File</label>
+                                    <input id="art-file-input" type="file" accept="image/*" class="w-full text-xs text-[#2C2C2C]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option B: Local Filename / Image URL</label>
+                                    <input id="art-url-input" type="text" placeholder="e.g., my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white text-sm outline-none focus:border-[#2C2C2C]">
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Description</label>
+                                <textarea id="art-desc-input" rows="2" placeholder="Poetic description or story behind the artwork..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C] resize-none"></textarea>
+                            </div>
+
+                            <div class="md:col-span-2 flex items-center justify-end gap-3">
+                                <button type="button" id="cancel-edit-btn" onclick="resetAdminForm()" class="hidden px-5 py-2.5 rounded-xl border border-[#2C2C2C]/30 text-xs uppercase tracking-wider hover:bg-[#2C2C2C]/5">
+                                    Cancel Edit
+                                </button>
+                                <button type="submit" id="save-artwork-btn" class="px-7 py-3 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50">
+                                    Publish to Live Gallery
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Existing Artworks List -->
+                    <div>
+                        <h4 class="font-serif text-xl mb-4">Current Collection (<span id="admin-total-count">0</span>)</h4>
+                        <div id="admin-artworks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Admin item cards populated via JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimalist Footer -->
+    <footer class="w-full border-t border-[#A69076]/25 mt-auto py-12 px-6 md:px-12 bg-[#FAF9F6]">
+        <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
+            <div>
+                <h4 class="font-serif text-xl text-[#2C2C2C] mb-1">The Artist's Loft</h4>
+                <p class="text-xs tracking-wider text-[#2C2C2C]/60 font-light">Curated works of MT. Oung — Yangon, Myanmar</p>
+            </div>
+            
+            <div class="flex gap-8 text-xs uppercase tracking-[0.2em]">
+                <button type="button" onclick="showSection('home')" class="text-[#2C2C2C]/60 hover:text-[#A69076] transition-colors">Home</button>
+                <button type="button" onclick="showSection('artworks')" class="text-[#2C2C2C]/60 hover:text-[#A69076] transition-colors">Artworks</button>
+                <button type="button" onclick="showSection('about')" class="text-[#2C2C2C]/60 hover:text-[#A69076] transition-colors">About</button>
+            </div>
+
+            <div ondblclick="openAdminModal()" title="Double-click for Curator Access" class="text-xs text-[#2C2C2C]/45 font-light select-none cursor-default">
+                &copy; <span id="footer-year"></span> The Artist's Loft. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Subtle Secret Tap Toast -->
+    <div id="secret-tap-toast" class="fixed bottom-5 right-5 z-50 hidden px-4 py-2 rounded-full bg-[#2C2C2C]/85 text-[#FAF9F6] text-xs tracking-widest uppercase shadow-lg pointer-events-none"></div>
+
+    <!-- Immediate Synchronous Image Fallbacks (Available before module scripts defer) -->
+    <script>
+        function createArtPlaceholderDataURL(title, category, aspect) {
+            const isPortrait = aspect === '3/4';
+            const w = isPortrait ? 600 : 800;
+            const h = isPortrait ? 800 : 600;
+            const palettes = {
+                'Sacred Art': ['#EFE6D5', '#C8A97E', '#8C6D46'],
+                'Floral & Still Life': ['#F2EDE4', '#B8A898', '#7A8471'],
+                'Landscapes': ['#EAE7DF', '#9EA899', '#6B7A6E'],
+                'Portraits': ['#EFEAE2', '#C2A894', '#7C6556']
+            };
+            const [bg, mid, accent] = palettes[category] || ['#EFECE6', '#C2B4A3', '#8E7B65'];
+            const safeTitle = String(title || 'Artwork').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+            const safeCat = String(category || 'Collection').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+                <defs>
+                    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${bg}"/>
+                        <stop offset="100%" stop-color="${mid}" stop-opacity="0.45"/>
+                    </linearGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#g)"/>
+                <circle cx="${w * 0.65}" cy="${h * 0.35}" r="${Math.min(w, h) * 0.24}" fill="${accent}" opacity="0.16"/>
+                <path d="M0 ${h * 0.72} Q ${w * 0.35} ${h * 0.58}, ${w * 0.65} ${h * 0.7} T ${w} ${h * 0.64} L ${w} ${h} L 0 ${h} Z" fill="${accent}" opacity="0.22"/>
+                <rect x="28" y="28" width="${w - 56}" height="${h - 56}" fill="none" stroke="${accent}" stroke-opacity="0.3" stroke-width="1"/>
+                <text x="50%" y="${h * 0.47}" text-anchor="middle" font-family="Georgia, serif" font-size="26" fill="#2C2C2C" opacity="0.82">${safeTitle}</text>
+                <text x="50%" y="${h * 0.53}" text-anchor="middle" font-family="sans-serif" font-size="12" letter-spacing="4" fill="#2C2C2C" opacity="0.55">${safeCat.toUpperCase()}</text>
+                <text x="50%" y="${h - 48}" text-anchor="middle" font-family="sans-serif" font-size="11" letter-spacing="2" fill="#2C2C2C" opacity="0.45">MT. OUNG COLLECTION</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+        }
+
+        function applyArtFallback(imgEl, title, category, aspect) {
+            imgEl.onerror = null;
+            imgEl.src = createArtPlaceholderDataURL(title, category, aspect);
+        }
+
+        function handleCardImageError(imgEl) {
+            imgEl.onerror = null;
+            const title = imgEl.getAttribute('data-title') || 'Artwork';
+            const category = imgEl.getAttribute('data-category') || 'Collection';
+            const aspect = imgEl.getAttribute('data-aspect') || '3/4';
+            imgEl.src = createArtPlaceholderDataURL(title, category, aspect);
+        }
+
+        function handleBgFallback(imgEl, index) {
+            imgEl.onerror = null;
+            imgEl.src = createArtPlaceholderDataURL('Lotus Study ' + index, 'Floral & Still Life', '3/4');
+        }
+
+        function handleArtistFallback(img) {
+            img.onerror = null;
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 750">
+                <rect width="600" height="750" fill="#EDE9E1"/>
+                <circle cx="300" cy="270" r="95" fill="#A69076" opacity="0.35"/>
+                <path d="M130 680 C130 510, 470 510, 470 680" fill="#A69076" opacity="0.28"/>
+                <text x="300" y="440" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#2C2C2C" opacity="0.75">MT. Oung</text>
+                <text x="300" y="472" text-anchor="middle" font-family="sans-serif" font-size="11" letter-spacing="3" fill="#2C2C2C" opacity="0.5">ARTIST PORTRAIT (artist.jpg)</text>
+            </svg>`;
+            img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+        }
+
+        // Automatically resolve broken images even if onerror fired before JS parsed
+        function verifyAllImagesLoaded() {
+            document.querySelectorAll('img').forEach(img => {
+                if (img.complete && img.naturalWidth === 0) {
+                    if (img.hasAttribute('data-title')) {
+                        handleCardImageError(img);
+                    } else if (img.alt && img.alt.includes('MT. Oung (')) {
+                        handleArtistFallback(img);
+                    } else if (img.alt && img.alt.includes('Lotus Study')) {
+                        handleBgFallback(img, img.alt.includes('II') ? 2 : 1);
+                    }
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', verifyAllImagesLoaded);
+        window.addEventListener('load', verifyAllImagesLoaded);
+    </script>
+
+    <!-- Application Logic with Live Firebase Cloud Sync -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Set current year
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        // Store only cryptographic SHA-256 hash in memory/cloud (zero plaintext passcode in code)
+        let storedPinHash = null;
+        let isPinInitialized = false;
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft';
+
+        async function hashPasscode(plainText) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(String(plainText));
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Default Seed Artworks
+        const DEFAULT_ARTWORKS = [
+            {
+                id: 'art-1',
+                title: 'Devotion in Saffron',
+                category: 'Sacred Art',
+                medium: 'Oil on Canvas',
+                status: 'Available',
+                price: '',
+                image: 'image_d698fb.jpg',
+                aspect: '3/4',
+                description: 'Young novices walking in serene morning light, capturing the quiet spiritual rhythm of Myanmar.',
+                order: 1
+            },
+            {
+                id: 'art-2',
+                title: 'Sacred Lotus Bloom',
+                category: 'Floral & Still Life',
+                medium: 'Oil on Canvas',
+                status: 'Available',
+                price: '',
+                image: '05582-mtoung3.jpg',
+                aspect: '3/4',
+                description: 'Soft impasto petals emerging from tranquil waters, symbolizing purity and inner stillness.',
+                order: 2
+            },
+            {
+                id: 'art-3',
+                title: 'Morning Mist on the Irrawaddy',
+                category: 'Landscapes',
+                medium: 'Oil on Canvas',
+                status: 'Sold',
+                price: '',
+                image: '179362955683157.jpg',
+                aspect: '4/3',
+                description: 'Luminous reflections across the river at dawn, painted with fluid impressionistic brushwork.',
+                order: 3
+            },
+            {
+                id: 'art-4',
+                title: "Mother's Love",
+                category: 'Portraits',
+                medium: 'Oil on Canvas',
+                status: 'Available',
+                price: '',
+                image: '20160602-mtoung5.jpg',
+                aspect: '3/4',
+                description: 'An intimate, tender study of maternal warmth rendered in earthy ochre and warm umber tones.',
+                order: 4
+            },
+            {
+                id: 'art-5',
+                title: 'Lotus Pond Reverie',
+                category: 'Floral & Still Life',
+                medium: 'Oil on Canvas',
+                status: 'Available',
+                price: '',
+                image: '8899c-mtoung4.jpg',
+                aspect: '3/4',
+                description: 'Delicate interplay of sunlight and shadow across blooming lotus leaves.',
+                order: 5
+            },
+            {
+                id: 'art-6',
+                title: "Melody's Rest",
+                category: 'Portraits',
+                medium: 'Oil on Canvas',
+                status: 'Available',
+                price: '',
+                image: 'images.jpg',
+                aspect: '4/3',
+                description: 'A quiet moment of contemplation alongside a classical harp, celebrating Burmese musical heritage.',
+                order: 6
+            }
+        ];
+
+        // Live State
+        let artworks = [...DEFAULT_ARTWORKS];
+        let activeCategory = 'All';
+        let isAdminUnlocked = false;
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let cloudReady = false;
+
+        // Your Firebase Configuration (theartist-sloft)
+        const LIVE_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAaT5T_BABWliAqxvNr_KADw-VItLSxWlc",
+            authDomain: "theartist-sloft.firebaseapp.com",
+            projectId: "theartist-sloft",
+            storageBucket: "theartist-sloft.firebasestorage.app",
+            messagingSenderId: "922602203077",
+            appId: "1:922602203077:web:99977308aec4186e4bcdac",
+            measurementId: "G-MBZTTH72RX"
+        };
+
+        function updateCloudStatus(isConnected, label) {
+            cloudReady = isConnected;
+            const dot = document.getElementById('cloud-status-dot');
+            const text = document.getElementById('cloud-status-text');
+            if (!dot || !text) return;
+            dot.className = `w-2.5 h-2.5 rounded-full inline-block ${isConnected ? 'bg-emerald-500' : 'bg-amber-400'}`;
+            text.textContent = label;
+        }
+
+        function getArtworksCollectionRef() {
+            return collection(db, 'artifacts', APP_ID, 'public', 'data', 'artworks');
+        }
+
+        function getSettingsDocRef() {
+            return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'admin_security');
+        }
+
+        // Initialize Firebase Cloud Connection
+        async function initCloudGallery() {
+            try {
+                const firebaseConfig = (typeof __firebase_config !== 'undefined' && __firebase_config)
+                    ? JSON.parse(__firebase_config)
+                    : LIVE_FIREBASE_CONFIG;
+
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const cred = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = cred.user;
+                } else {
+                    const cred = await signInAnonymously(auth);
+                    currentUser = cred.user;
+                }
+
+                // Listen for encrypted curator passcode hash from Cloud
+                onSnapshot(
+                    getSettingsDocRef(),
+                    (docSnap) => {
+                        if (docSnap.exists() && docSnap.data().pinHash) {
+                            storedPinHash = String(docSnap.data().pinHash);
+                            isPinInitialized = true;
+                        } else {
+                            isPinInitialized = false;
+                        }
+                        updateAdminGateUI();
+                    },
+                    (err) => {
+                        console.warn('Settings sync notice:', err);
+                    }
+                );
+
+                const colRef = getArtworksCollectionRef();
+
+                // Real-time listener so every visitor worldwide sees updates immediately
+                onSnapshot(
+                    colRef,
+                    async (snapshot) => {
+                        if (snapshot.empty) {
+                            updateCloudStatus(true, 'Connected to Cloud (theartist-sloft) — Seeding initial collection...');
+                            for (const item of DEFAULT_ARTWORKS) {
+                                await setDoc(doc(colRef, item.id), item);
+                            }
+                            return;
+                        }
+
+                        const loaded = [];
+                        snapshot.forEach((docSnap) => {
+                            loaded.push(docSnap.data());
+                        });
+
+                        loaded.sort((a, b) => (a.order || 999) - (b.order || 999));
+                        artworks = loaded;
+                        updateCloudStatus(true, 'Connected to Cloud (theartist-sloft) — Live Sync Active');
+                        renderCategoryFilterBar();
+                        renderArtworksGrid();
+                        if (isAdminUnlocked) {
+                            populateAdminCategoryDropdown();
+                            renderAdminArtworksList();
+                        }
+                    },
+                    (error) => {
+                        console.error('Firestore listener error:', error);
+                        updateCloudStatus(false, 'Offline fallback mode (Check Firestore Rules)');
+                    }
+                );
+            } catch (error) {
+                console.error('Cloud initialization error:', error);
+                updateCloudStatus(false, 'Offline fallback mode');
+            }
+        }
+
+        // Compress & resize uploaded images cleanly before cloud storage
+        function compressImageFile(file, maxDimension = 1100, quality = 0.82) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = Math.round((height * maxDimension) / width);
+                                width = maxDimension;
+                            } else {
+                                width = Math.round((width * maxDimension) / height);
+                                height = maxDimension;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const aspect = height > width ? '3/4' : '4/3';
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve({ dataUrl: compressedDataUrl, aspect });
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ==================== NAVIGATION & SECRET ADMIN TRIGGERS ====================
+        let brandTapCount = 0;
+        let brandTapTimer = null;
+
+        function handleSecretBrandTap(event) {
+            if (event) event.preventDefault();
+            brandTapCount++;
+            clearTimeout(brandTapTimer);
+
+            const toast = document.getElementById('secret-tap-toast');
+            if (brandTapCount >= 2 && brandTapCount < 5 && toast) {
+                toast.textContent = `Curator Unlock (${brandTapCount}/5)`;
+                toast.classList.remove('hidden');
+            }
+
+            if (brandTapCount >= 5) {
+                brandTapCount = 0;
+                if (toast) toast.classList.add('hidden');
+                openAdminModal();
+                return;
+            }
+
+            if (brandTapCount === 1) {
+                showSection('home');
+            }
+
+            brandTapTimer = setTimeout(() => {
+                brandTapCount = 0;
+                if (toast) toast.classList.add('hidden');
+            }, 2500);
+        }
+
+        function showSection(sectionId) {
+            const sections = ['home', 'artworks', 'about', 'contact'];
+            sections.forEach(id => {
+                const el = document.getElementById(`section-${id}`);
+                if (el) {
+                    if (id === sectionId) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                const target = btn.getAttribute('data-target');
+                if (target === sectionId) {
+                    btn.classList.add('text-[#A69076]', 'border-b', 'border-[#A69076]');
+                    btn.classList.remove('text-[#2C2C2C]/70');
+                } else {
+                    btn.classList.remove('text-[#A69076]', 'border-b', 'border-[#A69076]');
+                    btn.classList.add('text-[#2C2C2C]/70');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (sectionId === 'artworks') {
+                renderCategoryFilterBar();
+                renderArtworksGrid();
+            }
+        }
+
+        // ==================== CATEGORY & GALLERY RENDERING ====================
+        function getUniqueCategories() {
+            const cats = new Set(['All']);
+            artworks.forEach(art => {
+                if (art.category && art.category.trim() !== '') {
+                    cats.add(art.category.trim());
+                }
+            });
+            return Array.from(cats);
+        }
+
+        function renderCategoryFilterBar() {
+            const bar = document.getElementById('category-filter-bar');
+            if (!bar) return;
+            const categories = getUniqueCategories();
+
+            if (!categories.includes(activeCategory)) {
+                activeCategory = 'All';
+            }
+
+            bar.innerHTML = categories.map(cat => {
+                const isActive = cat === activeCategory;
+                const safeCatAttr = cat.replace(/'/g, "\\'");
+                const baseClasses = "px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] transition-all duration-300 font-medium";
+                const stateClasses = isActive
+                    ? "bg-[#2C2C2C] text-[#FAF9F6] shadow-md"
+                    : "bg-transparent text-[#2C2C2C]/70 border border-[#A69076]/35 hover:border-[#2C2C2C] hover:text-[#2C2C2C]";
+                return `<button type="button" onclick="filterByCategory('${safeCatAttr}')" class="${baseClasses} ${stateClasses}">${cat}</button>`;
+            }).join('');
+        }
+
+        function filterByCategory(category) {
+            activeCategory = category;
+            renderCategoryFilterBar();
+            renderArtworksGrid();
+        }
+
+        function escapeHTML(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function inquireAboutArtwork(id, event) {
+            if (event) event.stopPropagation();
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
+
+            const lightboxModal = document.getElementById('lightbox-modal');
+            if (lightboxModal && !lightboxModal.classList.contains('hidden')) {
+                closeLightbox();
+            }
+
+            showSection('contact');
+            setTimeout(() => {
+                const messageEl = document.getElementById('contact-message');
+                const nameEl = document.getElementById('contact-name');
+                if (messageEl) {
+                    messageEl.value = `Hello, I would like to inquire about the price and availability of "${art.title}" (${art.medium || 'Oil on Canvas'}).`;
+                }
+                if (nameEl) nameEl.focus();
+            }, 120);
+        }
+
+        function renderArtworksGrid() {
+            const grid = document.getElementById('artworks-masonry-grid');
+            const countLabel = document.getElementById('artwork-count-label');
+            if (!grid) return;
+
+            const filtered = activeCategory === 'All'
+                ? artworks
+                : artworks.filter(art => art.category === activeCategory);
+
+            if (countLabel) {
+                countLabel.textContent = `Showing ${filtered.length} ${filtered.length === 1 ? 'Work' : 'Works'}${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}`;
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-[#2C2C2C]/50 font-light">No artworks found in this category yet.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map((art, index) => {
+                const safeTitle = escapeHTML(art.title);
+                const safeCategory = escapeHTML(art.category);
+                const safeMedium = escapeHTML(art.medium || 'Oil on Canvas');
+                const safeImage = escapeHTML(art.image);
+                const safeAspect = escapeHTML(art.aspect || '3/4');
+                const isSold = (art.status || 'Available').toLowerCase() === 'sold';
+                const statusDotClass = isSold ? 'bg-red-500 ring-red-200' : 'bg-emerald-500 ring-emerald-200';
+                const statusLabel = isSold ? 'Sold' : 'Available';
+                const safePrice = escapeHTML((art.price || '').trim());
+
+                return `
+                    <article class="reveal-item break-inside-avoid mb-8" style="transition-delay: ${(index % 3) * 110}ms;">
+                        <div class="tilt-card group cursor-pointer bg-white/70 border border-[#A69076]/20 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl"
+                             data-art-id="${escapeHTML(art.id)}"
+                             onclick="openLightboxById('${escapeHTML(art.id)}')">
+                            <div class="tilt-glare"></div>
+                            <div class="relative overflow-hidden bg-[#EFECE6] min-h-[240px]">
+                                <img src="${safeImage}"
+                                     alt="${safeTitle}"
+                                     data-title="${safeTitle}"
+                                     data-category="${safeCategory}"
+                                     data-aspect="${safeAspect}"
+                                     onerror="handleCardImageError(this)"
+                                     class="w-full h-auto object-cover block transition-transform duration-700 ease-out group-hover:scale-105">
+
+                                <!-- Availability Status Dot on Painting (Green = Available, Red = Sold) -->
+                                <div class="absolute top-3.5 right-3.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FAF9F6]/90 backdrop-blur-sm border border-[#A69076]/25 shadow-sm"
+                                     title="${statusLabel}">
+                                    <span class="w-2.5 h-2.5 rounded-full ${statusDotClass} ring-2"></span>
+                                    <span class="text-[10px] uppercase tracking-[0.18em] font-medium text-[#2C2C2C]">${statusLabel}</span>
+                                </div>
+
+                                <div class="absolute inset-0 bg-[#2C2C2C]/0 group-hover:bg-[#2C2C2C]/15 transition-colors duration-300 flex items-end p-5">
+                                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-4 py-1.5 rounded-full bg-[#FAF9F6]/90 backdrop-blur-sm text-[10px] uppercase tracking-[0.22em] text-[#2C2C2C]">
+                                        View Painting
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <span class="block text-[10px] uppercase tracking-[0.25em] text-[#A69076] mb-1.5">${safeCategory}</span>
+                                <h3 class="font-serif text-xl text-[#2C2C2C] mb-1 group-hover:text-[#A69076] transition-colors">${safeTitle}</h3>
+                                <p class="text-xs text-[#2C2C2C]/55 font-light">${safeMedium}</p>
+
+                                <!-- Price & Price Inquiry Row -->
+                                <div class="mt-4 pt-3.5 border-t border-[#A69076]/15 flex items-center justify-between gap-2">
+                                    <span class="text-xs font-medium text-[#2C2C2C]/85">
+                                        ${isSold ? '<span class="text-red-700/80 uppercase tracking-[0.18em] text-[10px]">Sold</span>' : (safePrice || '<span class="text-[#2C2C2C]/50 font-light">Available</span>')}
+                                    </span>
+                                    ${isSold
+                                        ? `<span class="text-[10px] uppercase tracking-[0.2em] text-[#2C2C2C]/40">Private Collection</span>`
+                                        : `<button type="button" onclick="inquireAboutArtwork('${escapeHTML(art.id)}', event)"
+                                               class="px-3.5 py-1.5 rounded-full bg-[#2C2C2C] text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#A69076] transition-colors">
+                                               Price Inquiry
+                                           </button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            initScrollRevealObserver();
+            initTiltCards();
+            setTimeout(() => {
+                if (typeof verifyAllImagesLoaded === 'function') verifyAllImagesLoaded();
+            }, 150);
+        }
+
+        // ==================== SCROLL REVEAL & 3D TILT EFFECTS ====================
+        let revealObserver = null;
+
+        function initScrollRevealObserver() {
+            if (revealObserver) {
+                revealObserver.disconnect();
+            }
+
+            revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, {
+                threshold: 0.08,
+                rootMargin: '0px 0px -30px 0px'
+            });
+
+            const items = document.querySelectorAll('.reveal-item');
+            items.forEach(el => {
+                revealObserver.observe(el);
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    requestAnimationFrame(() => el.classList.add('is-visible'));
+                }
+            });
+        }
+
+        function initTiltCards() {
+            document.querySelectorAll('.tilt-card').forEach(card => {
+                const glare = card.querySelector('.tilt-glare');
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((y - centerY) / centerY) * -6;
+                    const rotateY = ((x - centerX) / centerX) * 6;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+
+                    if (glare) {
+                        const percentX = (x / rect.width) * 100;
+                        const percentY = (y / rect.height) * 100;
+                        glare.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 70%)`;
+                        glare.style.opacity = '1';
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    if (glare) {
+                        glare.style.opacity = '0';
+                    }
+                });
+            });
+        }
+
+        // ==================== LIGHTBOX ====================
+        let currentLightboxId = null;
+        let isLightboxTransitioning = false;
+
+        function getVisibleLightboxArtworks() {
+            return activeCategory === 'All'
+                ? artworks
+                : artworks.filter(art => art.category === activeCategory);
+        }
+
+        function populateLightboxContent(art, list) {
+            const img = document.getElementById('lightbox-img');
+            const titleEl = document.getElementById('lightbox-title');
+            const catEl = document.getElementById('lightbox-category');
+            const descEl = document.getElementById('lightbox-desc');
+            const counterEl = document.getElementById('lightbox-counter');
+            const statusDotEl = document.getElementById('lightbox-status-dot');
+            const statusTextEl = document.getElementById('lightbox-status-text');
+            const priceEl = document.getElementById('lightbox-price');
+            const inquiryBtn = document.getElementById('lightbox-inquiry-btn');
+
+            img.onerror = function() {
+                applyArtFallback(img, art.title, art.category, art.aspect || '3/4');
+            };
+            img.src = art.image;
+            titleEl.textContent = art.title;
+            catEl.textContent = `${art.category} — ${art.medium || 'Oil on Canvas'}`;
+            descEl.textContent = art.description || '';
+
+            const idx = list.findIndex(a => a.id === art.id);
+            if (counterEl && idx !== -1) {
+                counterEl.textContent = `${idx + 1} / ${list.length}`;
+            }
+
+            const isSold = (art.status || 'Available').toLowerCase() === 'sold';
+            if (isSold) {
+                if (statusDotEl) statusDotEl.className = 'w-2.5 h-2.5 rounded-full bg-red-500';
+                if (statusTextEl) {
+                    statusTextEl.className = 'text-[10px] uppercase tracking-[0.25em] text-red-300 font-medium';
+                    statusTextEl.textContent = 'Sold';
+                }
+                if (priceEl) priceEl.textContent = '';
+                if (inquiryBtn) inquiryBtn.classList.add('hidden');
+            } else {
+                if (statusDotEl) statusDotEl.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
+                if (statusTextEl) {
+                    statusTextEl.className = 'text-[10px] uppercase tracking-[0.25em] text-emerald-300 font-medium';
+                    statusTextEl.textContent = 'Available';
+                }
+                if (priceEl) priceEl.textContent = (art.price || '').trim();
+                if (inquiryBtn) {
+                    inquiryBtn.classList.remove('hidden');
+                    inquiryBtn.onclick = (e) => inquireAboutArtwork(art.id, e);
+                }
+            }
+        }
+
+        function openLightboxById(id) {
+            const list = getVisibleLightboxArtworks();
+            const art = list.find(a => a.id === id) || artworks.find(a => a.id === id);
+            if (!art) return;
+
+            currentLightboxId = art.id;
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+
+            // Ensure starting closed state before triggering entrance transition
+            modal.classList.remove('is-open');
+            img.classList.remove('lightbox-slide-out-left', 'lightbox-slide-out-right', 'lightbox-slide-in-from-right', 'lightbox-slide-in-from-left');
+            caption.classList.remove('lightbox-slide-out-left', 'lightbox-slide-out-right', 'lightbox-slide-in-from-right', 'lightbox-slide-in-from-left');
+
+            populateLightboxContent(art, list);
+
+            modal.classList.remove('hidden');
+            // Force browser reflow so CSS transition plays visibly from start to finish
+            void modal.offsetWidth;
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    modal.classList.add('is-open');
+                });
+            });
+            document.body.style.overflow = 'hidden';
+        }
+
+        function navigateLightbox(direction, event) {
+            if (event) event.stopPropagation();
+            if (isLightboxTransitioning) return;
+
+            const list = getVisibleLightboxArtworks();
+            if (list.length <= 1) return;
+
+            const currentIndex = list.findIndex(a => a.id === currentLightboxId);
+            const nextIndex = (currentIndex + direction + list.length) % list.length;
+            const nextArt = list[nextIndex];
+            if (!nextArt) return;
+
+            isLightboxTransitioning = true;
+            currentLightboxId = nextArt.id;
+
+            const img = document.getElementById('lightbox-img');
+            const caption = document.getElementById('lightbox-caption');
+
+            const outClass = direction > 0 ? 'lightbox-slide-out-left' : 'lightbox-slide-out-right';
+            const inClass = direction > 0 ? 'lightbox-slide-in-from-right' : 'lightbox-slide-in-from-left';
+
+            img.classList.add(outClass);
+            caption.classList.add(outClass);
+
+            setTimeout(() => {
+                populateLightboxContent(nextArt, list);
+
+                img.classList.remove(outClass);
+                caption.classList.remove(outClass);
+                img.classList.add(inClass);
+                caption.classList.add(inClass);
+
+                void img.offsetWidth;
+
+                requestAnimationFrame(() => {
+                    img.classList.remove(inClass);
+                    caption.classList.remove(inClass);
+                    setTimeout(() => {
+                        isLightboxTransitioning = false;
+                    }, 650);
+                });
+            }, 300);
+        }
+
+        function closeLightbox(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('lightbox-modal');
+            currentLightboxId = null;
+
+            modal.classList.remove('is-open');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 720);
+        }
+
+        // Touch swipe support inside Lightbox for mobile/tablet
+        let lightboxTouchStartX = 0;
+        const lightboxModalEl = document.getElementById('lightbox-modal');
+        if (lightboxModalEl) {
+            lightboxModalEl.addEventListener('touchstart', (e) => {
+                lightboxTouchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            lightboxModalEl.addEventListener('touchend', (e) => {
+                const diffX = e.changedTouches[0].screenX - lightboxTouchStartX;
+                if (Math.abs(diffX) > 45) {
+                    navigateLightbox(diffX < 0 ? 1 : -1);
+                }
+            }, { passive: true });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const lightboxOpen = !document.getElementById('lightbox-modal').classList.contains('hidden');
+            if (lightboxOpen) {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    navigateLightbox(1);
+                    return;
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    navigateLightbox(-1);
+                    return;
+                }
+            }
+            if (e.key === 'Escape') {
+                closeLightbox();
+                closeAdminModal();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                openAdminModal();
+            }
+            if (e.altKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                openAdminModal();
+            }
+        });
+
+        // ==================== ADMIN CONSOLE LOGIC ====================
+        function updateAdminGateUI() {
+            const titleEl = document.getElementById('admin-gate-title');
+            const subEl = document.getElementById('admin-gate-subtitle');
+            const confirmInput = document.getElementById('admin-pin-confirm-input');
+            const submitBtn = document.getElementById('admin-gate-submit-btn');
+            const pinInput = document.getElementById('admin-pin-input');
+
+            if (!titleEl || !subEl || !confirmInput || !submitBtn || !pinInput) return;
+
+            if (!isPinInitialized) {
+                titleEl.textContent = 'Create Curator Passcode';
+                subEl.textContent = 'Set your private master passcode for the first time. It is encrypted and hidden from page source.';
+                pinInput.placeholder = 'Create Passcode (min 4 chars)';
+                confirmInput.classList.remove('hidden');
+                confirmInput.required = true;
+                submitBtn.textContent = 'Set Passcode & Unlock';
+            } else {
+                titleEl.textContent = 'Curator Access';
+                subEl.textContent = 'Enter your private security passcode to manage the gallery.';
+                pinInput.placeholder = 'Enter Passcode';
+                confirmInput.classList.add('hidden');
+                confirmInput.required = false;
+                submitBtn.textContent = 'Unlock Console';
+            }
+        }
+
+        function openAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            modal.classList.remove('hidden');
+            document.getElementById('admin-pin-error').classList.add('hidden');
+            updateAdminGateUI();
+
+            if (isAdminUnlocked) {
+                showAdminDashboard();
+            } else {
+                document.getElementById('admin-login-view').classList.remove('hidden');
+                document.getElementById('admin-dashboard-view').classList.add('hidden');
+                document.getElementById('admin-pin-input').value = '';
+                document.getElementById('admin-pin-confirm-input').value = '';
+                setTimeout(() => document.getElementById('admin-pin-input').focus(), 100);
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            resetAdminForm();
+        }
+
+        async function verifyAdminPin(event) {
+            event.preventDefault();
+            const entered = document.getElementById('admin-pin-input').value.trim();
+            const errorEl = document.getElementById('admin-pin-error');
+            errorEl.classList.add('hidden');
+
+            if (!isPinInitialized) {
+                const confirmed = document.getElementById('admin-pin-confirm-input').value.trim();
+                if (entered.length < 4) {
+                    errorEl.textContent = 'Passcode must be at least 4 characters.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                if (entered !== confirmed) {
+                    errorEl.textContent = 'Passcodes do not match. Please re-enter.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                const newHash = await hashPasscode(entered);
+                storedPinHash = newHash;
+                isPinInitialized = true;
+                try {
+                    if (currentUser) {
+                        await setDoc(getSettingsDocRef(), { pinHash: newHash, updatedAt: Date.now() }, { merge: true });
+                    }
+                } catch (err) {
+                    console.error('Failed to initialize passcode in cloud:', err);
+                }
+                isAdminUnlocked = true;
+                showAdminDashboard();
+                return;
+            }
+
+            const enteredHash = await hashPasscode(entered);
+            if (enteredHash === storedPinHash) {
+                isAdminUnlocked = true;
+                showAdminDashboard();
+            } else {
+                errorEl.textContent = 'Incorrect passcode. Please try again.';
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function toggleChangePinBox() {
+            const box = document.getElementById('change-pin-box');
+            const feedback = document.getElementById('change-pin-feedback');
+            box.classList.toggle('hidden');
+            feedback.classList.add('hidden');
+            document.getElementById('current-pin-verify-input').value = '';
+            document.getElementById('new-pin-input').value = '';
+        }
+
+        async function saveNewAdminPin(event) {
+            event.preventDefault();
+            const currentEntered = document.getElementById('current-pin-verify-input').value.trim();
+            const newPin = document.getElementById('new-pin-input').value.trim();
+            const feedback = document.getElementById('change-pin-feedback');
+
+            const currentHash = await hashPasscode(currentEntered);
+            if (storedPinHash && currentHash !== storedPinHash) {
+                feedback.textContent = 'Current passcode is incorrect.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-red-600';
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            if (newPin.length < 4) {
+                feedback.textContent = 'New passcode must be at least 4 characters.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-red-600';
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            const newHash = await hashPasscode(newPin);
+            storedPinHash = newHash;
+            isPinInitialized = true;
+
+            try {
+                if (currentUser) {
+                    await setDoc(getSettingsDocRef(), { pinHash: newHash, updatedAt: Date.now() }, { merge: true });
+                }
+                feedback.textContent = 'Passcode encrypted and updated in Cloud!';
+                feedback.className = 'text-xs mt-2.5 font-medium text-emerald-700';
+                feedback.classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('change-pin-box').classList.add('hidden');
+                    feedback.classList.add('hidden');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to save passcode:', err);
+                feedback.textContent = 'Updated for this session.';
+                feedback.className = 'text-xs mt-2.5 font-medium text-amber-700';
+                feedback.classList.remove('hidden');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('admin-login-view').classList.add('hidden');
+            document.getElementById('admin-dashboard-view').classList.remove('hidden');
+            populateAdminCategoryDropdown();
+            renderAdminArtworksList();
+        }
+
+        function populateAdminCategoryDropdown(selectedCat = '') {
+            const select = document.getElementById('art-category-select');
+            const defaultCats = ['Sacred Art', 'Floral & Still Life', 'Landscapes', 'Portraits'];
+            const allCats = new Set(defaultCats);
+            artworks.forEach(a => {
+                if (a.category) allCats.add(a.category);
+            });
+
+            select.innerHTML = Array.from(allCats).map(cat => {
+                const isSelected = cat === selectedCat ? 'selected' : '';
+                return `<option value="${escapeHTML(cat)}" ${isSelected}>${escapeHTML(cat)}</option>`;
+            }).join('');
+        }
+
+        function renderAdminArtworksList() {
+            const list = document.getElementById('admin-artworks-list');
+            const totalCount = document.getElementById('admin-total-count');
+            if (totalCount) totalCount.textContent = artworks.length;
+
+            list.innerHTML = artworks.map(art => {
+                const isSold = (art.status || 'Available').toLowerCase() === 'sold';
+                const dotClass = isSold ? 'bg-red-500' : 'bg-emerald-500';
+                const statusInfo = isSold ? 'Sold' : (escapeHTML(art.price) || 'Available');
+
+                return `
+                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-[#A69076]/20">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <img src="${escapeHTML(art.image)}"
+                                 alt="${escapeHTML(art.title)}"
+                                 data-title="${escapeHTML(art.title)}"
+                                 data-category="${escapeHTML(art.category)}"
+                                 data-aspect="${escapeHTML(art.aspect || '3/4')}"
+                                 onerror="handleCardImageError(this)"
+                                 class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
+                            <div class="min-w-0">
+                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] block truncate">${escapeHTML(art.category)}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full ${dotClass} flex-shrink-0"></span>
+                                    <h5 class="font-serif text-base text-[#2C2C2C] truncate">${escapeHTML(art.title)}</h5>
+                                </div>
+                                <span class="text-[11px] text-[#2C2C2C]/50 block truncate">${escapeHTML(art.medium || 'Oil on Canvas')} • ${statusInfo}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button type="button" onclick="editArtworkInAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
+                                Edit
+                            </button>
+                            <button type="button" onclick="deleteArtworkFromAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function saveArtworkFromAdmin(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('save-artwork-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publishing...';
+
+            try {
+                const editId = document.getElementById('edit-artwork-id').value;
+                const title = document.getElementById('art-title-input').value.trim();
+                const selectedCat = document.getElementById('art-category-select').value;
+                const newCat = document.getElementById('art-new-category-input').value.trim();
+                const category = newCat !== '' ? newCat : selectedCat;
+                const medium = document.getElementById('art-medium-input').value.trim() || 'Oil on Canvas';
+                const status = document.getElementById('art-status-select').value || 'Available';
+                const price = document.getElementById('art-price-input').value.trim();
+                const description = document.getElementById('art-desc-input').value.trim();
+                const urlInput = document.getElementById('art-url-input').value.trim();
+                const fileInput = document.getElementById('art-file-input');
+
+                let imageSrc = urlInput;
+                let aspect = '3/4';
+
+                if (fileInput.files && fileInput.files[0]) {
+                    const compressed = await compressImageFile(fileInput.files[0]);
+                    imageSrc = compressed.dataUrl;
+                    aspect = compressed.aspect;
+                } else if (!imageSrc && editId) {
+                    const existing = artworks.find(a => a.id === editId);
+                    if (existing) {
+                        imageSrc = existing.image;
+                        aspect = existing.aspect || '3/4';
+                    }
+                } else if (!imageSrc) {
+                    imageSrc = createArtPlaceholderDataURL(title, category, '3/4');
+                }
+
+                const docId = editId || 'art-' + Date.now();
+                const existingArt = artworks.find(a => a.id === docId);
+
+                const artworkPayload = {
+                    id: docId,
+                    title,
+                    category,
+                    medium,
+                    status,
+                    price,
+                    image: imageSrc,
+                    aspect,
+                    description,
+                    order: existingArt ? (existingArt.order || 1) : 0,
+                    updatedAt: Date.now()
+                };
+
+                if (cloudReady && currentUser) {
+                    await setDoc(doc(getArtworksCollectionRef(), docId), artworkPayload);
+                } else {
+                    if (editId) {
+                        const idx = artworks.findIndex(a => a.id === editId);
+                        if (idx !== -1) artworks[idx] = artworkPayload;
+                    } else {
+                        artworks.unshift(artworkPayload);
+                    }
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    renderAdminArtworksList();
+                }
+
+                resetAdminForm();
+                populateAdminCategoryDropdown();
+            } catch (err) {
+                console.error('Error publishing artwork:', err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publish to Live Gallery';
+            }
+        }
+
+        function editArtworkInAdmin(id) {
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
+
+            document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
+            document.getElementById('edit-artwork-id').value = art.id;
+            document.getElementById('art-title-input').value = art.title || '';
+            populateAdminCategoryDropdown(art.category);
+            document.getElementById('art-new-category-input').value = '';
+            document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
+            document.getElementById('art-status-select').value = art.status || 'Available';
+            document.getElementById('art-price-input').value = art.price || '';
+            const currentImg = String(art.image || '');
+            document.getElementById('art-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
+            document.getElementById('art-desc-input').value = art.description || '';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
+
+            const modalOverlay = document.getElementById('admin-modal');
+            const modalBody = document.getElementById('admin-modal-body');
+            const formContainer = document.getElementById('admin-form-container');
+            const titleInput = document.getElementById('art-title-input');
+
+            const scrollToTop = () => {
+                if (modalOverlay) modalOverlay.scrollTop = 0;
+                if (modalBody) {
+                    modalBody.scrollTop = 0;
+                    modalBody.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                if (formContainer) {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            };
+
+            scrollToTop();
+            requestAnimationFrame(scrollToTop);
+            setTimeout(() => {
+                scrollToTop();
+                if (titleInput) titleInput.focus({ preventScroll: false });
+            }, 60);
+
+            if (formContainer) {
+                formContainer.classList.add('ring-2', 'ring-[#A69076]');
+                setTimeout(() => formContainer.classList.remove('ring-2', 'ring-[#A69076]'), 1600);
+            }
+        }
+
+        function resetAdminForm() {
+            document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
+            document.getElementById('admin-artwork-form').reset();
+            document.getElementById('edit-artwork-id').value = '';
+            document.getElementById('art-medium-input').value = 'Oil on Canvas';
+            document.getElementById('art-status-select').value = 'Available';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            document.getElementById('save-artwork-btn').textContent = 'Publish to Live Gallery';
+        }
+
+        async function deleteArtworkFromAdmin(id) {
+            if (cloudReady && currentUser) {
+                await deleteDoc(doc(getArtworksCollectionRef(), id));
+            } else {
+                artworks = artworks.filter(a => a.id !== id);
+                renderCategoryFilterBar();
+                renderArtworksGrid();
+                renderAdminArtworksList();
+            }
+        }
+
+        async function resetToDefaultArtworks() {
+            if (cloudReady && currentUser) {
+                const colRef = getArtworksCollectionRef();
+                for (const existing of artworks) {
+                    await deleteDoc(doc(colRef, existing.id));
+                }
+                for (const item of DEFAULT_ARTWORKS) {
+                    await setDoc(doc(colRef, item.id), item);
+                }
+            } else {
+                artworks = [...DEFAULT_ARTWORKS];
+                renderCategoryFilterBar();
+                renderArtworksGrid();
+                renderAdminArtworksList();
+            }
+            populateAdminCategoryDropdown();
+        }
+
+        function exportArtworksJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(artworks, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "mtoung-artworks-backup.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // ==================== CONTACT FORM (NETLIFY READY) ====================
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const feedback = document.getElementById('contact-feedback');
+            const formData = new FormData(form);
+
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(formData).toString()
+            })
+            .then(() => {
+                feedback.classList.remove('hidden');
+                form.reset();
+            })
+            .catch(() => {
+                feedback.classList.remove('hidden');
+                form.reset();
+            });
+        }
+
+        // Expose functions globally for inline event handlers
+        window.showSection = showSection;
+        window.handleSecretBrandTap = handleSecretBrandTap;
+        window.filterByCategory = filterByCategory;
+        window.inquireAboutArtwork = inquireAboutArtwork;
+        window.openLightboxById = openLightboxById;
+        window.navigateLightbox = navigateLightbox;
+        window.closeLightbox = closeLightbox;
+        window.openAdminModal = openAdminModal;
+        window.closeAdminModal = closeAdminModal;
+        window.verifyAdminPin = verifyAdminPin;
+        window.toggleChangePinBox = toggleChangePinBox;
+        window.saveNewAdminPin = saveNewAdminPin;
+        window.saveArtworkFromAdmin = saveArtworkFromAdmin;
+        window.editArtworkInAdmin = editArtworkInAdmin;
+        window.resetAdminForm = resetAdminForm;
+        window.deleteArtworkFromAdmin = deleteArtworkFromAdmin;
+        window.resetToDefaultArtworks = resetToDefaultArtworks;
+        window.exportArtworksJSON = exportArtworksJSON;
+        window.handleContactSubmit = handleContactSubmit;
+
+        // Boot initial view & connect to Firebase Cloud
+        renderCategoryFilterBar();
+        renderArtworksGrid();
+        showSection('home');
+        initCloudGallery();
+        verifyAllImagesLoaded();
+
+        // Auto-open Admin Console if URL includes ?admin=true or #admin
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'true' || window.location.hash === '#admin') {
+            setTimeout(() => openAdminModal(), 300);
+        }
+    </script>
+</body>
+</html>
