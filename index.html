@@ -55,9 +55,12 @@
             color: #EDE7DA;
         }
 
+        /* Keep original Logo colors in Dark Mode — subtly soften opacity only */
+        #header-brand-logo {
+            transition: opacity 0.45s ease, transform 0.3s ease;
+        }
         html.dark #header-brand-logo {
-            filter: invert(0.92) brightness(1.08);
-            mix-blend-mode: screen;
+            opacity: 0.84;
         }
 
         /* Custom Scrollbar */
@@ -98,17 +101,30 @@
         /* Smooth Continuous Scroll-Driven Reveal & Zoom */
         .reveal-item {
             opacity: 0.06;
-            transform: translate3d(0, 28px, 0) scale(0.94);
-            filter: blur(2px);
+            transform: translate3d(0, 42px, 0) scale(0.84);
+            filter: blur(4px);
             will-change: opacity, transform, filter;
         }
 
         /* Interactive 3D Tilt Card, Specular Glare & Light Sheen */
         .tilt-card {
             transform-style: preserve-3d;
-            transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
                         border-color 0.45s ease;
             position: relative;
+        }
+        .tilt-card.is-scrolling {
+            transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.45s ease;
+        }
+        .tilt-card.is-tilting {
+            transition: opacity 0.35s ease,
+                        filter 0.35s ease,
+                        box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.35s ease;
         }
         .tilt-card:hover {
             box-shadow: 0 32px 64px -18px rgba(38, 35, 31, 0.28), 0 12px 28px -10px rgba(156, 130, 101, 0.34);
@@ -241,7 +257,7 @@
                     <img id="header-brand-logo"
                          src="Logo.jpg"
                          alt="The Artist's Loft"
-                         class="h-10 sm:h-12 md:h-14 w-auto max-w-[230px] object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105">
+                         class="h-10 sm:h-12 md:h-14 w-auto max-w-[230px] object-contain mix-blend-multiply dark:mix-blend-normal transition-transform duration-300 group-hover:scale-105">
                 </button>
             </div>
 
@@ -919,7 +935,7 @@
             }
         }
 
-        // Smart Auto-Resolver for Logo.jpg
+        // Smart Auto-Resolver for Logo.jpg (with automatic white-background removal)
         function initBrandLogoResolver() {
             const candidates = [
                 'brand-logo.jpg',
@@ -936,6 +952,51 @@
                 'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/logo.jpg',
                 'https://cdn.jsdelivr.net/gh/thetpaing2006-sudo/theartistsloft@main/ALlogo.jpg'
             ];
+
+            // Knock out white / near-white background pixels with smooth edge feathering
+            const removeWhiteBackgroundToPNG = (imgEl) => {
+                try {
+                    const w = imgEl.naturalWidth;
+                    const h = imgEl.naturalHeight;
+                    if (!w || !h) return null;
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imgEl, 0, 0, w, h);
+
+                    const imageData = ctx.getImageData(0, 0, w, h);
+                    const data = imageData.data;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i];
+                        const g = data[i + 1];
+                        const b = data[i + 2];
+                        const a = data[i + 3];
+                        if (a === 0) continue;
+
+                        const maxC = Math.max(r, g, b);
+                        const minC = Math.min(r, g, b);
+                        const chroma = maxC - minC;
+                        const brightness = (r + g + b) / 3;
+
+                        if (brightness >= 240 && chroma < 22) {
+                            // Pure / near-pure white background -> fully transparent
+                            data[i + 3] = 0;
+                        } else if (brightness > 205 && chroma < 30) {
+                            // Soft anti-aliased edge feathering to prevent white halos
+                            const alphaFactor = (240 - brightness) / (240 - 205);
+                            data[i + 3] = Math.round(a * Math.max(0, Math.min(1, alphaFactor)));
+                        }
+                    }
+
+                    ctx.putImageData(imageData, 0, 0);
+                    return canvas.toDataURL('image/png');
+                } catch (e) {
+                    return null;
+                }
+            };
 
             const applyFaviconPNG = (imgEl) => {
                 try {
@@ -969,8 +1030,14 @@
 
             const applyResolvedLogo = (url, probeImg) => {
                 const headerImg = document.getElementById('header-brand-logo');
-                if (headerImg && headerImg.src !== url) {
-                    headerImg.src = url;
+                const transparentLogoUrl = removeWhiteBackgroundToPNG(probeImg);
+                if (headerImg) {
+                    if (transparentLogoUrl) {
+                        headerImg.src = transparentLogoUrl;
+                        headerImg.classList.remove('mix-blend-multiply', 'dark:mix-blend-normal');
+                    } else if (headerImg.src !== url) {
+                        headerImg.src = url;
+                    }
                 }
                 applyFaviconPNG(probeImg);
             };
@@ -2582,30 +2649,63 @@
         }
 
         // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
-        let galleryScrollRaf = null;
+        let galleryAnimRaf = null;
         let galleryScrollBound = false;
+        const cardAnimStates = new WeakMap();
 
         function getCardRandomSeed(card, idx) {
             if (card.dataset.randSeeded === 'true') {
                 return {
                     phase: parseFloat(card.dataset.randPhase),
                     scaleMin: parseFloat(card.dataset.randScaleMin),
-                    yOffset: parseFloat(card.dataset.randYOffset)
+                    yOffset: parseFloat(card.dataset.randYOffset),
+                    easePower: parseFloat(card.dataset.randEasePower),
+                    lerpSpeed: parseFloat(card.dataset.randLerp)
                 };
             }
-            const seed = (idx * 73 + 19) % 100 / 100;
-            const phase = (seed - 0.5) * 0.22;
-            const scaleMin = 0.91 + (seed * 0.035);
-            const yOffset = 22 + Math.round(seed * 14);
+            // Subtle deterministic-random organic variance per card so same-row cards never move robotically in unison
+            const r1 = Math.random();
+            const r2 = Math.random();
+            const r3 = Math.random();
+            const phase = (r1 - 0.5) * 0.26;          // Slight vertical timing offset
+            const scaleMin = 0.81 + (r2 * 0.065);     // Noticeable smooth zoom range (0.81 - 0.875)
+            const yOffset = 34 + Math.round(r3 * 22); // Gentle floating travel distance
+            const easePower = 1.35 + (r2 * 0.45);     // Subtle curve variance
+            const lerpSpeed = 0.095 + (r1 * 0.045);   // Slight lag variance for fluid organic motion
+
             card.dataset.randSeeded = 'true';
             card.dataset.randPhase = phase.toFixed(3);
             card.dataset.randScaleMin = scaleMin.toFixed(3);
             card.dataset.randYOffset = String(yOffset);
-            return { phase, scaleMin, yOffset };
+            card.dataset.randEasePower = easePower.toFixed(3);
+            card.dataset.randLerp = lerpSpeed.toFixed(3);
+            return { phase, scaleMin, yOffset, easePower, lerpSpeed };
         }
 
-        function updateGalleryScrollPresence() {
-            galleryScrollRaf = null;
+        function computeTargetScrollProgress(card, idx, vh) {
+            const rect = card.getBoundingClientRect();
+            const cardCenter = (rect.top + rect.bottom) * 0.5;
+            const { phase, easePower } = getCardRandomSeed(card, idx);
+
+            // Sweet-spot focal center slightly below header
+            const focalCenter = vh * 0.52;
+            const focalRadius = Math.max(vh * 0.56, 360);
+            const adjustedCenter = cardCenter + (phase * vh * 0.22);
+            const normalizedDist = Math.min(1, Math.abs(adjustedCenter - focalCenter) / focalRadius);
+
+            // Smooth cosine-inspired bell curve with a comfortable crisp center plateau
+            const plateauDist = Math.max(0, (normalizedDist - 0.16) / 0.84);
+            const raw = Math.max(0, Math.min(1, 1 - Math.pow(plateauDist, easePower)));
+            const eased = raw * raw * (3 - 2 * raw);
+
+            return {
+                progress: eased,
+                direction: adjustedCenter < focalCenter ? -1 : 1
+            };
+        }
+
+        function stepGalleryScrollAnimation() {
+            galleryAnimRaf = null;
             const artworksSection = document.getElementById('section-artworks');
             if (!artworksSection || artworksSection.classList.contains('hidden')) return;
 
@@ -2613,48 +2713,55 @@
             if (cards.length === 0) return;
 
             const vh = window.innerHeight || document.documentElement.clientHeight;
-            const headerHeight = 105;
-            const topFadeStart = headerHeight + 45;
-            const topFadeEnd = headerHeight - 150;
-            const bottomFadeStart = vh + 95;
-            const bottomFadeEnd = vh * 0.80;
+            let needsAnotherFrame = false;
 
             cards.forEach((card, idx) => {
+                const { scaleMin, yOffset, lerpSpeed } = getCardRandomSeed(card, idx);
+                const targetInfo = computeTargetScrollProgress(card, idx, vh);
+                const target = card.dataset.hovered === 'true' ? 1 : targetInfo.progress;
+
+                let state = cardAnimStates.get(card);
+                if (!state) {
+                    state = { current: target, dir: targetInfo.direction };
+                    cardAnimStates.set(card, state);
+                }
+
+                // Smooth physics lerp for buttery-soft zoom-in / zoom-out
+                const diff = target - state.current;
+                if (Math.abs(diff) > 0.0015) {
+                    state.current += diff * lerpSpeed;
+                    needsAnotherFrame = true;
+                } else {
+                    state.current = target;
+                }
+                state.dir = targetInfo.direction;
+
                 if (card.dataset.hovered === 'true') {
                     card.style.opacity = '1';
                     card.style.filter = 'none';
                     return;
                 }
 
-                const rect = card.getBoundingClientRect();
-                const center = (rect.top + rect.bottom) * 0.5;
-                const { phase, scaleMin, yOffset } = getCardRandomSeed(card, idx);
-                const adjustedCenter = center + (phase * 140);
-
-                let progress = 1;
-                if (adjustedCenter < topFadeStart) {
-                    progress = (adjustedCenter - topFadeEnd) / (topFadeStart - topFadeEnd);
-                } else if (adjustedCenter > bottomFadeEnd) {
-                    progress = 1 - ((adjustedCenter - bottomFadeEnd) / (bottomFadeStart - bottomFadeEnd));
-                }
-
-                progress = Math.max(0, Math.min(1, progress));
-                const eased = progress * progress * (3 - 2 * progress);
-
+                const eased = state.current;
                 const opacity = 0.06 + (0.94 * eased);
-                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -18 : yOffset);
+                const translateY = (1 - eased) * (state.dir < 0 ? -yOffset * 0.65 : yOffset);
                 const scale = scaleMin + ((1 - scaleMin) * eased);
-                const blurPx = (1 - eased) * 1.8;
+                const blurPx = (1 - eased) * 4.2;
 
+                card.classList.add('is-scrolling');
                 card.style.opacity = opacity.toFixed(3);
-                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
+                card.style.filter = blurPx > 0.1 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
                 card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
             });
+
+            if (needsAnotherFrame) {
+                galleryAnimRaf = requestAnimationFrame(stepGalleryScrollAnimation);
+            }
         }
 
         function requestGalleryScrollUpdate() {
-            if (galleryScrollRaf === null) {
-                galleryScrollRaf = requestAnimationFrame(updateGalleryScrollPresence);
+            if (galleryAnimRaf === null) {
+                galleryAnimRaf = requestAnimationFrame(stepGalleryScrollAnimation);
             }
         }
 
@@ -2672,6 +2779,8 @@
 
                 card.addEventListener('mouseenter', () => {
                     card.dataset.hovered = 'true';
+                    card.classList.remove('is-scrolling');
+                    card.classList.add('is-tilting');
                     card.style.opacity = '1';
                     card.style.filter = 'none';
                 });
@@ -2684,7 +2793,7 @@
                     const centerY = rect.height / 2;
                     const rotateX = ((y - centerY) / centerY) * -6.5;
                     const rotateY = ((x - centerX) / centerX) * 6.5;
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-8px) scale(1.022)`;
                     if (glare) {
                         const pctX = (x / rect.width) * 100;
                         const pctY = (y / rect.height) * 100;
@@ -2695,12 +2804,13 @@
 
                 card.addEventListener('mouseleave', () => {
                     card.dataset.hovered = 'false';
+                    card.classList.remove('is-tilting');
                     if (glare) glare.style.opacity = '0';
                     requestGalleryScrollUpdate();
                 });
             });
 
-            updateGalleryScrollPresence();
+            requestGalleryScrollUpdate();
         }
 
         // ==================== ULTRA-SOFT WHISPER GALLERY AMBIENCE (0.022) ====================
