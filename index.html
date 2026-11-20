@@ -696,7 +696,7 @@
 
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist Name *</label>
-                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Ba" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Lun Gywe or Daw Khin" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
@@ -1290,7 +1290,7 @@
 
         // Live State
         let artists = [...DEFAULT_ARTISTS];
-        let artworks = [...DEFAULT_ARTWORKS];
+        let artworks = [];
         let galleryAbout = { ...DEFAULT_GALLERY_ABOUT };
         let editLogs = [];
         let activeArtistId = 'mt-oung';
@@ -1445,20 +1445,10 @@
                     }
                 }, (err) => console.warn('Artists sync notice:', err));
 
-                // 4. Sync Artworks
+                // 4. Sync Artworks (Never auto-reseed default artworks when collection is empty)
                 const colRef = getArtworksCollectionRef();
-                onSnapshot(colRef, async (snapshot) => {
+                onSnapshot(colRef, (snapshot) => {
                     if (snapshot.empty) {
-                        if (!artworksSeededFlag) {
-                            artworksSeededFlag = true;
-                            updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Seeding initial collection...`);
-                            await setDoc(getGalleryMetaDocRef(), { artworksSeeded: true, seededAt: Date.now() }, { merge: true });
-                            for (const item of DEFAULT_ARTWORKS) {
-                                await setDoc(doc(colRef, item.id), item);
-                            }
-                            return;
-                        }
-                        // User intentionally deleted all artworks — keep collection empty without re-seeding
                         artworks = [];
                         updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Live Sync Active`);
                         renderSelectedArtistProfile();
@@ -1469,11 +1459,6 @@
                             renderAdminArtworksList();
                         }
                         return;
-                    }
-
-                    if (!artworksSeededFlag) {
-                        artworksSeededFlag = true;
-                        setDoc(getGalleryMetaDocRef(), { artworksSeeded: true }, { merge: true }).catch(() => {});
                     }
 
                     const loaded = [];
@@ -2350,18 +2335,19 @@
 
         async function deleteArtworkFromAdmin(id) {
             const target = artworks.find(a => a.id === id);
-            artworksSeededFlag = true;
-            if (cloudReady && currentUser) {
+            artworks = artworks.filter(a => a.id !== id);
+            renderSelectedArtistProfile();
+            renderCategoryFilterBar();
+            renderArtworksGrid();
+            renderAdminArtworksList();
+
+            if (db && currentUser) {
                 try {
-                    await setDoc(getGalleryMetaDocRef(), { artworksSeeded: true }, { merge: true });
-                } catch (e) {}
-                await deleteDoc(doc(getArtworksCollectionRef(), id));
-            } else {
-                artworks = artworks.filter(a => a.id !== id);
-                renderSelectedArtistProfile();
-                renderCategoryFilterBar();
-                renderArtworksGrid();
-                renderAdminArtworksList();
+                    await deleteDoc(doc(getArtworksCollectionRef(), id));
+                } catch (err) {
+                    console.error('Failed to delete artwork from cloud:', err);
+                    showAdminFeedback('Delete failed in cloud: ' + (err.message || 'Check connection.'), true);
+                }
             }
             if (target) {
                 await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
