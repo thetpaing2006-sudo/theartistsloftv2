@@ -897,6 +897,8 @@ body,
         }
 
   let themeFadeTimer = null;
+let themeSwapTimer = null;
+
 function toggleThemeMode() {
     const currentlyDark = document.documentElement.classList.contains('dark');
     const nextMode = currentlyDark ? 'light' : 'dark';
@@ -906,18 +908,29 @@ function toggleThemeMode() {
         playSoftGalleryChime('select');
     }
 
-    if (veil) {
-        clearTimeout(themeFadeTimer);
-        veil.classList.add('is-fading');
-        setTimeout(() => {
-            applyThemeMode(nextMode);
-        }, 220);
-        themeFadeTimer = setTimeout(() => {
-            veil.classList.remove('is-fading');
-        }, 680);
-    } else {
+    if (!veil) {
         applyThemeMode(nextMode);
+        return;
     }
+
+    clearTimeout(themeFadeTimer);
+    clearTimeout(themeSwapTimer);
+
+    veil.classList.remove('theme-veil--to-dark', 'theme-veil--to-light', 'is-fading');
+    veil.classList.add(nextMode === 'dark' ? 'theme-veil--to-dark' : 'theme-veil--to-light');
+
+    requestAnimationFrame(() => {
+        veil.classList.add('is-fading');
+    });
+
+    themeSwapTimer = setTimeout(() => {
+        applyThemeMode(nextMode);
+        veil.classList.remove('is-fading');
+    }, 300);
+
+    themeFadeTimer = setTimeout(() => {
+        veil.classList.remove('theme-veil--to-dark', 'theme-veil--to-light');
+    }, 980);
 }
 
         (function initSavedTheme() {
