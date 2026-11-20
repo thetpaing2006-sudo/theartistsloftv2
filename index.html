@@ -31,144 +31,33 @@
         };
     </script>
 
-    <!-- Instant Theme Initialization (Prevents Flash on Page Load) -->
-    <script>
-        (function () {
-            try {
-                const savedTheme = localStorage.getItem('tal-theme');
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            } catch (e) {}
-        })();
-    </script>
-
     <style>
-        /* Classic Museum Warm Parchment & Fine Linen Paper Texture (Light Mode) */
+        /* Classic Museum Warm Parchment & Fine Linen Paper Texture */
         body {
             background-color: #F3EFE6;
             background-image:
-                radial-gradient(circle at 20% 15%, rgba(255, 252, 245, 0.8) 0%, transparent 55%),
+                radial-gradient(circle at 20% 15%, rgba(255, 252, 245, 0.75) 0%, transparent 55%),
                 radial-gradient(circle at 85% 80%, rgba(224, 214, 195, 0.55) 0%, transparent 60%),
                 repeating-linear-gradient(0deg, rgba(156, 130, 101, 0.025) 0px, rgba(156, 130, 101, 0.025) 1px, transparent 1px, transparent 4px),
                 repeating-linear-gradient(90deg, rgba(156, 130, 101, 0.02) 0px, rgba(156, 130, 101, 0.02) 1px, transparent 1px, transparent 4px);
             color: #26231F;
-            transition: background-color 0.65s cubic-bezier(0.16, 1, 0.3, 1), color 0.65s ease;
+            transition: background-color 0.45s ease, color 0.45s ease;
         }
 
-        /* World-Class Midnight Obsidian Gallery Texture (Dark Mode) */
+        /* World-Class Midnight Gallery Dark Mode */
         html.dark body {
-            background-color: #11100E;
+            background-color: #12110F;
             background-image:
-                radial-gradient(circle at 50% 8%, rgba(212, 180, 131, 0.07) 0%, transparent 52%),
-                radial-gradient(circle at 18% 25%, rgba(36, 31, 26, 0.65) 0%, transparent 55%),
-                radial-gradient(circle at 85% 85%, rgba(24, 21, 18, 0.85) 0%, transparent 60%),
-                repeating-linear-gradient(0deg, rgba(212, 180, 131, 0.025) 0px, rgba(212, 180, 131, 0.025) 1px, transparent 1px, transparent 4px),
-                repeating-linear-gradient(90deg, rgba(212, 180, 131, 0.02) 0px, rgba(212, 180, 131, 0.02) 1px, transparent 1px, transparent 4px);
-            color: #F0EAE0;
+                radial-gradient(circle at 22% 14%, rgba(212, 180, 131, 0.08) 0%, transparent 55%),
+                radial-gradient(circle at 82% 84%, rgba(156, 130, 101, 0.07) 0%, transparent 60%),
+                repeating-linear-gradient(0deg, rgba(212, 180, 131, 0.02) 0px, rgba(212, 180, 131, 0.02) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(212, 180, 131, 0.015) 0px, rgba(212, 180, 131, 0.015) 1px, transparent 1px, transparent 4px);
+            color: #EDE7DA;
         }
 
-        /* Seamless Dark Mode Surface & Typography Refinement */
-        html.dark header {
-            background-color: rgba(17, 16, 14, 0.86) !important;
-            border-color: rgba(212, 180, 131, 0.18) !important;
-            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7);
-        }
-        html.dark footer {
-            background-color: #11100E !important;
-            border-color: rgba(212, 180, 131, 0.18) !important;
-        }
-        html.dark .bg-\[\#FAF7F0\]\/95,
-        html.dark .bg-\[\#FAF7F0\]\/90,
-        html.dark .bg-\[\#FAF7F0\]\/85,
-        html.dark .bg-\[\#FAF7F0\]\/80,
-        html.dark .bg-\[\#FAF7F0\]\/75,
-        html.dark .bg-\[\#FAF7F0\]\/70 {
-            background-color: rgba(25, 23, 20, 0.88) !important;
-            border-color: rgba(212, 180, 131, 0.20) !important;
-        }
-        html.dark .bg-\[\#E7E0D2\] {
-            background: radial-gradient(circle at 50% 42%, #24211D 0%, #171512 100%) !important;
-        }
-        html.dark .text-\[\#26231F\],
-        html.dark .text-\[\#2C2C2C\] {
-            color: #F0EAE0 !important;
-        }
-        html.dark .text-\[\#26231F\]\/85,
-        html.dark .text-\[\#26231F\]\/80 {
-            color: rgba(240, 234, 224, 0.88) !important;
-        }
-        html.dark .text-\[\#26231F\]\/75,
-        html.dark .text-\[\#26231F\]\/70,
-        html.dark .text-\[\#2C2C2C\]\/75,
-        html.dark .text-\[\#2C2C2C\]\/70 {
-            color: rgba(240, 234, 224, 0.75) !important;
-        }
-        html.dark .text-\[\#26231F\]\/65,
-        html.dark .text-\[\#26231F\]\/60,
-        html.dark .text-\[\#2C2C2C\]\/50 {
-            color: rgba(240, 234, 224, 0.56) !important;
-        }
-        html.dark .placeholder\:text-\[\#2C2C2C\]\/30::placeholder {
-            color: rgba(240, 234, 224, 0.30) !important;
-        }
-        html.dark .text-\[\#9C8265\],
-        html.dark .text-\[\#A69076\] {
-            color: #D4B483 !important;
-        }
-        html.dark .bg-\[\#26231F\],
-        html.dark .bg-\[\#2C2C2C\] {
-            background-color: #D4B483 !important;
-            color: #11100E !important;
-        }
-        html.dark .bg-\[\#26231F\]:hover,
-        html.dark .bg-\[\#2C2C2C\]:hover {
-            background-color: #E5C89B !important;
-            color: #11100E !important;
-        }
-        html.dark .bg-\[\#26231F\]\/80 {
-            background-color: rgba(17, 16, 14, 0.86) !important;
-            color: #F0EAE0 !important;
-            border: 1px solid rgba(212, 180, 131, 0.25);
-        }
-        html.dark .from-\[\#F3EFE6\] {
-            --tw-gradient-from: #11100E var(--tw-gradient-from-position) !important;
-            --tw-gradient-to: rgba(17, 16, 14, 0) var(--tw-gradient-to-position) !important;
-            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
-        }
-        html.dark .to-\[\#F3EFE6\] {
-            --tw-gradient-to: #11100E var(--tw-gradient-to-position) !important;
-        }
         html.dark #header-brand-logo {
-            filter: invert(0.92) hue-rotate(180deg) contrast(1.06);
+            filter: invert(0.92) brightness(1.08);
             mix-blend-mode: screen;
-        }
-        html.dark #home-bg-1,
-        html.dark #home-bg-2 {
-            mix-blend-mode: luminosity;
-            opacity: 0.20;
-        }
-
-        /* Dark Mode Admin Console Styling */
-        html.dark #admin-modal .bg-\[\#FAF9F6\] {
-            background-color: #171513 !important;
-            color: #F0EAE0 !important;
-        }
-        html.dark #admin-modal .bg-white,
-        html.dark #admin-modal .bg-white\/80 {
-            background-color: #211E1B !important;
-            color: #F0EAE0 !important;
-            border-color: rgba(212, 180, 131, 0.22) !important;
-        }
-        html.dark #admin-modal input,
-        html.dark #admin-modal select,
-        html.dark #admin-modal textarea {
-            background-color: #13110F !important;
-            color: #F0EAE0 !important;
-            border-color: rgba(212, 180, 131, 0.35) !important;
         }
 
         /* Custom Scrollbar */
@@ -180,7 +69,7 @@
             background: #EDE7DA;
         }
         html.dark ::-webkit-scrollbar-track {
-            background: #161412;
+            background: #1B1916;
         }
         ::-webkit-scrollbar-thumb {
             background: #9C8265;
@@ -197,7 +86,7 @@
         }
         .sound-bar {
             transform-origin: bottom;
-            animation: soundPulse 1.3s ease-in-out infinite;
+            animation: soundPulse 1.1s ease-in-out infinite;
         }
         .sound-bar:nth-child(2) { animation-delay: 0.25s; }
         .sound-bar:nth-child(3) { animation-delay: 0.5s; }
@@ -206,27 +95,24 @@
             transform: scaleY(0.35);
         }
 
-        /* Smooth Continuous Scroll-Driven Zoom-In / Zoom-Out & Focus */
+        /* Smooth Continuous Scroll-Driven Reveal & Zoom */
         .reveal-item {
-            opacity: 0.05;
-            transform: perspective(1200px) translate3d(0, 32px, 0) scale(0.83);
-            will-change: opacity, transform;
+            opacity: 0.06;
+            transform: translate3d(0, 28px, 0) scale(0.94);
+            filter: blur(2px);
+            will-change: opacity, transform, filter;
         }
 
-        /* World-Class Interactive 3D Tilt Card, Specular Glare & Light Sheen */
+        /* Interactive 3D Tilt Card, Specular Glare & Light Sheen */
         .tilt-card {
             transform-style: preserve-3d;
-            transition: box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+            transition: box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
                         border-color 0.45s ease;
             position: relative;
         }
         .tilt-card:hover {
-            box-shadow: 0 34px 68px -18px rgba(38, 35, 31, 0.28), 0 12px 28px -10px rgba(156, 130, 101, 0.35);
-            border-color: rgba(156, 130, 101, 0.8);
-        }
-        html.dark .tilt-card:hover {
-            box-shadow: 0 36px 72px -16px rgba(0, 0, 0, 0.88), 0 0 38px -8px rgba(212, 180, 131, 0.22);
-            border-color: rgba(212, 180, 131, 0.72);
+            box-shadow: 0 32px 64px -18px rgba(38, 35, 31, 0.28), 0 12px 28px -10px rgba(156, 130, 101, 0.34);
+            border-color: rgba(212, 180, 131, 0.8);
         }
         .tilt-glare {
             position: absolute;
@@ -243,14 +129,11 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.34) 48%, rgba(255, 255, 255, 0.08) 54%, transparent 72%);
+            background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.32) 48%, rgba(255, 255, 255, 0.08) 54%, transparent 72%);
             transform: translateX(-130%);
             transition: transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 21;
             border-radius: inherit;
-        }
-        html.dark .tilt-card::after {
-            background: linear-gradient(115deg, transparent 25%, rgba(235, 212, 175, 0.22) 48%, rgba(235, 212, 175, 0.06) 54%, transparent 72%);
         }
         .tilt-card:hover::after {
             transform: translateX(130%);
@@ -258,10 +141,10 @@
 
         /* Smooth Section Fade */
         .page-section {
-            animation: fadeSection 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeSection 0.45s ease-out forwards;
         }
         @keyframes fadeSection {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -338,10 +221,10 @@
         }
     </style>
 </head>
-<body class="bg-[#F3EFE6] text-[#26231F] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F]">
+<body class="bg-[#F3EFE6] dark:bg-[#12110F] text-[#26231F] dark:text-[#EDE7DA] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F] dark:selection:text-[#EDE7DA]">
 
     <!-- Top Minimalist Navigation Header -->
-    <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#F3EFE6]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/20 transition-all">
+    <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/20 dark:border-[#D4B483]/20 transition-all">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             
             <!-- Left Navigation Links -->
@@ -362,26 +245,20 @@
                 </button>
             </div>
 
-            <!-- Right Links + Theme Toggle + Ultra-Soft Gallery Ambience Sound Toggle -->
-            <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 md:gap-4 md:w-1/3">
-                <button type="button" id="theme-toggle-btn" onclick="toggleGalleryTheme(event)" title="Switch between Warm Parchment & Midnight Gallery Theme"
-                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9C8265]/40 bg-[#FAF7F0]/75 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.18em] text-[#26231F]/80 transition-all">
-                    <svg id="theme-icon-moon" class="w-3.5 h-3.5 text-[#9C8265] dark:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
-                    </svg>
-                    <svg id="theme-icon-sun" class="w-3.5 h-3.5 text-[#D4B483] hidden dark:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="4" />
-                        <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
-                    </svg>
+            <!-- Right Links + Theme Toggle + Classic Gallery Ambience Sound Toggle -->
+            <div class="flex items-center justify-center md:justify-end gap-3 sm:gap-4 md:w-1/3">
+                <button type="button" id="theme-toggle-btn" onclick="toggleThemeMode()" title="Switch Light / Midnight Gallery Dark Mode"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9C8265]/40 dark:border-[#D4B483]/35 bg-[#FAF7F0]/75 dark:bg-[#1E1B17]/80 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.18em] text-[#26231F]/80 dark:text-[#EDE7DA]/85 transition-all">
+                    <span id="theme-toggle-icon" aria-hidden="true">☾</span>
                     <span id="theme-toggle-label">Dark</span>
                 </button>
 
-                <button type="button" id="sound-toggle-btn" onclick="toggleGallerySound(event)" title="Toggle Ultra-Soft Gallery Ambience"
-                        class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#9C8265]/40 bg-[#FAF7F0]/75 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.2em] text-[#26231F]/80 transition-all">
+                <button type="button" id="sound-toggle-btn" onclick="toggleGallerySound(event)" title="Toggle Classic Gallery & Nature Ambience"
+                        class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#9C8265]/40 dark:border-[#D4B483]/35 bg-[#FAF7F0]/75 dark:bg-[#1E1B17]/80 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.2em] text-[#26231F]/80 dark:text-[#EDE7DA]/85 transition-all">
                     <span class="flex items-end gap-[2px] h-3 w-3" aria-hidden="true">
-                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] rounded-full"></span>
-                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] rounded-full"></span>
-                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] rounded-full"></span>
+                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] dark:bg-[#D4B483] rounded-full"></span>
+                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] dark:bg-[#D4B483] rounded-full"></span>
+                        <span class="sound-bar w-[2px] h-full bg-[#9C8265] dark:bg-[#D4B483] rounded-full"></span>
                     </span>
                     <span id="sound-toggle-label">Sound On</span>
                 </button>
@@ -399,29 +276,29 @@
         
         <!-- Side-by-side Background Lotus Paintings -->
         <div class="absolute inset-0 z-0 flex w-full h-full pointer-events-none">
-            <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)" class="w-1/2 h-full object-cover opacity-35 mix-blend-multiply">
-            <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II" onerror="handleBgFallback(this, 2)" class="w-1/2 h-full object-cover opacity-35 mix-blend-multiply">
+            <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)" class="w-1/2 h-full object-cover opacity-35 dark:opacity-20 mix-blend-multiply dark:mix-blend-lighten">
+            <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II" onerror="handleBgFallback(this, 2)" class="w-1/2 h-full object-cover opacity-35 dark:opacity-20 mix-blend-multiply dark:mix-blend-lighten">
         </div>
 
         <!-- Soft Gradient Vignettes for Seamless Blending -->
-        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-[#F3EFE6] via-transparent to-[#F3EFE6]"></div>
-        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-r from-[#F3EFE6] via-transparent to-[#F3EFE6] opacity-55"></div>
+        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-[#F3EFE6] dark:from-[#12110F] via-transparent to-[#F3EFE6] dark:to-[#12110F]"></div>
+        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-r from-[#F3EFE6] dark:from-[#12110F] via-transparent to-[#F3EFE6] dark:to-[#12110F] opacity-55"></div>
 
         <!-- Frosted-Glass Editorial Hero Card -->
-        <div class="relative z-10 w-full bg-[#FAF7F0]/75 backdrop-blur-md border border-[#9C8265]/30 shadow-2xl shadow-[#9C8265]/15 px-7 py-12 md:px-16 md:py-16 rounded-3xl max-w-3xl mx-auto my-auto">
-            <p class="text-[11px] md:text-xs uppercase tracking-[0.35em] text-[#9C8265] mb-3 font-medium">Curated Myanmar Fine Art</p>
-            <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-medium tracking-tight text-[#26231F] mb-5 leading-tight">
+        <div class="relative z-10 w-full bg-[#FAF7F0]/75 dark:bg-[#1B1916]/80 backdrop-blur-md border border-[#9C8265]/30 dark:border-[#D4B483]/25 shadow-2xl shadow-[#9C8265]/15 dark:shadow-black/50 px-7 py-12 md:px-16 md:py-16 rounded-3xl max-w-3xl mx-auto my-auto">
+            <p class="text-[11px] md:text-xs uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-3 font-medium">Curated Myanmar Fine Art</p>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-serif font-medium tracking-tight text-[#26231F] dark:text-[#EDE7DA] mb-5 leading-tight">
                 The Artist's Loft
             </h1>
-            <div class="w-12 h-[1px] bg-[#9C8265] mx-auto mb-6"></div>
-            <p class="text-sm sm:text-base md:text-lg text-[#26231F]/80 font-light leading-relaxed max-w-xl mx-auto mb-9">
+            <div class="w-12 h-[1px] bg-[#9C8265] dark:bg-[#D4B483] mx-auto mb-6"></div>
+            <p class="text-sm sm:text-base md:text-lg text-[#26231F]/80 dark:text-[#EDE7DA]/80 font-light leading-relaxed max-w-xl mx-auto mb-9">
                 The Artist's Loft — sharing unique artworks of artists from Myanmar
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <button type="button" onclick="showSection('artworks')" class="px-8 py-3.5 bg-[#26231F] text-[#F3EFE6] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:bg-[#9C8265] transition-colors shadow-md">
+                <button type="button" onclick="showSection('artworks')" class="px-8 py-3.5 bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:bg-[#9C8265] dark:hover:bg-[#E5C99B] transition-colors shadow-md">
                     Explore Artworks
                 </button>
-                <button type="button" onclick="showSection('about')" class="px-8 py-3.5 border border-[#9C8265]/65 text-[#26231F] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:border-[#26231F] dark:hover:border-[#D4B483] transition-colors">
+                <button type="button" onclick="showSection('about')" class="px-8 py-3.5 border border-[#9C8265]/65 dark:border-[#D4B483]/50 text-[#26231F] dark:text-[#EDE7DA] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:border-[#26231F] dark:hover:border-[#D4B483] transition-colors">
                     About The Gallery
                 </button>
             </div>
@@ -433,7 +310,7 @@
         
         <!-- Top Artist Selector Bar -->
         <div class="w-full max-w-screen-xl mx-auto px-6 pt-12 pb-6 text-center">
-            <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] mb-4 font-medium">Represented Artists</p>
+            <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-4 font-medium">Represented Artists</p>
             <div id="artist-selector-bar" class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
                 <!-- Artist selection buttons injected dynamically via JS -->
             </div>
@@ -441,22 +318,22 @@
 
         <!-- Selected Artist Profile Card -->
         <div class="w-full max-w-5xl mx-auto px-6 pb-10">
-            <div id="selected-artist-profile" class="artist-switch-stage artist-switch-in bg-[#FAF7F0]/85 backdrop-blur-sm border border-[#9C8265]/25 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-7 md:gap-10">
+            <div id="selected-artist-profile" class="artist-switch-stage artist-switch-in bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-7 md:gap-10">
                 <!-- Artist Portrait & Bio injected dynamically via JS -->
             </div>
         </div>
 
         <!-- Dynamic Category Filter Bar for Selected Artist -->
         <div class="w-full max-w-screen-xl mx-auto px-6 mb-12">
-            <div id="category-filter-bar" class="artist-switch-stage artist-switch-in flex flex-wrap items-center justify-center gap-2.5 md:gap-4 border-b border-[#A69076]/20 pb-6">
+            <div id="category-filter-bar" class="artist-switch-stage artist-switch-in flex flex-wrap items-center justify-center gap-2.5 md:gap-4 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-6">
                 <!-- Buttons injected dynamically via JS -->
             </div>
             <div class="text-center mt-4">
-                <span id="artwork-count-label" class="text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/50"></span>
+                <span id="artwork-count-label" class="text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/50 dark:text-[#EDE7DA]/50"></span>
             </div>
         </div>
 
-        <!-- World-Class Museum Gallery Grid -->
+        <!-- Synchronized Row-Aligned Gallery Grid -->
         <main class="w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-36">
             <div id="artworks-masonry-grid" class="artist-switch-stage artist-switch-in grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
                 <!-- Artwork Cards injected dynamically via JS -->
@@ -467,19 +344,19 @@
     <!-- ==================== 3. ABOUT SECTION (THE ARTIST'S LOFT GALLERY) ==================== -->
     <section id="section-about" class="page-section hidden flex-grow">
         <div class="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
-            <div class="bg-[#FAF7F0]/85 backdrop-blur-sm border border-[#9C8265]/25 rounded-3xl p-8 sm:p-12 md:p-16 shadow-sm">
+            <div class="bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-8 sm:p-12 md:p-16 shadow-sm">
                 <div class="text-center max-w-3xl mx-auto mb-12">
-                    <p class="text-xs uppercase tracking-[0.35em] text-[#9C8265] mb-3 font-medium">Curatorial Vision</p>
-                    <h2 id="gallery-about-heading" class="text-4xl sm:text-5xl font-serif font-medium text-[#26231F] mb-4 leading-tight">
+                    <p class="text-xs uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-3 font-medium">Curatorial Vision</p>
+                    <h2 id="gallery-about-heading" class="text-4xl sm:text-5xl font-serif font-medium text-[#26231F] dark:text-[#EDE7DA] mb-4 leading-tight">
                         About The Artist's Loft
                     </h2>
-                    <p id="gallery-about-subtitle" class="text-base sm:text-lg font-serif italic text-[#26231F]/70">
+                    <p id="gallery-about-subtitle" class="text-base sm:text-lg font-serif italic text-[#26231F]/70 dark:text-[#EDE7DA]/70">
                         Bridging Myanmar's Contemporary Fine Art with Global Collectors
                     </p>
-                    <div class="w-16 h-[1px] bg-[#9C8265] mx-auto mt-7"></div>
+                    <div class="w-16 h-[1px] bg-[#9C8265] dark:bg-[#D4B483] mx-auto mt-7"></div>
                 </div>
 
-                <div id="gallery-about-body" class="space-y-6 text-[#26231F]/85 font-light text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+                <div id="gallery-about-body" class="space-y-6 text-[#26231F]/85 dark:text-[#EDE7DA]/85 font-light text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
                     <p>
                         Founded in Yangon, <strong>The Artist's Loft</strong> is an independent curatorial platform and private art space dedicated to presenting original fine artworks by distinguished and emerging artists from Myanmar.
                     </p>
@@ -492,23 +369,23 @@
                 </div>
 
                 <!-- Gallery Pillars Strip -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-14 pt-10 border-t border-[#9C8265]/25 text-center">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-14 pt-10 border-t border-[#9C8265]/25 dark:border-[#D4B483]/20 text-center">
                     <div>
-                        <span class="block font-serif text-xl text-[#26231F] mb-1">Direct Provenance</span>
-                        <span class="text-xs uppercase tracking-widest text-[#9C8265]">Authenticated Studio Works</span>
+                        <span class="block font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1">Direct Provenance</span>
+                        <span class="text-xs uppercase tracking-widest text-[#9C8265] dark:text-[#D4B483]">Authenticated Studio Works</span>
                     </div>
                     <div>
-                        <span class="block font-serif text-xl text-[#26231F] mb-1">Myanmar Heritage</span>
-                        <span class="text-xs uppercase tracking-widest text-[#9C8265]">Masters & Emerging Voices</span>
+                        <span class="block font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1">Myanmar Heritage</span>
+                        <span class="text-xs uppercase tracking-widest text-[#9C8265] dark:text-[#D4B483]">Masters & Emerging Voices</span>
                     </div>
                     <div>
-                        <span class="block font-serif text-xl text-[#26231F] mb-1">Private Viewings</span>
-                        <span class="text-xs uppercase tracking-widest text-[#9C8265]">Worldwide Collector Support</span>
+                        <span class="block font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1">Private Viewings</span>
+                        <span class="text-xs uppercase tracking-widest text-[#9C8265] dark:text-[#D4B483]">Worldwide Collector Support</span>
                     </div>
                 </div>
 
                 <div class="mt-12 text-center">
-                    <button type="button" onclick="showSection('artworks')" class="px-8 py-3.5 bg-[#26231F] text-[#F3EFE6] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:bg-[#9C8265] transition-colors shadow-sm">
+                    <button type="button" onclick="showSection('artworks')" class="px-8 py-3.5 bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] text-xs uppercase tracking-[0.22em] font-medium rounded-full hover:bg-[#9C8265] dark:hover:bg-[#E5C99B] transition-colors shadow-sm">
                         Meet Our Artists &amp; View Works
                     </button>
                 </div>
@@ -520,65 +397,65 @@
     <section id="section-contact" class="page-section hidden flex-grow flex items-center justify-center">
         <div class="max-w-2xl w-full mx-auto px-6 py-20 md:py-24">
             <div class="text-center mb-12">
-                <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] mb-3 font-medium">Inquiries &amp; Acquisitions</p>
-                <h2 class="text-4xl md:text-5xl font-serif font-medium text-[#2C2C2C] mb-4">Get in Touch</h2>
-                <p class="text-sm md:text-base text-[#2C2C2C]/70 font-light">
+                <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] dark:text-[#D4B483] mb-3 font-medium">Inquiries &amp; Acquisitions</p>
+                <h2 class="text-4xl md:text-5xl font-serif font-medium text-[#2C2C2C] dark:text-[#EDE7DA] mb-4">Get in Touch</h2>
+                <p class="text-sm md:text-base text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 font-light">
                     For artwork availability, private viewings, or exhibition inquiries, please leave a message below.
                 </p>
             </div>
 
             <!-- Secure Server-Proxied Contact Form -->
-            <form id="contact-form" name="contact" method="POST" onsubmit="handleContactSubmit(event)" class="space-y-8 bg-[#FAF7F0]/80 backdrop-blur-sm border border-[#9C8265]/25 p-8 md:p-12 rounded-3xl shadow-sm">
+            <form id="contact-form" name="contact" method="POST" onsubmit="handleContactSubmit(event)" class="space-y-8 bg-[#FAF7F0]/80 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 p-8 md:p-12 rounded-3xl shadow-sm">
                 <input type="checkbox" name="botcheck" id="contact-botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" />
 
                 <div>
-                    <label for="contact-name" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Full Name</label>
-                    <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="Your name" class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30">
+                    <label for="contact-name" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-2">Full Name</label>
+                    <input id="contact-name" type="text" name="name" required maxlength="120" placeholder="Your name" class="w-full border-b border-[#A69076]/40 dark:border-[#D4B483]/30 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] dark:text-[#EDE7DA] placeholder:text-[#2C2C2C]/30 dark:placeholder:text-[#EDE7DA]/30">
                 </div>
 
                 <div>
-                    <label for="contact-email" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Email Address</label>
-                    <input id="contact-email" type="email" name="email" required maxlength="160" placeholder="you@example.com" class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30">
+                    <label for="contact-email" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-2">Email Address</label>
+                    <input id="contact-email" type="email" name="email" required maxlength="160" placeholder="you@example.com" class="w-full border-b border-[#A69076]/40 dark:border-[#D4B483]/30 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] dark:text-[#EDE7DA] placeholder:text-[#2C2C2C]/30 dark:placeholder:text-[#EDE7DA]/30">
                 </div>
 
                 <div>
-                    <label for="contact-message" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 mb-2">Message</label>
-                    <textarea id="contact-message" name="message" rows="4" required maxlength="3000" placeholder="Tell us about the artwork you are interested in..." class="w-full border-b border-[#A69076]/40 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] placeholder:text-[#2C2C2C]/30 resize-none"></textarea>
+                    <label for="contact-message" class="block text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-2">Message</label>
+                    <textarea id="contact-message" name="message" rows="4" required maxlength="3000" placeholder="Tell us about the artwork you are interested in..." class="w-full border-b border-[#A69076]/40 dark:border-[#D4B483]/30 bg-transparent py-2.5 outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483] transition-colors text-[#2C2C2C] dark:text-[#EDE7DA] placeholder:text-[#2C2C2C]/30 dark:placeholder:text-[#EDE7DA]/30 resize-none"></textarea>
                 </div>
 
                 <div class="pt-2 text-center">
-                    <button id="contact-submit-btn" type="submit" class="w-full sm:w-auto px-12 py-4 bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] rounded-full transition-colors uppercase tracking-[0.22em] text-xs font-medium shadow-sm disabled:opacity-50">
+                    <button id="contact-submit-btn" type="submit" class="w-full sm:w-auto px-12 py-4 bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] dark:hover:bg-[#E5C99B] rounded-full transition-colors uppercase tracking-[0.22em] text-xs font-medium shadow-sm disabled:opacity-50">
                         Send Message
                     </button>
                 </div>
 
-                <div id="contact-feedback" class="hidden p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C]">
+                <div id="contact-feedback" class="hidden p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]">
                     Thank you! Your message has been sent to our gallery team. We will respond shortly.
                 </div>
             </form>
         </div>
     </section>
 
-    <!-- ==================== 5. FULL-SCREEN MUSEUM LIGHTBOX MODAL ==================== -->
-    <div id="lightbox-modal" class="fixed inset-0 z-50 hidden bg-[#11100E]/96 backdrop-blur-md flex items-center justify-center p-4 md:p-10" onclick="closeLightbox(event)">
+    <!-- ==================== 5. FULL-SCREEN LIGHTBOX MODAL ==================== -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 hidden bg-[#12110F]/95 backdrop-blur-md flex items-center justify-center p-4 md:p-10" onclick="closeLightbox(event)">
         <button type="button" onclick="closeLightbox(event)" class="absolute top-5 right-6 md:top-8 md:right-10 text-[#FAF9F6]/80 hover:text-[#D4B483] text-4xl md:text-5xl leading-none transition-colors z-20" aria-label="Close Lightbox">&times;</button>
 
         <!-- Previous Painting Button -->
-        <button type="button" onclick="navigateLightbox(-1, event)" class="absolute left-3 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#1D1B18]/70 hover:bg-[#D4B483] hover:border-[#D4B483] hover:text-[#11100E] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Previous Painting">
+        <button type="button" onclick="navigateLightbox(-1, event)" class="absolute left-3 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#26231F]/60 hover:bg-[#D4B483] hover:border-[#D4B483] hover:text-[#12110F] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Previous Painting">
             <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
         </button>
 
         <!-- Next Painting Button -->
-        <button type="button" onclick="navigateLightbox(1, event)" class="absolute right-3 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#1D1B18]/70 hover:bg-[#D4B483] hover:border-[#D4B483] hover:text-[#11100E] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Next Painting">
+        <button type="button" onclick="navigateLightbox(1, event)" class="absolute right-3 sm:right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full border border-[#FAF9F6]/25 bg-[#26231F]/60 hover:bg-[#D4B483] hover:border-[#D4B483] hover:text-[#12110F] text-[#FAF9F6] flex items-center justify-center transition-all duration-300 shadow-lg backdrop-blur-sm" aria-label="Next Painting">
             <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
             </svg>
         </button>
         
         <div id="lightbox-stage" class="max-w-5xl w-full flex flex-col items-center justify-center text-center px-10 sm:px-16" onclick="event.stopPropagation()">
-            <img id="lightbox-img" src="" alt="Enlarged Artwork" class="max-h-[58vh] w-auto max-w-full object-contain rounded-lg shadow-2xl mb-5 ring-1 ring-white/10">
+            <img id="lightbox-img" src="" alt="Enlarged Artwork" class="max-h-[58vh] w-auto max-w-full object-contain rounded-lg shadow-2xl mb-5 border border-[#D4B483]/20">
             <div id="lightbox-caption" class="max-w-2xl px-4">
                 <div class="flex items-center justify-center gap-2 mb-1.5">
                     <span id="lightbox-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
@@ -587,18 +464,13 @@
                     <span id="lightbox-counter" class="text-[10px] uppercase tracking-[0.3em] text-[#FAF9F6]/45"></span>
                 </div>
                 <span id="lightbox-category" class="inline-block text-[11px] uppercase tracking-[0.28em] text-[#D4B483] mb-1"></span>
-                <h3 id="lightbox-title" class="font-serif text-2xl md:text-3xl text-[#FAF9F6] mb-2"></h3>
-                
-                <!-- Museum Placard Technical Specs (Medium • Size • Year • Provenance) -->
-                <div id="lightbox-specs" class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-[#FAF9F6]/70 tracking-wide mb-3 border-y border-[#FAF9F6]/15 py-2 px-4">
-                    <!-- Populated via JS -->
-                </div>
-
-                <p id="lightbox-desc" class="text-sm md:text-base text-[#FAF9F6]/80 font-light leading-relaxed"></p>
+                <h3 id="lightbox-title" class="font-serif text-2xl md:text-3xl text-[#FAF9F6] mb-1.5"></h3>
+                <p id="lightbox-placard" class="text-xs uppercase tracking-[0.18em] text-[#FAF9F6]/65 mb-2"></p>
+                <p id="lightbox-desc" class="text-sm md:text-base text-[#FAF9F6]/75 font-light leading-relaxed"></p>
                 <div id="lightbox-price-row" class="mt-4 flex flex-wrap items-center justify-center gap-4">
                     <span id="lightbox-price" class="text-sm font-medium text-[#FAF9F6] tracking-wide"></span>
-                    <button id="lightbox-inquiry-btn" type="button" class="px-6 py-2.5 rounded-full bg-[#D4B483] text-[#11100E] text-[11px] uppercase tracking-[0.22em] font-medium hover:bg-[#FAF9F6] transition-colors">
-                        Acquisition Inquiry
+                    <button id="lightbox-inquiry-btn" type="button" class="px-5 py-2 rounded-full bg-[#D4B483] text-[#12110F] text-[11px] uppercase tracking-[0.22em] font-medium hover:bg-[#FAF9F6] transition-colors">
+                        Price Inquiry
                     </button>
                 </div>
             </div>
@@ -606,16 +478,16 @@
     </div>
 
     <!-- ==================== 6. BUILT-IN ADMIN CONSOLE MODAL ==================== -->
-    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-[#11100E]/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-        <div class="bg-[#FAF9F6] border border-[#A69076]/30 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden text-[#2C2C2C]">
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden bg-[#12110F]/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-[#FAF9F6] dark:bg-[#1B1916] border border-[#A69076]/30 dark:border-[#D4B483]/25 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden text-[#2C2C2C] dark:text-[#EDE7DA]">
             
             <!-- Modal Header -->
-            <div class="px-6 py-4 md:px-8 border-b border-[#A69076]/20 flex justify-between items-center bg-white/80 flex-shrink-0">
+            <div class="px-6 py-4 md:px-8 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 flex justify-between items-center bg-white/80 dark:bg-[#141210]/90 flex-shrink-0">
                 <div>
-                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#A69076] block">Gallery Management</span>
-                    <h3 class="font-serif text-2xl text-[#2C2C2C]">Admin Console</h3>
+                    <span class="text-[10px] uppercase tracking-[0.25em] text-[#A69076] dark:text-[#D4B483] block">Gallery Management</span>
+                    <h3 class="font-serif text-2xl text-[#2C2C2C] dark:text-[#EDE7DA]">Admin Console</h3>
                 </div>
-                <button type="button" onclick="closeAdminModal()" class="text-3xl text-[#2C2C2C]/60 hover:text-[#2C2C2C] leading-none">&times;</button>
+                <button type="button" onclick="closeAdminModal()" class="text-3xl text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 hover:text-[#2C2C2C] dark:hover:text-white leading-none">&times;</button>
             </div>
 
             <!-- Modal Body -->
@@ -623,25 +495,25 @@
                 
                 <!-- Step 1: Secure Passcode Gate -->
                 <div id="admin-login-view" class="max-w-sm mx-auto py-8 text-center space-y-5">
-                    <div class="w-12 h-12 rounded-full bg-[#A69076]/15 text-[#A69076] flex items-center justify-center mx-auto">
+                    <div class="w-12 h-12 rounded-full bg-[#A69076]/15 text-[#A69076] dark:text-[#D4B483] flex items-center justify-center mx-auto">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                     </div>
                     <div>
                         <h4 id="admin-gate-title" class="font-serif text-xl mb-1">Curator Access</h4>
-                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60">Enter your private security passcode to manage the gallery.</p>
+                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Enter your private security passcode to manage the gallery.</p>
                     </div>
                     <form onsubmit="verifyAdminPin(event)" class="space-y-4">
-                        <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter Passcode" class="w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white outline-none focus:border-[#2C2C2C]">
-                        <input id="admin-pin-confirm-input" type="password" minlength="4" autocomplete="new-password" placeholder="Confirm New Passcode" class="hidden w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white outline-none focus:border-[#2C2C2C]">
+                        <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter Passcode" class="w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
+                        <input id="admin-pin-confirm-input" type="password" minlength="4" autocomplete="new-password" placeholder="Confirm New Passcode" class="hidden w-full text-center tracking-[0.35em] text-lg py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
                         <p id="admin-pin-error" class="hidden text-xs text-red-600">Incorrect passcode. Please try again.</p>
-                        <button id="admin-gate-submit-btn" type="submit" class="w-full py-3 bg-[#2C2C2C] text-[#FAF9F6] text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#A69076] transition-colors">
+                        <button id="admin-gate-submit-btn" type="submit" class="w-full py-3 bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs uppercase tracking-[0.2em] rounded-xl hover:bg-[#A69076] transition-colors">
                             Unlock Console
                         </button>
                     </form>
                     <div class="pt-2">
-                        <button type="button" onclick="resetForgottenAdminPin()" class="text-[11px] underline text-[#9C8265] hover:text-[#2C2C2C] transition-colors">
+                        <button type="button" onclick="resetForgottenAdminPin()" class="text-[11px] underline text-[#9C8265] dark:text-[#D4B483] hover:text-[#2C2C2C] transition-colors">
                             Forgot / Reset Passcode
                         </button>
                     </div>
@@ -651,16 +523,16 @@
                 <div id="admin-dashboard-view" class="hidden space-y-8">
                     
                     <!-- Top Action Bar -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-[#A69076]/20">
-                        <div class="text-xs text-[#2C2C2C]/70 flex items-center gap-2">
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#141210] p-4 rounded-2xl border border-[#A69076]/20 dark:border-[#D4B483]/20">
+                        <div class="text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 flex items-center gap-2">
                             <span id="cloud-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
                             <span id="cloud-status-text">Connecting to live cloud gallery...</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" onclick="toggleChangePinBox()" class="px-4 py-2 rounded-xl border border-[#2C2C2C]/30 text-[#2C2C2C] hover:bg-[#2C2C2C] hover:text-white text-xs uppercase tracking-wider transition-colors">
+                            <button type="button" onclick="toggleChangePinBox()" class="px-4 py-2 rounded-xl border border-[#2C2C2C]/30 dark:border-[#D4B483]/30 hover:bg-[#2C2C2C] hover:text-white text-xs uppercase tracking-wider transition-colors">
                                 Change Passcode
                             </button>
-                            <button type="button" onclick="exportArtworksJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] text-[#2C2C2C] hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider transition-colors">
+                            <button type="button" onclick="exportArtworksJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] dark:border-[#D4B483]/50 hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider transition-colors">
                                 Export Backup
                             </button>
                         </div>
@@ -670,30 +542,29 @@
                     <div id="admin-publish-feedback" class="hidden p-4 rounded-2xl text-xs font-medium"></div>
 
                     <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Edit Log -->
-                    <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 pb-3">
-                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] text-[#FAF9F6]">
+                    <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-3">
+                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
                             Manage Artworks
                         </button>
-                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 hover:border-[#2C2C2C]">
+                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Manage Artists
                         </button>
-                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 hover:border-[#2C2C2C]">
+                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Gallery About Page
                         </button>
-                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 hover:border-[#2C2C2C] flex items-center gap-1.5">
-                            <span>Edit Log</span>
-                            <span id="admin-log-badge" class="px-1.5 py-0.5 text-[9px] rounded-full bg-[#9C8265]/20 text-[#9C8265]">0</span>
+                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Edit Log (<span id="admin-log-count">0</span>)
                         </button>
                     </div>
 
                     <!-- Change Passcode Box -->
-                    <div id="change-pin-box" class="hidden bg-white p-5 rounded-2xl border border-[#A69076]/30 shadow-sm">
+                    <div id="change-pin-box" class="hidden bg-white dark:bg-[#141210] p-5 rounded-2xl border border-[#A69076]/30 shadow-sm">
                         <h4 class="font-serif text-lg mb-1">Update Curator Passcode</h4>
-                        <p class="text-xs text-[#2C2C2C]/60 mb-4">Your passcode is encrypted (SHA-256) and never stored in plain text or source code.</p>
+                        <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 mb-4">Your passcode is encrypted (SHA-256) and never stored in plain text or source code.</p>
                         <form onsubmit="saveNewAdminPin(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <input id="current-pin-verify-input" type="password" required placeholder="Current passcode" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
-                            <input id="new-pin-input" type="password" required minlength="4" placeholder="New passcode (min 4 chars)" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
+                            <input id="current-pin-verify-input" type="password" required placeholder="Current passcode" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                            <input id="new-pin-input" type="password" required minlength="4" placeholder="New passcode (min 4 chars)" class="px-4 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
                                 Save Passcode
                             </button>
                         </form>
@@ -702,90 +573,90 @@
 
                     <!-- ==================== ADMIN TAB 1: ARTWORKS ==================== -->
                     <div id="admin-panel-artworks" class="space-y-8">
-                        <div id="admin-form-container" class="bg-white p-6 rounded-2xl border border-[#A69076]/25 shadow-sm transition-all duration-300">
+                        <div id="admin-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm transition-all duration-300">
                             <h4 id="admin-form-heading" class="font-serif text-xl mb-5">Add New Artwork</h4>
                             <form id="admin-artwork-form" onsubmit="saveArtworkFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artwork-id" value="">
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Artist *</label>
-                                    <select id="art-artist-select" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist *</label>
+                                    <select id="art-artist-select" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                         <!-- Artist options populated via JS -->
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Title *</label>
-                                    <input id="art-title-input" type="text" required placeholder="e.g., Golden Pagoda Morning" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Title *</label>
+                                    <input id="art-title-input" type="text" required placeholder="e.g., Golden Pagoda Morning" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Category *</label>
-                                    <select id="art-category-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Category *</label>
+                                    <select id="art-category-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                         <!-- Options populated by JS -->
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Create New Category (Optional)</label>
-                                    <input id="art-new-category-input" type="text" placeholder="Type new category name..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Create New Category (Optional)</label>
+                                    <input id="art-new-category-input" type="text" placeholder="Type new category name..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Medium *</label>
-                                    <input id="art-medium-input" type="text" value="Oil on Canvas" placeholder="e.g., Oil on Canvas, Watercolor on Paper" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Medium</label>
+                                    <input id="art-medium-input" type="text" value="Oil on Canvas" placeholder="e.g., Oil on Canvas" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Size (Dimensions)</label>
-                                    <input id="art-size-input" type="text" placeholder="e.g., 36 × 48 in (91.4 × 121.9 cm)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Size</label>
+                                    <input id="art-size-input" type="text" placeholder="e.g., 36 × 48 in (91.4 × 121.9 cm)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Year Created</label>
-                                    <input id="art-year-input" type="text" placeholder="e.g., 2024" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Year</label>
+                                    <input id="art-year-input" type="text" placeholder="e.g., 2024" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Edition / Framing &amp; Provenance</label>
-                                    <input id="art-provenance-input" type="text" placeholder="e.g., Original Signed • Gallery Framed" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Provenance / Frame</label>
+                                    <input id="art-provenance-input" type="text" placeholder="e.g., Artist Studio, Yangon" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Availability Status</label>
-                                    <select id="art-status-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Availability Status</label>
+                                    <select id="art-status-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                         <option value="Available">Available (Green Dot)</option>
                                         <option value="Sold">Collected (Red Dot)</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Price (Optional)</label>
-                                    <input id="art-price-input" type="text" placeholder="e.g., $1,200 or Price on Request" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Price (Optional)</label>
+                                    <input id="art-price-input" type="text" placeholder="e.g., $1,200 or Price on Request" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
-                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] border border-[#A69076]/20">
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option A: Upload Image File</label>
-                                        <input id="art-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'art-file-status')" class="w-full text-xs text-[#2C2C2C]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Image File</label>
+                                        <input id="art-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'art-file-status')" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
                                         <p id="art-file-status" class="hidden text-[11px] text-[#9C8265] mt-1.5 font-medium"></p>
                                     </div>
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option B: Local Filename / Image URL</label>
-                                        <input id="art-url-input" type="text" placeholder="e.g., my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white text-sm outline-none focus:border-[#2C2C2C]">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Local Filename / Image URL</label>
+                                        <input id="art-url-input" type="text" placeholder="e.g., my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Description</label>
-                                    <textarea id="art-desc-input" rows="3" placeholder="Curatorial note, poetic description, or story behind the artwork..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C] resize-y"></textarea>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Description</label>
+                                    <textarea id="art-desc-input" rows="2" placeholder="Poetic description or story behind the artwork..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C] resize-none"></textarea>
                                 </div>
 
                                 <div class="md:col-span-2 flex items-center justify-end gap-3">
                                     <button type="button" id="cancel-edit-btn" onclick="resetAdminForm()" class="hidden px-5 py-2.5 rounded-xl border border-[#2C2C2C]/30 text-xs uppercase tracking-wider hover:bg-[#2C2C2C]/5">
                                         Cancel Edit
                                     </button>
-                                    <button type="submit" id="save-artwork-btn" class="px-7 py-3 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50">
+                                    <button type="submit" id="save-artwork-btn" class="px-7 py-3 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50">
                                         Publish to Live Gallery
                                     </button>
                                 </div>
@@ -802,43 +673,43 @@
 
                     <!-- ==================== ADMIN TAB 2: ARTISTS ==================== -->
                     <div id="admin-panel-artists" class="hidden space-y-8">
-                        <div id="admin-artist-form-container" class="bg-white p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
+                        <div id="admin-artist-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <h4 id="admin-artist-form-heading" class="font-serif text-xl mb-5">Add New Artist Profile</h4>
                             <form id="admin-artist-form" onsubmit="saveArtistFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artist-id" value="">
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Artist Name *</label>
-                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Ba Nyan" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist Name *</label>
+                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Lun Gywe or Daw Khin" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Subtitle / Birth Year &amp; Origin</label>
-                                    <input id="artist-subtitle-input" type="text" placeholder="e.g., Contemporary Impressionist (b. 1978, Yangon)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Subtitle / Birth Year &amp; Origin</label>
+                                    <input id="artist-subtitle-input" type="text" placeholder="e.g., Contemporary Impressionist (b. 1978, Yangon)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
-                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] border border-[#A69076]/20">
+                                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option A: Upload Portrait Photo</label>
-                                        <input id="artist-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'artist-file-status')" class="w-full text-xs text-[#2C2C2C]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload Portrait Photo</label>
+                                        <input id="artist-file-input" type="file" accept="image/*" onchange="previewAdminSelectedFile(this, 'artist-file-status')" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
                                         <p id="artist-file-status" class="hidden text-[11px] text-[#9C8265] mt-1.5 font-medium"></p>
                                     </div>
                                     <div>
-                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Option B: Portrait Filename / URL</label>
-                                        <input id="artist-url-input" type="text" placeholder="e.g., artist2.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white text-sm outline-none focus:border-[#2C2C2C]">
+                                        <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Portrait Filename / URL</label>
+                                        <input id="artist-url-input" type="text" placeholder="e.g., artist2.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Artist Biography &amp; Exhibitions *</label>
-                                    <textarea id="artist-bio-input" rows="4" required placeholder="Write the artist's biography, style, exhibitions, and museum collections..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C] resize-y"></textarea>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist Biography &amp; Exhibitions *</label>
+                                    <textarea id="artist-bio-input" rows="4" required placeholder="Write the artist's biography, style, exhibitions, and museum collections..." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C] resize-y"></textarea>
                                 </div>
 
                                 <div class="md:col-span-2 flex items-center justify-end gap-3">
                                     <button type="button" id="cancel-artist-edit-btn" onclick="resetArtistForm()" class="hidden px-5 py-2.5 rounded-xl border border-[#2C2C2C]/30 text-xs uppercase tracking-wider hover:bg-[#2C2C2C]/5">
                                         Cancel Edit
                                     </button>
-                                    <button type="submit" id="save-artist-btn" class="px-7 py-3 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors">
+                                    <button type="submit" id="save-artist-btn" class="px-7 py-3 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors">
                                         Save Artist Profile
                                     </button>
                                 </div>
@@ -855,24 +726,24 @@
 
                     <!-- ==================== ADMIN TAB 3: GALLERY ABOUT ==================== -->
                     <div id="admin-panel-gallery" class="hidden">
-                        <div class="bg-white p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <h4 class="font-serif text-xl mb-2">Edit Gallery About Page</h4>
-                            <p class="text-xs text-[#2C2C2C]/60 mb-5">Customize the story and curatorial vision displayed on the About page.</p>
+                            <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 mb-5">Customize the story and curatorial vision displayed on the About page.</p>
                             <form onsubmit="saveGalleryAboutFromAdmin(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Heading</label>
-                                    <input id="about-heading-input" type="text" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Heading</label>
+                                    <input id="about-heading-input" type="text" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Subtitle</label>
-                                    <input id="about-subtitle-input" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Subtitle</label>
+                                    <input id="about-subtitle-input" type="text" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 mb-1.5">Gallery Story (Separate paragraphs with a blank line)</label>
-                                    <textarea id="about-body-input" rows="6" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] text-sm outline-none focus:border-[#2C2C2C] resize-y"></textarea>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Gallery Story (Separate paragraphs with a blank line)</label>
+                                    <textarea id="about-body-input" rows="6" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C] resize-y"></textarea>
                                 </div>
                                 <div class="text-right">
-                                    <button type="submit" class="px-7 py-3 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors">
+                                    <button type="submit" class="px-7 py-3 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors">
                                         Update Gallery About
                                     </button>
                                 </div>
@@ -880,26 +751,25 @@
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB 4: AUDIT / EDIT LOG ==================== -->
+                    <!-- ==================== ADMIN TAB 4: EDIT LOG ==================== -->
                     <div id="admin-panel-logs" class="hidden space-y-5">
-                        <div class="bg-white p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-5 border-b border-[#A69076]/20">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
                                 <div>
-                                    <h4 class="font-serif text-xl">Curator Edit &amp; Activity Log</h4>
-                                    <p class="text-xs text-[#2C2C2C]/60 mt-0.5">Chronological record of all gallery additions, updates, and deletions.</p>
+                                    <h4 class="font-serif text-xl">Curatorial Activity &amp; Edit Log</h4>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Chronological history of artwork, artist, about, and security changes.</p>
                                 </div>
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <button type="button" onclick="downloadEditLogsCSV()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] text-[#FAF9F6] hover:bg-[#A69076] text-xs uppercase tracking-wider font-medium transition-colors">
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="downloadEditLogsCSV()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
                                         Download CSV
                                     </button>
-                                    <button type="button" onclick="downloadEditLogsJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] text-[#2C2C2C] hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider font-medium transition-colors">
+                                    <button type="button" onclick="downloadEditLogsJSON()" class="px-4 py-2 rounded-xl border border-[#A69076] dark:border-[#D4B483]/50 hover:bg-[#A69076] hover:text-white text-xs uppercase tracking-wider transition-colors">
                                         Download JSON
                                     </button>
                                 </div>
                             </div>
-
-                            <div id="admin-edit-logs-list" class="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-                                <!-- Edit log entries populated dynamically via JS -->
+                            <div id="admin-edit-logs-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                                <!-- Edit logs populated via JS -->
                             </div>
                         </div>
                     </div>
@@ -910,9 +780,9 @@
     </div>
 
     <!-- Minimalist Footer (Double-click copyright text to open Admin Console) -->
-    <footer class="w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 bg-[#F3EFE6] text-center">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.22em] text-[#26231F]/60">
-            <span ondblclick="openAdminModal()" class="cursor-pointer select-none hover:text-[#26231F] transition-colors" title="Double-click for Gallery Management">&copy; <span id="footer-year">2026</span> The Artist's Loft</span>
+    <footer class="w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 bg-[#F3EFE6] dark:bg-[#12110F] text-center">
+        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
+            <span ondblclick="openAdminModal()" class="cursor-pointer select-none hover:text-[#26231F] dark:hover:text-[#EDE7DA] transition-colors" title="Double-click for Gallery Management">&copy; <span id="footer-year">2026</span> The Artist's Loft</span>
             <span>Curated Myanmar Fine Art Gallery</span>
         </div>
     </footer>
@@ -921,6 +791,40 @@
     <audio id="gallery-bg-audio" loop preload="auto" src="ambience.mp3"></audio>
 
     <script>
+        // Theme Mode (Light Warm Parchment / Midnight Gallery Dark)
+        function applyThemeMode(mode) {
+            const isDark = mode === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            try { localStorage.setItem('tal_theme_mode', isDark ? 'dark' : 'light'); } catch (e) {}
+            const iconEl = document.getElementById('theme-toggle-icon');
+            const labelEl = document.getElementById('theme-toggle-label');
+            if (iconEl) iconEl.textContent = isDark ? '☀' : '☾';
+            if (labelEl) labelEl.textContent = isDark ? 'Light' : 'Dark';
+        }
+
+        function toggleThemeMode() {
+            const currentlyDark = document.documentElement.classList.contains('dark');
+            applyThemeMode(currentlyDark ? 'light' : 'dark');
+            if (typeof playSoftGalleryChime === 'function') {
+                playSoftGalleryChime('filter');
+            }
+        }
+
+        (function initSavedTheme() {
+            try {
+                const saved = localStorage.getItem('tal_theme_mode');
+                if (saved === 'dark' || saved === 'light') {
+                    applyThemeMode(saved);
+                    return;
+                }
+            } catch (e) {}
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyThemeMode('dark');
+            } else {
+                applyThemeMode('light');
+            }
+        })();
+
         // Secret 5-Tap Admin Trigger on Brand Logo
         let secretTapCount = 0;
         let secretTapTimer = null;
@@ -940,29 +844,6 @@
                 showSection('home');
             }
         }
-
-        // Theme Toggle & Sync (Warm Parchment Light <-> Midnight Obsidian Gallery Dark)
-        function updateThemeToggleUI() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const label = document.getElementById('theme-toggle-label');
-            if (label) {
-                label.textContent = isDark ? 'Light' : 'Dark';
-            }
-        }
-
-        function toggleGalleryTheme(event) {
-            if (event) event.stopPropagation();
-            const isDark = document.documentElement.classList.toggle('dark');
-            try {
-                localStorage.setItem('tal-theme', isDark ? 'dark' : 'light');
-            } catch (e) {}
-            updateThemeToggleUI();
-            if (typeof playSoftGalleryChime === 'function') {
-                playSoftGalleryChime('filter');
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', updateThemeToggleUI);
 
         // Elegant Museum Placeholder Generator
         function createArtPlaceholderDataURL(title, category, aspect = '3/4') {
@@ -1183,9 +1064,12 @@
             document.querySelectorAll('.nav-link').forEach(btn => {
                 const isTarget = btn.getAttribute('data-target') === sectionId;
                 btn.classList.toggle('text-[#9C8265]', isTarget);
+                btn.classList.toggle('dark:text-[#D4B483]', isTarget);
                 btn.classList.toggle('border-b', isTarget);
                 btn.classList.toggle('border-[#9C8265]', isTarget);
+                btn.classList.toggle('dark:border-[#D4B483]', isTarget);
                 btn.classList.toggle('text-[#26231F]/70', !isTarget);
+                btn.classList.toggle('dark:text-[#EDE7DA]/70', !isTarget);
             });
             requestAnimationFrame(() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
@@ -1198,7 +1082,7 @@
         window.addEventListener('load', verifyAllImagesLoaded);
     </script>
 
-    <!-- Application Logic with Multi-Artist, Museum Metadata, Audit Logs & Live Firebase Cloud Sync -->
+    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync (APP_ID = theartists-loft-v2) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -1208,7 +1092,7 @@
 
         let storedPinHash = null;
         let isPinInitialized = false;
-        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft';
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'theartists-loft-v2';
 
         async function hashPasscode(plainText) {
             const encoder = new TextEncoder();
@@ -1237,7 +1121,7 @@
             body: "Founded in Yangon, The Artist's Loft is an independent curatorial platform and private art space dedicated to presenting original fine artworks by distinguished and emerging artists from Myanmar.\n\nRooted in a deep respect for traditional craftsmanship and contemporary visual storytelling, our collection highlights works that capture the spiritual tranquility, cultural heritage, and poetic landscapes of Myanmar.\n\nEvery painting presented in our gallery is carefully curated directly from the artists' studios, ensuring authenticity, provenance, and a meaningful connection between creator and collector worldwide."
         };
 
-        // Default Seed Artworks with Museum Specifications (Title, Medium, Size, Year, Provenance, Description)
+        // Default Seed Artworks with Museum Placard Details
         const DEFAULT_ARTWORKS = [
             {
                 id: 'art-1',
@@ -1247,12 +1131,12 @@
                 medium: 'Oil on Canvas',
                 size: '36 × 24 in (91.4 × 61.0 cm)',
                 year: '2023',
-                provenance: 'Original Signed • Studio Provenance',
+                provenance: 'Artist Studio, Yangon',
                 status: 'Available',
                 price: '',
                 image: 'image_d698fb.jpg',
                 aspect: '3/4',
-                description: 'Young novices walking in serene morning light, capturing the quiet spiritual rhythm and timeless monastic grace of Myanmar.',
+                description: 'Young novices walking in serene morning light, capturing the quiet spiritual rhythm of Myanmar.',
                 order: 1
             },
             {
@@ -1263,12 +1147,12 @@
                 medium: 'Oil on Canvas',
                 size: '30 × 24 in (76.2 × 61.0 cm)',
                 year: '2024',
-                provenance: 'Original Signed • Gallery Framed',
+                provenance: 'Artist Studio, Yangon',
                 status: 'Available',
                 price: '',
                 image: '05582-mtoung3.jpg',
                 aspect: '3/4',
-                description: 'Soft impasto petals emerging from tranquil waters, symbolizing purity, renewal, and inner stillness.',
+                description: 'Soft impasto petals emerging from tranquil waters, symbolizing purity and inner stillness.',
                 order: 2
             },
             {
@@ -1279,12 +1163,12 @@
                 medium: 'Oil on Canvas',
                 size: '24 × 36 in (61.0 × 91.4 cm)',
                 year: '2022',
-                provenance: 'Private Collection • Yangon',
+                provenance: 'Private Collection',
                 status: 'Sold',
                 price: '',
                 image: '179362955683157.jpg',
                 aspect: '4/3',
-                description: 'Luminous reflections across the river at dawn, painted with fluid impressionistic brushwork and atmospheric depth.',
+                description: 'Luminous reflections across the river at dawn, painted with fluid impressionistic brushwork.',
                 order: 3
             },
             {
@@ -1295,7 +1179,7 @@
                 medium: 'Oil on Canvas',
                 size: '36 × 28 in (91.4 × 71.1 cm)',
                 year: '2023',
-                provenance: 'Original Signed • Certificate of Authenticity',
+                provenance: 'Artist Studio, Yangon',
                 status: 'Available',
                 price: '',
                 image: '20160602-mtoung5.jpg',
@@ -1309,14 +1193,14 @@
                 title: 'Lotus Pond Reverie',
                 category: 'Floral & Still Life',
                 medium: 'Oil on Canvas',
-                size: '32 × 24 in (81.3 × 61.0 cm)',
+                size: '30 × 24 in (76.2 × 61.0 cm)',
                 year: '2024',
-                provenance: 'Original Signed • Studio Provenance',
+                provenance: 'Artist Studio, Yangon',
                 status: 'Available',
                 price: '',
                 image: '8899c-mtoung4.jpg',
                 aspect: '3/4',
-                description: 'Delicate interplay of sunlight and shadow across blooming lotus leaves in a quiet sanctuary pond.',
+                description: 'Delicate interplay of sunlight and shadow across blooming lotus leaves.',
                 order: 5
             },
             {
@@ -1325,14 +1209,14 @@
                 title: "Melody's Rest",
                 category: 'Portraits',
                 medium: 'Oil on Canvas',
-                size: '24 × 32 in (61.0 × 81.3 cm)',
+                size: '24 × 30 in (61.0 × 76.2 cm)',
                 year: '2023',
-                provenance: 'Original Signed • Certificate of Authenticity',
+                provenance: 'Artist Studio, Yangon',
                 status: 'Available',
                 price: '',
                 image: 'images.jpg',
                 aspect: '4/3',
-                description: 'A quiet moment of contemplation alongside a classical Burmese harp (Saung-gauk), celebrating musical heritage.',
+                description: 'A quiet moment of contemplation alongside a classical harp, celebrating Burmese musical heritage.',
                 order: 6
             }
         ];
@@ -1390,22 +1274,17 @@
             return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'admin_security');
         }
 
-        // ==================== EDIT LOG RECORDING & RENDERING ====================
-        async function recordEditLog(action, entityType, targetTitle, details = '') {
-            const now = new Date();
+        async function recordEditLog(action, targetType, targetName, details = '') {
             const logEntry = {
-                id: 'log-' + now.getTime() + '-' + Math.random().toString(36).slice(2, 6),
-                timestamp: now.getTime(),
-                isoDate: now.toISOString(),
+                id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                timestamp: new Date().toISOString(),
                 action,
-                entityType,
-                targetTitle: String(targetTitle || 'Untitled'),
-                details: String(details || '')
+                targetType,
+                targetName,
+                details
             };
-
             editLogs.unshift(logEntry);
-            if (editLogs.length > 250) editLogs = editLogs.slice(0, 250);
-            renderEditLogsList();
+            renderAdminEditLogsList();
 
             try {
                 if (db && currentUser) {
@@ -1414,100 +1293,6 @@
             } catch (err) {
                 console.warn('Edit log cloud sync notice:', err);
             }
-        }
-
-        function formatLogTimestamp(ts) {
-            try {
-                const d = new Date(ts);
-                return d.toLocaleString(undefined, {
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
-            } catch (e) {
-                return String(ts || '');
-            }
-        }
-
-        function renderEditLogsList() {
-            const listEl = document.getElementById('admin-edit-logs-list');
-            const badgeEl = document.getElementById('admin-log-badge');
-            if (badgeEl) badgeEl.textContent = editLogs.length;
-            if (!listEl) return;
-
-            if (editLogs.length === 0) {
-                listEl.innerHTML = `
-                    <div class="text-center py-10 px-4 rounded-xl bg-[#FAF9F6] border border-[#A69076]/20">
-                        <p class="font-serif text-base text-[#2C2C2C]/70 mb-1">No edits recorded yet.</p>
-                        <p class="text-xs text-[#2C2C2C]/50">Any additions, updates, or deletions in the Admin Console will automatically appear here.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            listEl.innerHTML = editLogs.map(entry => {
-                const act = String(entry.action || 'UPDATED').toUpperCase();
-                let badgeStyle = 'bg-amber-100 text-amber-800 border-amber-200';
-                if (act.includes('ADD') || act.includes('CREATE')) {
-                    badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-                } else if (act.includes('DELETE') || act.includes('REMOVE')) {
-                    badgeStyle = 'bg-red-100 text-red-800 border-red-200';
-                }
-
-                return `
-                    <div class="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                        <div class="space-y-1 min-w-0">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-semibold rounded-md border ${badgeStyle}">${escapeHTML(act)}</span>
-                                <span class="text-[10px] uppercase tracking-widest text-[#9C8265] font-medium">${escapeHTML(entry.entityType || 'Gallery')}</span>
-                                <span class="font-serif text-sm text-[#2C2C2C] font-medium truncate">${escapeHTML(entry.targetTitle)}</span>
-                            </div>
-                            ${entry.details ? `<p class="text-xs text-[#2C2C2C]/65 truncate">${escapeHTML(entry.details)}</p>` : ''}
-                        </div>
-                        <span class="text-[11px] text-[#2C2C2C]/50 whitespace-nowrap flex-shrink-0">${escapeHTML(formatLogTimestamp(entry.timestamp))}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function downloadEditLogsJSON() {
-            const payload = {
-                gallery: "The Artist's Loft",
-                exportedAt: new Date().toISOString(),
-                totalEntries: editLogs.length,
-                logs: editLogs
-            };
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function downloadEditLogsCSV() {
-            const headers = ['Timestamp (ISO)', 'Action', 'Entity Type', 'Target Title', 'Details'];
-            const escapeCSV = (val) => `"${String(val || '').replace(/"/g, '""')}"`;
-            const rows = editLogs.map(log => [
-                escapeCSV(log.isoDate || new Date(log.timestamp).toISOString()),
-                escapeCSV(log.action),
-                escapeCSV(log.entityType),
-                escapeCSV(log.targetTitle),
-                escapeCSV(log.details)
-            ].join(','));
-
-            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
         }
 
         // Initialize Firebase Cloud Connection
@@ -1582,7 +1367,7 @@
                 const colRef = getArtworksCollectionRef();
                 onSnapshot(colRef, async (snapshot) => {
                     if (snapshot.empty) {
-                        updateCloudStatus(true, 'Connected to Cloud — Seeding initial collection...');
+                        updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Seeding initial collection...`);
                         for (const item of DEFAULT_ARTWORKS) {
                             await setDoc(doc(colRef, item.id), item);
                         }
@@ -1598,7 +1383,7 @@
 
                     loaded.sort((a, b) => (a.order || 999) - (b.order || 999));
                     artworks = loaded;
-                    updateCloudStatus(true, 'Connected to Cloud (theartist-sloft) — Live Sync Active');
+                    updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Live Sync Active`);
                     renderSelectedArtistProfile();
                     renderCategoryFilterBar();
                     renderArtworksGrid();
@@ -1615,10 +1400,11 @@
                 onSnapshot(getEditLogsCollectionRef(), (snapshot) => {
                     const loadedLogs = [];
                     snapshot.forEach((docSnap) => loadedLogs.push(docSnap.data()));
-                    loadedLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    loadedLogs.sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')));
                     editLogs = loadedLogs;
-                    renderEditLogsList();
+                    renderAdminEditLogsList();
                 }, (err) => console.warn('Edit logs sync notice:', err));
+
             } catch (error) {
                 console.error('Cloud initialization error:', error);
                 updateCloudStatus(false, 'Offline fallback mode');
@@ -1674,8 +1460,8 @@
                 const safeName = escapeHTML(artist.name);
                 const baseClasses = "px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.22em] transition-all duration-500 ease-out font-medium";
                 const stateClasses = isActive
-                    ? "bg-[#26231F] text-[#F3EFE6] shadow-md scale-[1.03]"
-                    : "bg-[#FAF7F0]/80 text-[#26231F]/75 border border-[#9C8265]/40 hover:border-[#26231F] dark:hover:border-[#D4B483] hover:text-[#26231F]";
+                    ? "bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] shadow-md scale-[1.03]"
+                    : "bg-[#FAF7F0]/80 dark:bg-[#1B1916]/80 text-[#26231F]/75 dark:text-[#EDE7DA]/75 border border-[#9C8265]/40 dark:border-[#D4B483]/30 hover:border-[#26231F] dark:hover:border-[#D4B483]";
                 return `<button type="button" onclick="selectArtist('${safeId}')" class="${baseClasses} ${stateClasses}">${safeName}</button>`;
             }).join('');
         }
@@ -1732,7 +1518,7 @@
             const artistWorksCount = artworks.filter(w => (w.artistId || 'mt-oung') === artist.id).length;
 
             container.innerHTML = `
-                <div class="w-36 h-44 sm:w-44 sm:h-52 md:w-48 md:h-60 rounded-2xl overflow-hidden bg-[#E7E0D2] flex-shrink-0 shadow-md border border-[#9C8265]/25">
+                <div class="w-36 h-44 sm:w-44 sm:h-52 md:w-48 md:h-60 rounded-2xl overflow-hidden bg-[#E7E0D2] dark:bg-[#24211D] flex-shrink-0 shadow-md border border-[#9C8265]/25 dark:border-[#D4B483]/25">
                     <img src="${safeImg}"
                          alt="${safeName}"
                          data-artist-name="${safeName}"
@@ -1740,13 +1526,13 @@
                          class="w-full h-full object-cover block">
                 </div>
                 <div class="flex-1 text-center md:text-left">
-                    <span class="inline-block text-[10px] uppercase tracking-[0.32em] text-[#9C8265] mb-2 font-medium">Artist Profile</span>
-                    <h2 class="text-3xl sm:text-4xl font-serif font-medium text-[#26231F] mb-1.5 leading-tight">${safeName}</h2>
-                    <p class="text-sm font-serif italic text-[#26231F]/65 mb-4">${safeSubtitle}</p>
-                    <div class="w-12 h-[1px] bg-[#9C8265] mx-auto md:mx-0 mb-4"></div>
-                    <p class="text-sm md:text-base text-[#26231F]/80 font-light leading-relaxed whitespace-pre-line">${safeBio}</p>
-                    <div class="mt-6 pt-5 border-t border-[#9C8265]/20 flex flex-wrap items-center justify-center md:justify-start gap-4">
-                        <button type="button" onclick="scrollToArtistWorks()" class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-[#26231F] text-[#F3EFE6] hover:bg-[#9C8265] text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-sm group">
+                    <span class="inline-block text-[10px] uppercase tracking-[0.32em] text-[#9C8265] dark:text-[#D4B483] mb-2 font-medium">Artist Profile</span>
+                    <h2 class="text-3xl sm:text-4xl font-serif font-medium text-[#26231F] dark:text-[#EDE7DA] mb-1.5 leading-tight">${safeName}</h2>
+                    <p class="text-sm font-serif italic text-[#26231F]/65 dark:text-[#EDE7DA]/65 mb-4">${safeSubtitle}</p>
+                    <div class="w-12 h-[1px] bg-[#9C8265] dark:bg-[#D4B483] mx-auto md:mx-0 mb-4"></div>
+                    <p class="text-sm md:text-base text-[#26231F]/80 dark:text-[#EDE7DA]/80 font-light leading-relaxed whitespace-pre-line">${safeBio}</p>
+                    <div class="mt-6 pt-5 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 flex flex-wrap items-center justify-center md:justify-start gap-4">
+                        <button type="button" onclick="scrollToArtistWorks()" class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] hover:bg-[#9C8265] text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 shadow-sm group">
                             <span>View Artworks (${artistWorksCount})</span>
                             <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -1767,7 +1553,7 @@
             }
         }
 
-        // ==================== CATEGORY FILTER & MUSEUM GALLERY GRID ====================
+        // ==================== CATEGORY FILTER & SYNCHRONIZED ROW GALLERY GRID ====================
         function getArtistArtworks(artistId = activeArtistId) {
             return artworks.filter(a => (a.artistId || 'mt-oung') === artistId);
         }
@@ -1786,8 +1572,8 @@
                 const isActive = cat === activeCategory;
                 const safeCat = escapeHTML(cat);
                 const btnClass = isActive
-                    ? 'px-5 py-2 rounded-full text-xs uppercase tracking-[0.2em] font-medium bg-[#26231F] text-[#F3EFE6] shadow-sm'
-                    : 'px-5 py-2 rounded-full text-xs uppercase tracking-[0.2em] font-medium text-[#26231F]/70 hover:text-[#26231F] border border-transparent hover:border-[#9C8265]/40 transition-colors';
+                    ? 'px-5 py-2 rounded-full text-xs uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] shadow-sm'
+                    : 'px-5 py-2 rounded-full text-xs uppercase tracking-[0.2em] font-medium text-[#26231F]/70 dark:text-[#EDE7DA]/70 hover:text-[#26231F] dark:hover:text-[#EDE7DA] border border-transparent hover:border-[#9C8265]/40 transition-colors';
                 return `<button type="button" onclick="filterByCategory('${safeCat.replace(/'/g, "\\'")}')" class="${btnClass}">${safeCat}</button>`;
             }).join('');
         }
@@ -1815,9 +1601,9 @@
 
             if (visibleWorks.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full text-center py-16 px-6 bg-[#FAF7F0]/70 rounded-3xl border border-[#9C8265]/20">
-                        <p class="font-serif text-xl text-[#26231F]/75 mb-2">No artworks listed in this category yet.</p>
-                        <p class="text-xs uppercase tracking-widest text-[#9C8265]">Please select another category or artist above</p>
+                    <div class="col-span-full text-center py-16 px-6 bg-[#FAF7F0]/70 dark:bg-[#1B1916]/80 rounded-3xl border border-[#9C8265]/20 dark:border-[#D4B483]/20">
+                        <p class="font-serif text-xl text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-2">No artworks listed in this category yet.</p>
+                        <p class="text-xs uppercase tracking-widest text-[#9C8265] dark:text-[#D4B483]">Please select another category or artist above</p>
                     </div>
                 `;
                 return;
@@ -1837,38 +1623,32 @@
                 const safeImg = escapeHTML(art.image);
                 const safeAspect = escapeHTML(art.aspect || '3/4');
 
+                const placardMeta = [safeMedium, safeSize, safeYear].filter(Boolean).join(' • ');
+
                 return `
-                    <article class="reveal-item tilt-card flex flex-col h-full group bg-[#FAF7F0]/90 border border-[#9C8265]/25 rounded-2xl overflow-hidden shadow-sm cursor-pointer" onclick="openLightboxById('${safeId}')">
+                    <article class="reveal-item tilt-card flex flex-col h-full group bg-[#FAF7F0]/90 dark:bg-[#1B1916]/90 border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-2xl overflow-hidden shadow-sm cursor-pointer" onclick="openLightboxById('${safeId}')">
                         <div class="tilt-glare"></div>
-                        <div class="relative aspect-[4/5] w-full overflow-hidden bg-[#E7E0D2] flex items-center justify-center p-5 sm:p-6">
+                        <div class="relative aspect-[4/5] w-full overflow-hidden bg-[#E7E0D2] dark:bg-[#23201C] flex items-center justify-center p-4 sm:p-5">
                             <img src="${safeImg}"
                                  alt="${safeTitle}"
                                  data-title="${safeTitle}"
                                  data-category="${safeCat}"
                                  data-aspect="${safeAspect}"
                                  onerror="handleCardImageError(this)"
-                                 class="w-full h-full object-contain block drop-shadow-md transition-transform duration-1000 ease-out group-hover:scale-[1.04]">
+                                 class="w-full h-full object-contain block drop-shadow-sm transition-transform duration-1000 ease-out group-hover:scale-[1.04]">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#26231F]/18 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                             <div class="absolute top-3.5 right-3.5 px-3 py-1 rounded-full bg-[#26231F]/80 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] flex items-center gap-1.5 z-10">
                                 <span class="w-2 h-2 rounded-full ${dotClass}"></span>
                                 <span>${statusLabel}</span>
                             </div>
                         </div>
-                        <div class="p-6 flex-1 flex flex-col justify-between border-t border-[#9C8265]/15 bg-[#FAF7F0]/95">
+                        <div class="p-6 flex-1 flex flex-col justify-between border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 bg-[#FAF7F0]/95 dark:bg-[#1B1916]/95">
                             <div>
-                                <div class="flex items-center justify-between gap-2 mb-1.5">
-                                    <span class="text-[10px] uppercase tracking-[0.26em] text-[#9C8265]">${safeCat}</span>
-                                    ${safeYear ? `<span class="text-[10px] uppercase tracking-[0.2em] text-[#26231F]/50">${safeYear}</span>` : ''}
-                                </div>
-                                <h3 class="font-serif text-xl text-[#26231F] mb-2 group-hover:text-[#9C8265] transition-colors">${safeTitle}</h3>
-                                
-                                <!-- Museum Label Details: Medium & Size -->
-                                <div class="space-y-0.5 text-xs text-[#26231F]/65 mb-3 pb-3 border-b border-[#9C8265]/15">
-                                    <p><span class="uppercase tracking-wider text-[10px] text-[#9C8265] mr-1.5">Medium:</span>${safeMedium}</p>
-                                    ${safeSize ? `<p><span class="uppercase tracking-wider text-[10px] text-[#9C8265] mr-1.5">Size:</span>${safeSize}</p>` : ''}
-                                </div>
+                                <span class="block text-[10px] uppercase tracking-[0.26em] text-[#9C8265] dark:text-[#D4B483] mb-1.5">${safeCat}</span>
+                                <h3 class="font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 group-hover:text-[#9C8265] dark:group-hover:text-[#D4B483] transition-colors">${safeTitle}</h3>
+                                <p class="text-xs text-[#26231F]/60 dark:text-[#EDE7DA]/60 mb-3">${placardMeta}</p>
                             </div>
-                            ${safeDesc ? `<p class="text-sm text-[#26231F]/75 font-light leading-relaxed line-clamp-2">${safeDesc}</p>` : ''}
+                            ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2">${safeDesc}</p>` : ''}
                         </div>
                     </article>
                 `;
@@ -1903,7 +1683,7 @@
             const img = document.getElementById('lightbox-img');
             const titleEl = document.getElementById('lightbox-title');
             const catEl = document.getElementById('lightbox-category');
-            const specsEl = document.getElementById('lightbox-specs');
+            const placardEl = document.getElementById('lightbox-placard');
             const descEl = document.getElementById('lightbox-desc');
             const priceEl = document.getElementById('lightbox-price');
             const dotEl = document.getElementById('lightbox-status-dot');
@@ -1922,16 +1702,10 @@
             }
             if (titleEl) titleEl.textContent = art.title || '';
             if (catEl) catEl.textContent = `${artistName} • ${art.category || 'Fine Art'}`;
-
-            if (specsEl) {
-                const specParts = [];
-                if (art.medium) specParts.push(`<span><strong class="text-[#D4B483] font-normal uppercase text-[10px] tracking-wider mr-1">Medium:</strong>${escapeHTML(art.medium)}</span>`);
-                if (art.size) specParts.push(`<span><strong class="text-[#D4B483] font-normal uppercase text-[10px] tracking-wider mr-1">Size:</strong>${escapeHTML(art.size)}</span>`);
-                if (art.year) specParts.push(`<span><strong class="text-[#D4B483] font-normal uppercase text-[10px] tracking-wider mr-1">Year:</strong>${escapeHTML(art.year)}</span>`);
-                if (art.provenance) specParts.push(`<span>${escapeHTML(art.provenance)}</span>`);
-                specsEl.innerHTML = specParts.join('<span class="text-[#FAF9F6]/25">•</span>');
+            if (placardEl) {
+                const parts = [art.medium, art.size, art.year, art.provenance].filter(Boolean);
+                placardEl.textContent = parts.join('  |  ');
             }
-
             if (descEl) descEl.textContent = art.description || '';
             if (dotEl) dotEl.className = `w-2.5 h-2.5 rounded-full ${isSold ? 'bg-red-400' : 'bg-emerald-400'}`;
             if (statusTextEl) {
@@ -2060,17 +1834,14 @@
                 const isSelected = t === tabName;
                 if (panel) panel.classList.toggle('hidden', !isSelected);
                 if (btn) {
-                    const base = t === 'logs'
-                        ? 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium flex items-center gap-1.5 '
-                        : 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium ';
-                    btn.className = base + (isSelected
-                        ? 'bg-[#2C2C2C] text-[#FAF9F6]'
-                        : 'border border-[#A69076]/40 text-[#2C2C2C]/75 hover:border-[#2C2C2C]');
+                    btn.className = isSelected
+                        ? 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
+                        : 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
                 }
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
             if (tabName === 'artists') renderAdminArtistsList();
-            if (tabName === 'logs') renderEditLogsList();
+            if (tabName === 'logs') renderAdminEditLogsList();
         }
 
         function updateAdminGateUI() {
@@ -2161,9 +1932,9 @@
                 } catch (err) {
                     console.error('Failed to initialize passcode in cloud:', err);
                 }
+                await recordEditLog('Initialized', 'Security', 'Master Passcode', 'Created initial curator passcode');
                 failedPinAttempts = 0;
                 isAdminUnlocked = true;
-                await recordEditLog('INITIALIZED', 'Security', 'Master Curator Passcode', 'Master passcode configured');
                 showAdminDashboard();
                 return;
             }
@@ -2236,7 +2007,7 @@
                 if (currentUser) {
                     await setDoc(getSettingsDocRef(), { pinHash: newHash, updatedAt: Date.now() }, { merge: true });
                 }
-                await recordEditLog('UPDATED', 'Security', 'Curator Passcode', 'Master passcode updated');
+                await recordEditLog('Updated', 'Security', 'Master Passcode', 'Changed curator security passcode');
                 feedback.textContent = 'Passcode encrypted and updated in Cloud!';
                 feedback.className = 'text-xs mt-2.5 font-medium text-emerald-700';
                 feedback.classList.remove('hidden');
@@ -2258,8 +2029,8 @@
             populateAdminCategoryDropdown();
             renderAdminArtworksList();
             renderAdminArtistsList();
+            renderAdminEditLogsList();
             populateGalleryAboutAdminForm();
-            renderEditLogsList();
         }
 
         function populateAdminArtistDropdown(selectedArtistId = '') {
@@ -2299,10 +2070,10 @@
                 const statusInfo = isSold ? 'Collected' : (escapeHTML(art.price) || 'Available');
                 const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
                 const artistName = artist ? escapeHTML(artist.name) : 'MT. Oung';
-                const metaLine = [art.medium, art.size, statusInfo].filter(Boolean).map(escapeHTML).join(' • ');
+                const metaLine = [art.medium || 'Oil on Canvas', art.size, statusInfo].filter(Boolean).join(' • ');
 
                 return `
-                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-[#A69076]/20">
+                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
                         <div class="flex items-center gap-3.5 min-w-0">
                             <img src="${escapeHTML(art.image)}"
                                  alt="${escapeHTML(art.title)}"
@@ -2312,12 +2083,12 @@
                                  onerror="handleCardImageError(this)"
                                  class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
                             <div class="min-w-0">
-                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] block truncate">${artistName} • ${escapeHTML(art.category)}</span>
+                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${artistName} • ${escapeHTML(art.category)}</span>
                                 <div class="flex items-center gap-1.5">
                                     <span class="w-2 h-2 rounded-full ${dotClass} flex-shrink-0"></span>
-                                    <h5 class="font-serif text-base text-[#2C2C2C] truncate">${escapeHTML(art.title)}</h5>
+                                    <h5 class="font-serif text-base truncate">${escapeHTML(art.title)}</h5>
                                 </div>
-                                <span class="text-[11px] text-[#2C2C2C]/55 block truncate">${metaLine}</span>
+                                <span class="text-[11px] opacity-60 block truncate">${escapeHTML(metaLine)}</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
@@ -2375,8 +2146,6 @@
 
                 const docId = editId || 'art-' + Date.now();
                 const existingArt = artworks.find(a => a.id === docId);
-                const artistObj = artists.find(a => a.id === artistId);
-                const artistLabel = artistObj ? artistObj.name : artistId;
 
                 const artworkPayload = {
                     id: docId,
@@ -2422,10 +2191,10 @@
                 }
 
                 await recordEditLog(
-                    editId ? 'UPDATED' : 'ADDED',
+                    editId ? 'Updated' : 'Added',
                     'Artwork',
                     title,
-                    `Artist: ${artistLabel} | Medium: ${medium}${size ? ' | Size: ' + size : ''} | Status: ${status}`
+                    `${category} • ${medium}${size ? ' • ' + size : ''} (${status})`
                 );
 
                 resetAdminForm();
@@ -2470,9 +2239,6 @@
             document.getElementById('admin-artwork-form').reset();
             document.getElementById('edit-artwork-id').value = '';
             document.getElementById('art-medium-input').value = 'Oil on Canvas';
-            document.getElementById('art-size-input').value = '';
-            document.getElementById('art-year-input').value = '';
-            document.getElementById('art-provenance-input').value = '';
             document.getElementById('art-status-select').value = 'Available';
             document.getElementById('cancel-edit-btn').classList.add('hidden');
             document.getElementById('save-artwork-btn').textContent = 'Publish to Live Gallery';
@@ -2492,7 +2258,7 @@
                 renderAdminArtworksList();
             }
             if (target) {
-                await recordEditLog('DELETED', 'Artwork', target.title, `Removed from ${target.category || 'Collection'}`);
+                await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
             }
         }
 
@@ -2511,7 +2277,7 @@
                 const worksCount = artworks.filter(w => (w.artistId || 'mt-oung') === artist.id).length;
 
                 return `
-                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-[#A69076]/20">
+                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
                         <div class="flex items-center gap-3.5 min-w-0">
                             <img src="${safeImg}"
                                  alt="${safeName}"
@@ -2519,9 +2285,9 @@
                                  onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')"
                                  class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
                             <div class="min-w-0">
-                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] block truncate">${worksCount} ${worksCount === 1 ? 'Work' : 'Works'}</span>
-                                <h5 class="font-serif text-base text-[#2C2C2C] truncate">${safeName}</h5>
-                                <span class="text-[11px] text-[#2C2C2C]/55 block truncate">${safeSub}</span>
+                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${worksCount} ${worksCount === 1 ? 'Work' : 'Works'}</span>
+                                <h5 class="font-serif text-base truncate">${safeName}</h5>
+                                <span class="text-[11px] opacity-60 block truncate">${safeSub}</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
@@ -2577,28 +2343,35 @@
                     updatedAt: Date.now()
                 };
 
+                // Immediately update local UI so artist profile updates without waiting
+                if (editId) {
+                    const idx = artists.findIndex(a => a.id === editId);
+                    if (idx !== -1) artists[idx] = artistPayload;
+                } else {
+                    artists.push(artistPayload);
+                }
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+                populateAdminArtistDropdown(docId);
+                renderAdminArtistsList();
+
                 if (db && currentUser) {
-                    await setDoc(doc(getArtistsCollectionRef(), docId), artistPayload);
+                    await Promise.race([
+                        setDoc(doc(getArtistsCollectionRef(), docId), artistPayload),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Cloud timeout — check Firebase Firestore Rules or connection.')), 8000)
+                        )
+                    ]);
                     showAdminFeedback(`Artist "${name}" saved to Live Cloud!`);
                 } else {
-                    if (editId) {
-                        const idx = artists.findIndex(a => a.id === editId);
-                        if (idx !== -1) artists[idx] = artistPayload;
-                    } else {
-                        artists.push(artistPayload);
-                    }
-                    renderArtistSelectorBar();
-                    renderSelectedArtistProfile();
-                    populateAdminArtistDropdown();
-                    renderAdminArtistsList();
                     showAdminFeedback(`Artist "${name}" saved locally.`);
                 }
 
-                await recordEditLog(editId ? 'UPDATED' : 'ADDED', 'Artist', name, subtitle || 'Artist profile saved');
+                await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle || 'Artist profile updated');
                 resetArtistForm();
             } catch (err) {
                 console.error('Error saving artist:', err);
-                showAdminFeedback('Failed to save artist: ' + (err.message || 'Check connection.'), true);
+                showAdminFeedback('Artist updated locally, but cloud sync reported: ' + (err.message || 'Check connection.'), true);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Save Artist Profile';
@@ -2649,11 +2422,11 @@
                 renderAdminArtistsList();
             }
             if (target) {
-                await recordEditLog('DELETED', 'Artist', target.name, 'Removed artist profile');
+                await recordEditLog('Deleted', 'Artist', target.name, 'Removed artist profile');
             }
         }
 
-        // ==================== ADMIN: GALLERY ABOUT & EXPORT & CONTACT ====================
+        // ==================== ADMIN: GALLERY ABOUT, EDIT LOGS & EXPORT ====================
         function populateGalleryAboutAdminForm() {
             const hInput = document.getElementById('about-heading-input');
             const sInput = document.getElementById('about-subtitle-input');
@@ -2679,14 +2452,76 @@
                 } else {
                     showAdminFeedback('Gallery About page updated locally.');
                 }
-                await recordEditLog('UPDATED', 'Gallery About', heading, subtitle || 'Updated gallery story');
+                await recordEditLog('Updated', 'Gallery About', heading, 'Updated gallery curatorial statement');
             } catch (err) {
                 showAdminFeedback('Update failed: ' + err.message, true);
             }
         }
 
+        function renderAdminEditLogsList() {
+            const list = document.getElementById('admin-edit-logs-list');
+            const countEl = document.getElementById('admin-log-count');
+            if (countEl) countEl.textContent = editLogs.length;
+            if (!list) return;
+
+            if (editLogs.length === 0) {
+                list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = editLogs.map(log => {
+                const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString() : '';
+                const badgeColor = log.action === 'Deleted'
+                    ? 'bg-red-500/15 text-red-600'
+                    : (log.action === 'Added' || log.action === 'Initialized' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/15 text-amber-700 dark:text-amber-300');
+                return `
+                    <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-medium ${badgeColor}">${escapeHTML(log.action)}</span>
+                                <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(log.targetType)}</span>
+                                <span class="font-serif text-sm font-medium">${escapeHTML(log.targetName)}</span>
+                            </div>
+                            ${log.details ? `<p class="text-xs opacity-70">${escapeHTML(log.details)}</p>` : ''}
+                        </div>
+                        <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(dateStr)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function downloadEditLogsCSV() {
+            const headers = ['Timestamp', 'Action', 'TargetType', 'TargetName', 'Details'];
+            const rows = editLogs.map(l => [
+                l.timestamp || '',
+                l.action || '',
+                l.targetType || '',
+                l.targetName || '',
+                l.details || ''
+            ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadEditLogsJSON() {
+            const blob = new Blob([JSON.stringify({ appId: APP_ID, exportedAt: new Date().toISOString(), editLogs }, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         function exportArtworksJSON() {
             const payload = {
+                appId: APP_ID,
                 exportedAt: new Date().toISOString(),
                 galleryAbout,
                 artists,
@@ -2730,7 +2565,7 @@
                 if (res.ok && data.success) {
                     playSoftGalleryChime('success');
                     feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
-                    feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C]';
+                    feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]';
                     feedback.classList.remove('hidden');
                     form.reset();
                 } else {
@@ -2746,101 +2581,75 @@
             }
         }
 
-        // ==================== SMOOTH ZOOM-IN / ZOOM-OUT SCROLL & CURSOR FOCUS ENGINE ====================
+        // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
         let galleryScrollRaf = null;
         let galleryScrollBound = false;
-        let lastPointerX = -9999;
-        let lastPointerY = -9999;
+
+        function getCardRandomSeed(card, idx) {
+            if (card.dataset.randSeeded === 'true') {
+                return {
+                    phase: parseFloat(card.dataset.randPhase),
+                    scaleMin: parseFloat(card.dataset.randScaleMin),
+                    yOffset: parseFloat(card.dataset.randYOffset)
+                };
+            }
+            const seed = (idx * 73 + 19) % 100 / 100;
+            const phase = (seed - 0.5) * 0.22;
+            const scaleMin = 0.91 + (seed * 0.035);
+            const yOffset = 22 + Math.round(seed * 14);
+            card.dataset.randSeeded = 'true';
+            card.dataset.randPhase = phase.toFixed(3);
+            card.dataset.randScaleMin = scaleMin.toFixed(3);
+            card.dataset.randYOffset = String(yOffset);
+            return { phase, scaleMin, yOffset };
+        }
 
         function updateGalleryScrollPresence() {
+            galleryScrollRaf = null;
             const artworksSection = document.getElementById('section-artworks');
-            if (!artworksSection || artworksSection.classList.contains('hidden')) {
-                galleryScrollRaf = null;
-                return;
-            }
+            if (!artworksSection || artworksSection.classList.contains('hidden')) return;
 
             const cards = Array.from(document.querySelectorAll('#artworks-masonry-grid .reveal-item'));
-            if (cards.length === 0) {
-                galleryScrollRaf = null;
-                return;
-            }
+            if (cards.length === 0) return;
 
-            const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+            const vh = window.innerHeight || document.documentElement.clientHeight;
+            const headerHeight = 105;
+            const topFadeStart = headerHeight + 45;
+            const topFadeEnd = headerHeight - 150;
+            const bottomFadeStart = vh + 95;
+            const bottomFadeEnd = vh * 0.80;
 
-            // Detect card row under cursor even while scrolling without moving the mouse
-            const pointerCard = (lastPointerX >= 0 && lastPointerY >= 0)
-                ? document.elementFromPoint(lastPointerX, lastPointerY)?.closest('.reveal-item')
-                : null;
-            const activeRowTop = pointerCard ? Math.round(pointerCard.getBoundingClientRect().top) : null;
-
-            let stillMoving = false;
-
-            cards.forEach((card) => {
-                // Subtle, organic per-card random offsets so cards in the same row zoom naturally
-                if (card._randPhase === undefined) {
-                    card._randPhase = (Math.random() - 0.5) * 48;
-                    card._randScaleMin = 0.81 + Math.random() * 0.05;
-                    card._randEase = 0.085 + Math.random() * 0.04;
-                    card._randTiltZ = (Math.random() - 0.5) * 1.1;
+            cards.forEach((card, idx) => {
+                if (card.dataset.hovered === 'true') {
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                    return;
                 }
 
                 const rect = card.getBoundingClientRect();
-                const isPointerRow = activeRowTop !== null && Math.abs(Math.round(rect.top) - activeRowTop) < 35;
+                const center = (rect.top + rect.bottom) * 0.5;
+                const { phase, scaleMin, yOffset } = getCardRandomSeed(card, idx);
+                const adjustedCenter = center + (phase * 140);
 
-                let targetOpacity = 1;
-                let targetY = 0;
-                let targetScale = 1;
-                let targetRotZ = 0;
-
-                if (!isPointerRow) {
-                    const cardCenter = rect.top + rect.height * 0.5 + card._randPhase;
-                    const viewportCenter = vh * 0.5;
-                    const distanceFromCenter = Math.abs(cardCenter - viewportCenter);
-                    const focusRadius = vh * 0.50;
-                    const normalizedDist = Math.min(1, distanceFromCenter / focusRadius);
-
-                    const focusFactor = Math.pow(1 - normalizedDist, 1.5);
-                    targetOpacity = 0.05 + focusFactor * 0.95;
-                    targetY = (1 - focusFactor) * (cardCenter > viewportCenter ? 32 : -18);
-                    targetScale = card._randScaleMin + focusFactor * (1 - card._randScaleMin);
-                    targetRotZ = (1 - focusFactor) * card._randTiltZ;
+                let progress = 1;
+                if (adjustedCenter < topFadeStart) {
+                    progress = (adjustedCenter - topFadeEnd) / (topFadeStart - topFadeEnd);
+                } else if (adjustedCenter > bottomFadeEnd) {
+                    progress = 1 - ((adjustedCenter - bottomFadeEnd) / (bottomFadeStart - bottomFadeEnd));
                 }
 
-                const curOpacity = card._curOpacity !== undefined ? card._curOpacity : targetOpacity;
-                const curY = card._curY !== undefined ? card._curY : targetY;
-                const curScale = card._curScale !== undefined ? card._curScale : targetScale;
-                const curRotZ = card._curRotZ !== undefined ? card._curRotZ : targetRotZ;
+                progress = Math.max(0, Math.min(1, progress));
+                const eased = progress * progress * (3 - 2 * progress);
 
-                const ease = card._randEase;
-                const nextOpacity = curOpacity + (targetOpacity - curOpacity) * ease;
-                const nextY = curY + (targetY - curY) * ease;
-                const nextScale = curScale + (targetScale - curScale) * ease;
-                const nextRotZ = curRotZ + (targetRotZ - curRotZ) * ease;
+                const opacity = 0.06 + (0.94 * eased);
+                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -18 : yOffset);
+                const scale = scaleMin + ((1 - scaleMin) * eased);
+                const blurPx = (1 - eased) * 1.8;
 
-                card._curOpacity = nextOpacity;
-                card._curY = nextY;
-                card._curScale = nextScale;
-                card._curRotZ = nextRotZ;
-
-                if (
-                    Math.abs(targetOpacity - nextOpacity) > 0.004 ||
-                    Math.abs(targetY - nextY) > 0.15 ||
-                    Math.abs(targetScale - nextScale) > 0.002
-                ) {
-                    stillMoving = true;
-                }
-
-                card.style.opacity = nextOpacity.toFixed(3);
-                if (card.dataset.tilting !== 'true') {
-                    card.style.transform = `perspective(1200px) translate3d(0, ${nextY.toFixed(1)}px, 0) scale(${nextScale.toFixed(3)}) rotateZ(${nextRotZ.toFixed(2)}deg)`;
-                }
+                card.style.opacity = opacity.toFixed(3);
+                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
+                card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
             });
-
-            if (stillMoving) {
-                galleryScrollRaf = requestAnimationFrame(updateGalleryScrollPresence);
-            } else {
-                galleryScrollRaf = null;
-            }
         }
 
         function requestGalleryScrollUpdate() {
@@ -2854,11 +2663,6 @@
                 galleryScrollBound = true;
                 window.addEventListener('scroll', requestGalleryScrollUpdate, { passive: true });
                 window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
-                window.addEventListener('mousemove', (e) => {
-                    lastPointerX = e.clientX;
-                    lastPointerY = e.clientY;
-                    requestGalleryScrollUpdate();
-                }, { passive: true });
             }
 
             document.querySelectorAll('#artworks-masonry-grid .tilt-card').forEach(card => {
@@ -2866,8 +2670,13 @@
                 card.dataset.tiltBound = 'true';
                 const glare = card.querySelector('.tilt-glare');
 
+                card.addEventListener('mouseenter', () => {
+                    card.dataset.hovered = 'true';
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                });
+
                 card.addEventListener('mousemove', (e) => {
-                    card.dataset.tilting = 'true';
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
@@ -2879,24 +2688,22 @@
                     if (glare) {
                         const pctX = (x / rect.width) * 100;
                         const pctY = (y / rect.height) * 100;
-                        const isDark = document.documentElement.classList.contains('dark');
-                        const glareColor = isDark ? 'rgba(235, 212, 175, 0.24)' : 'rgba(255, 255, 255, 0.44)';
-                        glare.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%, ${glareColor} 0%, rgba(255,255,255,0) 68%)`;
+                        glare.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0) 68%)`;
                         glare.style.opacity = '1';
                     }
                 });
 
                 card.addEventListener('mouseleave', () => {
-                    card.dataset.tilting = 'false';
+                    card.dataset.hovered = 'false';
                     if (glare) glare.style.opacity = '0';
                     requestGalleryScrollUpdate();
                 });
             });
 
-            requestGalleryScrollUpdate();
+            updateGalleryScrollPresence();
         }
 
-        // ==================== ULTRA-SOFT WHISPER GALLERY AMBIENCE ====================
+        // ==================== ULTRA-SOFT WHISPER GALLERY AMBIENCE (0.022) ====================
         let audioCtx = null;
         let masterGain = null;
         let isSoundEnabled = true;
@@ -2930,7 +2737,7 @@
             }
         }
 
-        function fadeAudioVolume(audioEl, targetVol, durationMs = 1800) {
+        function fadeAudioVolume(audioEl, targetVol, durationMs = 1500) {
             if (!audioEl) return;
             const startVol = audioEl.volume;
             const steps = 25;
@@ -2962,16 +2769,16 @@
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + i * 0.22);
+                    osc.frequency.setValueAtTime(freq, now + i * 0.18);
 
-                    gain.gain.setValueAtTime(0.0001, now + i * 0.22);
-                    gain.gain.linearRampToValueAtTime(0.008, now + i * 0.22 + 1.6);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.22 + 5.6);
+                    gain.gain.setValueAtTime(0.0001, now + i * 0.18);
+                    gain.gain.linearRampToValueAtTime(0.009, now + i * 0.18 + 1.4);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.18 + 5.2);
 
                     osc.connect(gain);
                     gain.connect(masterGain);
-                    osc.start(now + i * 0.22);
-                    osc.stop(now + i * 0.22 + 5.8);
+                    osc.start(now + i * 0.18);
+                    osc.stop(now + i * 0.18 + 5.4);
                 });
             } catch (e) {}
         }
@@ -2993,13 +2800,13 @@
                     }).catch(() => {
                         if (!ambientInterval) {
                             playWhisperChord();
-                            ambientInterval = setInterval(playWhisperChord, 7400);
+                            ambientInterval = setInterval(playWhisperChord, 6800);
                         }
                     });
                 }
             } else if (!ambientInterval) {
                 playWhisperChord();
-                ambientInterval = setInterval(playWhisperChord, 7400);
+                ambientInterval = setInterval(playWhisperChord, 6800);
             }
         }
 
@@ -3117,12 +2924,11 @@
         window.resetArtistForm = resetArtistForm;
         window.deleteArtistFromAdmin = deleteArtistFromAdmin;
         window.saveGalleryAboutFromAdmin = saveGalleryAboutFromAdmin;
-        window.exportArtworksJSON = exportArtworksJSON;
-        window.downloadEditLogsJSON = downloadEditLogsJSON;
         window.downloadEditLogsCSV = downloadEditLogsCSV;
+        window.downloadEditLogsJSON = downloadEditLogsJSON;
+        window.exportArtworksJSON = exportArtworksJSON;
         window.handleContactSubmit = handleContactSubmit;
         window.toggleGallerySound = toggleGallerySound;
-        window.toggleGalleryTheme = toggleGalleryTheme;
         window.playSoftGalleryChime = playSoftGalleryChime;
         window.initGalleryCardAnimations = initGalleryCardAnimations;
 
@@ -3132,9 +2938,7 @@
         renderSelectedArtistProfile();
         renderCategoryFilterBar();
         renderArtworksGrid();
-        renderEditLogsList();
         updateSoundButtonUI();
-        updateThemeToggleUI();
         bindFirstInteractionAudioUnlock();
         startAmbientSoundscape();
         initCloudGallery();
