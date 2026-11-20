@@ -1456,8 +1456,12 @@
                     }
                 }, (error) => {
                     isLoadingArtworks = false;
-                    console.error('Firestore listener error:', error);
-                    updateCloudStatus(false, `Sync issue (${error.code || 'check rules'}) • ${GALLERY_BUILD_TAG}`);
+                    if (error?.code === 'permission-denied') {
+                        updateCloudStatus(false, 'Firestore rules blocked read/write — check Firebase Console Rules');
+                    } else {
+                        console.error('Firestore listener error:', error);
+                        updateCloudStatus(false, `Sync issue (${error.code || 'check rules'}) • ${GALLERY_BUILD_TAG}`);
+                    }
                     renderArtworksGrid();
                 });
 
@@ -2901,13 +2905,13 @@
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContextClass();
                 masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.032, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(0.14, audioCtx.currentTime);
                 masterGain.connect(audioCtx.destination);
             }
             if (audioCtx.state === 'suspended') {
-                audioCtx.resume().catch(() => {});
+                return audioCtx.resume().then(() => audioCtx).catch(() => audioCtx);
             }
-            return audioCtx;
+            return Promise.resolve(audioCtx);
         }
 
         function updateSoundButtonUI() {
@@ -2938,31 +2942,32 @@
         }
 
         // Warm classical salon note with gentle harmonic overtone & lowpass resonance
-        function triggerClassicalNote(freq, startTime, duration = 1.1, peakGain = 0.008, cutoffHz = 2100) {
-            const ctx = ensureAudioContext();
-            if (ctx.state !== 'running') return;
+        async function triggerClassicalNote(freq, startTimeOffset = 0, duration = 1.15, peakGain = 0.045, cutoffHz = 2800) {
+            const ctx = await ensureAudioContext();
+            if (!ctx || ctx.state !== 'running') return;
+            const now = ctx.currentTime + startTimeOffset;
 
             const filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(cutoffHz, startTime);
-            filter.Q.setValueAtTime(1.1, startTime);
+            filter.frequency.setValueAtTime(cutoffHz, now);
+            filter.Q.setValueAtTime(1.1, now);
 
             const noteGain = ctx.createGain();
-            noteGain.gain.setValueAtTime(0.0001, startTime);
-            noteGain.gain.linearRampToValueAtTime(peakGain, startTime + 0.035);
-            noteGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+            noteGain.gain.setValueAtTime(0.0001, now);
+            noteGain.gain.linearRampToValueAtTime(peakGain, now + 0.025);
+            noteGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
             const oscMain = ctx.createOscillator();
             oscMain.type = 'triangle';
-            oscMain.frequency.setValueAtTime(freq, startTime);
+            oscMain.frequency.setValueAtTime(freq, now);
 
             const oscHarmonic = ctx.createOscillator();
             oscHarmonic.type = 'sine';
-            oscHarmonic.frequency.setValueAtTime(freq * 2, startTime);
+            oscHarmonic.frequency.setValueAtTime(freq * 2, now);
 
             const harmGain = ctx.createGain();
-            harmGain.gain.setValueAtTime(0.18, startTime);
-            harmGain.gain.exponentialRampToValueAtTime(0.02, startTime + duration * 0.7);
+            harmGain.gain.setValueAtTime(0.24, now);
+            harmGain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.7);
 
             oscMain.connect(filter);
             oscHarmonic.connect(harmGain);
@@ -2970,24 +2975,24 @@
             filter.connect(noteGain);
             noteGain.connect(masterGain);
 
-            oscMain.start(startTime);
-            oscHarmonic.start(startTime);
-            oscMain.stop(startTime + duration + 0.05);
-            oscHarmonic.stop(startTime + duration + 0.05);
+            oscMain.start(now);
+            oscHarmonic.start(now);
+            oscMain.stop(now + duration + 0.05);
+            oscHarmonic.stop(now + duration + 0.05);
         }
 
         // Soft parchment/brush rustle when dragging or sliding across artworks
-        function playArtworkDragWhisper(intensity = 0.6) {
+        async function playArtworkDragWhisper(intensity = 0.65) {
             if (!isSoundEnabled) return;
             const nowMs = Date.now();
-            if (nowMs - lastDragWhisperTime < 140) return;
+            if (nowMs - lastDragWhisperTime < 120) return;
             lastDragWhisperTime = nowMs;
 
             try {
-                const ctx = ensureAudioContext();
-                if (ctx.state !== 'running') return;
+                const ctx = await ensureAudioContext();
+                if (!ctx || ctx.state !== 'running') return;
                 const now = ctx.currentTime;
-                const bufferSize = Math.floor(ctx.sampleRate * 0.14);
+                const bufferSize = Math.floor(ctx.sampleRate * 0.16);
                 const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const output = noiseBuffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
@@ -2999,29 +3004,29 @@
 
                 const bandpass = ctx.createBiquadFilter();
                 bandpass.type = 'bandpass';
-                bandpass.frequency.setValueAtTime(1150 + (intensity * 550), now);
-                bandpass.Q.setValueAtTime(2.2, now);
+                bandpass.frequency.setValueAtTime(1200 + (intensity * 650), now);
+                bandpass.Q.setValueAtTime(2.0, now);
 
                 const whisperGain = ctx.createGain();
-                const scaledPeak = Math.max(0.0025, Math.min(0.0075, 0.005 * intensity));
+                const scaledPeak = Math.max(0.015, Math.min(0.045, 0.03 * intensity));
                 whisperGain.gain.setValueAtTime(0.0001, now);
-                whisperGain.gain.linearRampToValueAtTime(scaledPeak, now + 0.03);
-                whisperGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+                whisperGain.gain.linearRampToValueAtTime(scaledPeak, now + 0.025);
+                whisperGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
 
                 whiteNoise.connect(bandpass);
                 bandpass.connect(whisperGain);
                 whisperGain.connect(masterGain);
 
                 whiteNoise.start(now);
-                whiteNoise.stop(now + 0.14);
+                whiteNoise.stop(now + 0.16);
             } catch (e) {}
         }
 
-        function playWhisperChord() {
+        async function playWhisperChord() {
             if (!isSoundEnabled) return;
             try {
-                const ctx = ensureAudioContext();
-                if (ctx.state !== 'running') return;
+                const ctx = await ensureAudioContext();
+                if (!ctx || ctx.state !== 'running') return;
                 const chords = [
                     [261.63, 329.63, 392.00],
                     [220.00, 261.63, 329.63],
@@ -3029,10 +3034,9 @@
                     [196.00, 246.94, 293.66]
                 ];
                 const chord = chords[Math.floor(Math.random() * chords.length)];
-                const now = ctx.currentTime;
 
                 chord.forEach((freq, i) => {
-                    triggerClassicalNote(freq, now + i * 0.22, 4.8, 0.0075, 1400);
+                    triggerClassicalNote(freq, i * 0.22, 4.5, 0.028, 1600);
                 });
             } catch (e) {}
         }
@@ -3042,7 +3046,7 @@
             const customBgAudio = document.getElementById('gallery-bg-audio');
 
             if (customBgAudio) {
-                customBgAudio.volume = 0.022;
+                customBgAudio.volume = 0.06;
                 const playPromise = customBgAudio.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
@@ -3050,17 +3054,15 @@
                             clearInterval(ambientInterval);
                             ambientInterval = null;
                         }
-                        fadeAudioVolume(customBgAudio, 0.022, 1800);
+                        fadeAudioVolume(customBgAudio, 0.06, 1500);
                     }).catch(() => {
                         if (!ambientInterval) {
-                            playWhisperChord();
-                            ambientInterval = setInterval(playWhisperChord, 6800);
+                            ambientInterval = setInterval(playWhisperChord, 7200);
                         }
                     });
                 }
             } else if (!ambientInterval) {
-                playWhisperChord();
-                ambientInterval = setInterval(playWhisperChord, 6800);
+                ambientInterval = setInterval(playWhisperChord, 7200);
             }
         }
 
@@ -3075,12 +3077,12 @@
             }
         }
 
-        function toggleGallerySound(event) {
+        async function toggleGallerySound(event) {
             if (event) event.stopPropagation();
             isSoundEnabled = !isSoundEnabled;
             updateSoundButtonUI();
             if (isSoundEnabled) {
-                ensureAudioContext();
+                await ensureAudioContext();
                 startAmbientSoundscape();
                 playSoftGalleryChime('select');
             } else {
@@ -3088,33 +3090,32 @@
             }
         }
 
-        function playSoftGalleryChime(type = 'nav') {
+        async function playSoftGalleryChime(type = 'nav') {
             if (!isSoundEnabled) return;
             try {
-                const ctx = ensureAudioContext();
-                if (ctx.state !== 'running') return;
-                const now = ctx.currentTime;
+                const ctx = await ensureAudioContext();
+                if (!ctx || ctx.state !== 'running') return;
 
                 if (type === 'artist') {
                     // Classic salon arpeggio when choosing an artist
                     const notes = [523.25, 659.25, 783.99, 1046.50];
                     notes.forEach((freq, idx) => {
-                        triggerClassicalNote(freq, now + idx * 0.11, 1.35, 0.0085, 2400);
+                        triggerClassicalNote(freq, idx * 0.11, 1.35, 0.045, 2600);
                     });
                     return;
                 }
 
                 if (type === 'select' || type === 'filter') {
                     // Gentle classic cadence when selecting categories or items
-                    triggerClassicalNote(587.33, now, 0.65, 0.007, 1900);
-                    triggerClassicalNote(880.00, now + 0.07, 0.8, 0.006, 2200);
+                    triggerClassicalNote(587.33, 0, 0.65, 0.038, 2200);
+                    triggerClassicalNote(880.00, 0.07, 0.8, 0.035, 2500);
                     return;
                 }
 
                 if (type === 'click' || type === 'open') {
                     // Warm classical pluck when clicking an artwork
-                    triggerClassicalNote(392.00, now, 0.85, 0.0075, 1750);
-                    triggerClassicalNote(587.33, now + 0.05, 1.0, 0.0065, 2100);
+                    triggerClassicalNote(392.00, 0, 0.85, 0.04, 2100);
+                    triggerClassicalNote(587.33, 0.05, 1.0, 0.036, 2400);
                     return;
                 }
 
@@ -3124,17 +3125,18 @@
                     inquiry: 880.00,
                     success: 987.77
                 };
-                triggerClassicalNote(freqMap[type] || 587.33, now, 0.75, 0.007, 2000);
+                triggerClassicalNote(freqMap[type] || 587.33, 0, 0.75, 0.038, 2300);
             } catch (e) {}
         }
 
         function bindFirstInteractionAudioUnlock() {
             if (audioUnlockBound) return;
             audioUnlockBound = true;
-            const unlock = () => {
+            const unlock = async () => {
                 if (isSoundEnabled) {
-                    ensureAudioContext();
+                    await ensureAudioContext();
                     startAmbientSoundscape();
+                    playSoftGalleryChime('nav');
                 }
                 ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
                     window.removeEventListener(evt, unlock);
