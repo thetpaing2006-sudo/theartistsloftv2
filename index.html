@@ -537,7 +537,7 @@
                     </div>
                     <div>
                         <h4 id="admin-gate-title" class="font-serif text-xl mb-1">Curator Access</h4>
-                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Enter your Cloudflare <code>ADMIN_API_TOKEN</code> to manage the gallery.</p>
+                        <p id="admin-gate-subtitle" class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Enter your Cloudflare <code>ADMIN_API_TOKEN</code> to manage D1 &amp; R2.</p>
                     </div>
                     <form onsubmit="verifyAdminPin(event)" class="space-y-4">
                         <input id="admin-pin-input" type="password" required minlength="4" autocomplete="current-password" placeholder="Enter ADMIN_API_TOKEN" class="w-full text-center tracking-[0.18em] text-base py-3 px-4 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#12110F] text-[#2C2C2C] dark:text-[#EDE7DA] outline-none focus:border-[#2C2C2C] dark:focus:border-[#D4B483]">
@@ -570,25 +570,28 @@
                     <!-- Admin Status Banner -->
                     <div id="admin-publish-feedback" class="hidden p-4 rounded-2xl text-xs font-medium"></div>
 
-                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Edit Log -->
+                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Visitor Activity | Edit Log -->
                     <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-3">
-                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
-                            Manage Artworks
+                        <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
+                            Artworks
                         </button>
-                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
-                            Manage Artists
+                        <button type="button" onclick="switchAdminTab('artists')" id="admin-tab-btn-artists" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Artists
                         </button>
-                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
-                            Gallery About Page
+                        <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Gallery About
                         </button>
-                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                        <button type="button" onclick="switchAdminTab('visitors')" id="admin-tab-btn-visitors" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Visitors (30d)
+                        </button>
+                        <button type="button" onclick="switchAdminTab('logs')" id="admin-tab-btn-logs" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Edit Log (<span id="admin-log-count">0</span>)
                         </button>
                     </div>
 
                     <!-- ==================== ADMIN TAB 1: ARTWORKS ==================== -->
                     <div id="admin-panel-artworks" class="space-y-8">
-                        <div id="admin-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm transition-all duration-300">
+                        <div id="admin-form-container" class="scroll-mt-4 bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm transition-all duration-300">
                             <h4 id="admin-form-heading" class="font-serif text-xl mb-5">Add New Artwork</h4>
                             <form id="admin-artwork-form" onsubmit="saveArtworkFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artwork-id" value="">
@@ -688,14 +691,14 @@
 
                     <!-- ==================== ADMIN TAB 2: ARTISTS ==================== -->
                     <div id="admin-panel-artists" class="hidden space-y-8">
-                        <div id="admin-artist-form-container" class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
+                        <div id="admin-artist-form-container" class="scroll-mt-4 bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <h4 id="admin-artist-form-heading" class="font-serif text-xl mb-5">Add New Artist Profile</h4>
                             <form id="admin-artist-form" onsubmit="saveArtistFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <input type="hidden" id="edit-artist-id" value="">
 
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist Name *</label>
-                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Ba or Daw Mya" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                                    <input id="artist-name-input" type="text" required placeholder="e.g., U Lun Gywe or Daw Khin" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
                                 <div>
@@ -766,13 +769,57 @@
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB 4: EDIT LOG ==================== -->
+                    <!-- ==================== ADMIN TAB 4: VISITOR ACTIVITY (30D + EMAIL REPORT) ==================== -->
+                    <div id="admin-panel-visitors" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm space-y-5">
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <h4 class="font-serif text-xl">Visitor Activity (Rolling 30 Days • IP-Free)</h4>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Automatically emails a readable report + CSV via Web3Forms before purging logs older than 30 days.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="loadVisitorActivityFromCloud()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
+                                        Refresh
+                                    </button>
+                                    <button type="button" id="archive-report-now-btn" onclick="triggerMonthlyReportNow()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider font-medium transition-colors">
+                                        Email Report &amp; Purge Now
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Top Viewed Artworks & Top Countries -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
+                                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Top Viewed Artworks</span>
+                                    <div id="visitor-top-artworks" class="space-y-1.5 text-xs">
+                                        <p class="opacity-60">Loading...</p>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
+                                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Top Countries &amp; Devices</span>
+                                    <div id="visitor-top-countries" class="space-y-1.5 text-xs">
+                                        <p class="opacity-60">Loading...</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Anonymous Visitor Log List -->
+                            <div>
+                                <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Recent Events</span>
+                                <div id="admin-visitor-logs-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                                    <p class="text-xs opacity-60 py-4 text-center">No visitor activity recorded yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== ADMIN TAB 5: EDIT LOG (PERSISTENT D1) ==================== -->
                     <div id="admin-panel-logs" class="hidden space-y-5">
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
                                 <div>
                                     <h4 class="font-serif text-xl">Curatorial Activity &amp; Edit Log</h4>
-                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Session &amp; cloud activity log for artwork, artist, and about changes.</p>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Saved in Cloudflare D1 for artwork, artist, and about changes.</p>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" onclick="downloadEditLogsCSV()" class="px-4 py-2 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-wider transition-colors">
@@ -796,9 +843,10 @@
 
     <!-- Minimalist Footer (Double-click copyright text to open Admin Console) -->
     <footer class="relative z-10 w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-sm text-center">
-        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
+        <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
             <span ondblclick="openAdminModal()" class="cursor-pointer select-none hover:text-[#26231F] dark:hover:text-[#EDE7DA] transition-colors" title="Double-click for Gallery Management">&copy; <span id="footer-year">2026</span> The Artist's Loft</span>
             <span>Curated Myanmar Fine Art Gallery</span>
+            <span id="visitor-counter-badge" class="text-[11px] tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483]">Visits: —</span>
         </div>
     </footer>
 
@@ -1109,6 +1157,9 @@
                 btn.classList.toggle('text-[#26231F]/70', !isTarget);
                 btn.classList.toggle('dark:text-[#EDE7DA]/70', !isTarget);
             });
+            if (typeof trackVisitorEvent === 'function') {
+                trackVisitorEvent('page_view', sectionId);
+            }
             requestAnimationFrame(() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
                 if (sectionId === 'artworks' && typeof initGalleryCardAnimations === 'function') {
@@ -1128,7 +1179,10 @@
             artworks: '/api/artworks',
             settings: '/api/settings',
             upload: '/api/upload',
-            contact: '/api/contact'
+            contact: '/api/contact',
+            visit: '/api/visit',
+            logs: '/api/logs',
+            activity: '/api/activity'
         };
         const ADMIN_TOKEN_STORAGE_KEY = 'artistsloft_admin_token';
         const GALLERY_BUILD_TAG = 'Cloudflare D1 + R2';
@@ -1157,6 +1211,7 @@
         let artworks = [];
         let galleryAbout = { ...DEFAULT_GALLERY_ABOUT };
         let editLogs = [];
+        let visitorActivityData = { logs: [], topArtworks: [], topCountries: [] };
         let activeArtistId = 'mt-oung';
         let activeCategory = 'All';
         let isArtistSwitching = false;
@@ -1232,6 +1287,60 @@
             };
         }
 
+        // Visitor Counter (Footer)
+        async function initVisitorCounter() {
+            const badge = document.getElementById('visitor-counter-badge');
+            const sessionKey = 'tal_visit_counted_v1';
+            try {
+                const alreadyCounted = sessionStorage.getItem(sessionKey) === '1';
+                const res = await fetch(API_ENDPOINTS.visit, {
+                    method: alreadyCounted ? 'GET' : 'POST',
+                    cache: 'no-store'
+                });
+                const data = await res.json();
+                if (res.ok && data.ok) {
+                    if (!alreadyCounted) sessionStorage.setItem(sessionKey, '1');
+                    if (badge) badge.textContent = `Visits: ${Number(data.total_visits || 0).toLocaleString()}`;
+                }
+            } catch (e) {
+                if (badge) badge.textContent = 'Visits: —';
+            }
+        }
+
+        // Anonymous IP-Free Visitor Activity Tracking
+        function trackVisitorEvent(eventType, itemName = '') {
+            try {
+                fetch(API_ENDPOINTS.activity, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    keepalive: true,
+                    body: JSON.stringify({ event_type: eventType, item_name: itemName })
+                }).catch(() => {});
+            } catch {}
+        }
+
+        // Load Persistent Edit Logs from D1 (/api/logs)
+        async function loadEditLogsFromCloud() {
+            try {
+                const res = await fetch(API_ENDPOINTS.logs, {
+                    headers: getAdminAuthHeaders(),
+                    cache: 'no-store'
+                });
+                const data = await res.json();
+                if (res.ok && data.ok && Array.isArray(data.logs)) {
+                    editLogs = data.logs.map(l => ({
+                        id: l.id,
+                        timestamp: l.timestamp,
+                        action: l.action,
+                        targetType: l.target_type,
+                        targetName: l.target_name,
+                        details: l.details
+                    }));
+                    renderAdminEditLogsList();
+                }
+            } catch (e) {}
+        }
+
         async function recordEditLog(action, targetType, targetName, details = '') {
             const logEntry = {
                 id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
@@ -1244,6 +1353,23 @@
             editLogs.unshift(logEntry);
             if (editLogs.length > 200) editLogs.length = 200;
             renderAdminEditLogsList();
+
+            try {
+                await fetch(API_ENDPOINTS.logs, {
+                    method: 'POST',
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({
+                        id: logEntry.id,
+                        timestamp: logEntry.timestamp,
+                        action: logEntry.action,
+                        target_type: logEntry.targetType,
+                        target_name: logEntry.targetName,
+                        details: logEntry.details
+                    })
+                });
+            } catch (err) {
+                console.warn('Edit log cloud sync notice:', err);
+            }
         }
 
         // Load Gallery Data from Cloudflare D1 via /api/gallery
@@ -1260,7 +1386,6 @@
                     throw new Error(data.error || `HTTP ${res.status}`);
                 }
 
-                // Artists
                 if (Array.isArray(data.artists) && data.artists.length > 0) {
                     const loadedArtists = data.artists.map(normalizeArtistRow);
                     loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
@@ -1273,14 +1398,12 @@
                     activeArtistId = artists[0]?.id || 'mt-oung';
                 }
 
-                // Artworks
                 const loadedArtworks = Array.isArray(data.artworks)
                     ? data.artworks.map(normalizeArtworkRow)
                     : [];
                 loadedArtworks.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
                 artworks = loadedArtworks;
 
-                // Site Settings (gallery_about)
                 if (data.settings && data.settings.gallery_about) {
                     const aboutObj = typeof data.settings.gallery_about === 'string'
                         ? JSON.parse(data.settings.gallery_about)
@@ -1322,7 +1445,7 @@
             box.classList.remove('hidden');
             box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             if (!isError) {
-                setTimeout(() => box.classList.add('hidden'), 4500);
+                setTimeout(() => box.classList.add('hidden'), 5000);
             }
         }
 
@@ -1386,6 +1509,7 @@
             const chosenArtist = artists.find(a => a.id === artistId);
             playSoftGalleryChime('artist');
             triggerClassicArtistMotif(chosenArtist ? chosenArtist.name : '');
+            trackVisitorEvent('select_artist', chosenArtist ? chosenArtist.name : artistId);
             isArtistSwitching = true;
             activeArtistId = artistId;
             activeCategory = 'All';
@@ -1613,6 +1737,7 @@
 
         function inquireAboutArtwork(artTitle, artistName) {
             playSoftGalleryChime('select');
+            trackVisitorEvent('inquire_artwork', `${artTitle} (${artistName})`);
             closeLightbox();
             showSection('contact');
             const msgBox = document.getElementById('contact-message');
@@ -1674,6 +1799,7 @@
             if (!art) return;
 
             playSoftGalleryChime('click');
+            trackVisitorEvent('view_artwork', art.title || id);
             currentLightboxId = art.id;
             const modal = document.getElementById('lightbox-modal');
             const img = document.getElementById('lightbox-img');
@@ -1707,6 +1833,7 @@
             const nextArt = list[nextIndex];
             if (!nextArt) return;
 
+            trackVisitorEvent('view_artwork', nextArt.title || nextArt.id);
             isLightboxTransitioning = true;
             currentLightboxId = nextArt.id;
 
@@ -1788,20 +1915,24 @@
         // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
         function switchAdminTab(tabName) {
             playSoftGalleryChime('select');
-            ['artworks', 'artists', 'gallery', 'logs'].forEach(t => {
+            ['artworks', 'artists', 'gallery', 'visitors', 'logs'].forEach(t => {
                 const panel = document.getElementById('admin-panel-' + t);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 const isSelected = t === tabName;
                 if (panel) panel.classList.toggle('hidden', !isSelected);
                 if (btn) {
                     btn.className = isSelected
-                        ? 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
-                        : 'admin-tab-btn px-5 py-2 rounded-full text-xs uppercase tracking-[0.18em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
+                        ? 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
+                        : 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
                 }
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
             if (tabName === 'artists') renderAdminArtistsList();
-            if (tabName === 'logs') renderAdminEditLogsList();
+            if (tabName === 'visitors') loadVisitorActivityFromCloud();
+            if (tabName === 'logs') {
+                loadEditLogsFromCloud();
+                renderAdminEditLogsList();
+            }
         }
 
         function updateAdminGateUI() {
@@ -1868,7 +1999,6 @@
             submitBtn.textContent = 'Verifying Token...';
 
             try {
-                // Verify token against /api/settings with a safe no-op or settings check
                 const checkRes = await fetch(API_ENDPOINTS.settings, {
                     method: 'POST',
                     headers: {
@@ -1894,7 +2024,10 @@
 
                 setSavedAdminToken(entered);
                 isAdminUnlocked = true;
-                await loadCloudGallery(false);
+                await Promise.all([
+                    loadCloudGallery(false),
+                    loadEditLogsFromCloud()
+                ]);
                 showAdminDashboard();
             } catch (err) {
                 errorEl.textContent = 'Connection error: ' + (err.message || 'Check Cloudflare Pages deployment.');
@@ -2102,34 +2235,34 @@
         }
 
         function editArtworkInAdmin(id) {
-    const art = artworks.find(a => a.id === id);
-    if (!art) return;
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
 
-    document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
-    document.getElementById('edit-artwork-id').value = art.id;
-    populateAdminArtistDropdown(art.artistId || 'mt-oung');
-    document.getElementById('art-title-input').value = art.title || '';
-    populateAdminCategoryDropdown(art.category);
-    document.getElementById('art-new-category-input').value = '';
-    document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
-    document.getElementById('art-size-input').value = art.size || '';
-    document.getElementById('art-year-input').value = art.year || '';
-    document.getElementById('art-provenance-input').value = art.provenance || '';
-    document.getElementById('art-status-select').value = art.status || 'Available';
-    document.getElementById('art-price-input').value = art.price || '';
-    const currentImg = String(art.image || '');
-    document.getElementById('art-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
-    document.getElementById('art-desc-input').value = art.description || '';
-    document.getElementById('cancel-edit-btn').classList.remove('hidden');
-    document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
+            document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
+            document.getElementById('edit-artwork-id').value = art.id;
+            populateAdminArtistDropdown(art.artistId || 'mt-oung');
+            document.getElementById('art-title-input').value = art.title || '';
+            populateAdminCategoryDropdown(art.category);
+            document.getElementById('art-new-category-input').value = '';
+            document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
+            document.getElementById('art-size-input').value = art.size || '';
+            document.getElementById('art-year-input').value = art.year || '';
+            document.getElementById('art-provenance-input').value = art.provenance || '';
+            document.getElementById('art-status-select').value = art.status || 'Available';
+            document.getElementById('art-price-input').value = art.price || '';
+            const currentImg = String(art.image || '');
+            document.getElementById('art-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('art-desc-input').value = art.description || '';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
 
-    const formContainer = document.getElementById('admin-form-container');
-    if (formContainer) {
-        setTimeout(() => {
-            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 60);
-    }
-}
+            const formContainer = document.getElementById('admin-form-container');
+            if (formContainer) {
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
+        }
 
         function resetAdminForm() {
             document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
@@ -2238,7 +2371,6 @@
                 const docId = editId || ('artist-' + Date.now());
                 const existingArtist = artists.find(a => a.id === docId);
                 const sortOrder = existingArtist ? (existingArtist.order || 1) : (artists.length + 1);
-
                 const fullBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
 
                 submitBtn.textContent = 'Saving to D1...';
@@ -2272,27 +2404,27 @@
             }
         }
 
-      function editArtistInAdmin(id) {
-    const artist = artists.find(a => a.id === id);
-    if (!artist) return;
+        function editArtistInAdmin(id) {
+            const artist = artists.find(a => a.id === id);
+            if (!artist) return;
 
-    document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
-    document.getElementById('edit-artist-id').value = artist.id;
-    document.getElementById('artist-name-input').value = artist.name || '';
-    document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
-    const currentImg = String(artist.image || '');
-    document.getElementById('artist-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
-    document.getElementById('artist-bio-input').value = artist.bio || '';
-    document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
-    document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
+            document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
+            document.getElementById('edit-artist-id').value = artist.id;
+            document.getElementById('artist-name-input').value = artist.name || '';
+            document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
+            const currentImg = String(artist.image || '');
+            document.getElementById('artist-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('artist-bio-input').value = artist.bio || '';
+            document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
+            document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
 
-    const artistFormContainer = document.getElementById('admin-artist-form-container');
-    if (artistFormContainer) {
-        setTimeout(() => {
-            artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 60);
-    }
-}
+            const artistFormContainer = document.getElementById('admin-artist-form-container');
+            if (artistFormContainer) {
+                setTimeout(() => {
+                    artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
+        }
 
         function resetArtistForm() {
             document.getElementById('admin-artist-form-heading').textContent = 'Add New Artist Profile';
@@ -2324,6 +2456,108 @@
                 }
             } catch (err) {
                 showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+            }
+        }
+
+        // ==================== ADMIN: VISITOR ACTIVITY & MONTHLY EMAIL REPORT ====================
+        async function loadVisitorActivityFromCloud() {
+            const topArtEl = document.getElementById('visitor-top-artworks');
+            const topCountryEl = document.getElementById('visitor-top-countries');
+            const listEl = document.getElementById('admin-visitor-logs-list');
+
+            try {
+                const res = await fetch(API_ENDPOINTS.activity, {
+                    headers: getAdminAuthHeaders(),
+                    cache: 'no-store'
+                });
+                const data = await res.json();
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `HTTP ${res.status}`);
+                }
+                visitorActivityData = {
+                    logs: data.logs || [],
+                    topArtworks: data.topArtworks || [],
+                    topCountries: data.topCountries || []
+                };
+            } catch (err) {
+                if (listEl) {
+                    listEl.innerHTML = `<p class="text-xs text-red-600 py-3 text-center">${escapeHTML(err.message || 'Unable to load visitor logs')}</p>`;
+                }
+                return;
+            }
+
+            if (topArtEl) {
+                topArtEl.innerHTML = visitorActivityData.topArtworks.length
+                    ? visitorActivityData.topArtworks.map((a, i) =>
+                        `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
+                            <span class="truncate pr-2">${i + 1}. ${escapeHTML(a.item_name)}</span>
+                            <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${Number(a.views || 0)} views</span>
+                        </div>`
+                    ).join('')
+                    : `<p class="opacity-60">No artwork view events yet.</p>`;
+            }
+
+            const mobileCount = visitorActivityData.logs.filter(l => l.device === 'Mobile').length;
+            const desktopCount = visitorActivityData.logs.filter(l => l.device !== 'Mobile').length;
+
+            if (topCountryEl) {
+                const countryHtml = visitorActivityData.topCountries.length
+                    ? visitorActivityData.topCountries.map(c =>
+                        `<span class="inline-block px-2 py-0.5 rounded bg-[#A69076]/15 mr-1.5 mb-1">${escapeHTML(c.country)}: <strong>${Number(c.count || 0)}</strong></span>`
+                    ).join('')
+                    : `<span class="opacity-60">No country data yet.</span>`;
+                topCountryEl.innerHTML = `
+                    <div class="mb-2">${countryHtml}</div>
+                    <div class="opacity-75">Devices (recent): Mobile <strong>${mobileCount}</strong> • Desktop <strong>${desktopCount}</strong></div>
+                `;
+            }
+
+            if (listEl) {
+                listEl.innerHTML = visitorActivityData.logs.length
+                    ? visitorActivityData.logs.map(row => `
+                        <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                            <div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(row.event_type)}</span>
+                                <span class="font-medium">${escapeHTML(row.item_name || '-')}</span>
+                                <span class="opacity-65 ml-1.5">[${escapeHTML(row.country || 'XX')} • ${escapeHTML(row.device || 'Desktop')}]</span>
+                            </div>
+                            <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(row.timestamp || '')}</span>
+                        </div>
+                    `).join('')
+                    : `<p class="text-xs opacity-60 py-4 text-center">No visitor activity in the last 30 days.</p>`;
+            }
+        }
+
+        async function triggerMonthlyReportNow() {
+            const btn = document.getElementById('archive-report-now-btn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Sending Report...';
+            }
+            try {
+                const res = await fetch(API_ENDPOINTS.activity, {
+                    method: 'POST',
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ action: 'archive_now' })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `Failed (${res.status})`);
+                }
+                if (data.sent) {
+                    showAdminFeedback(`Emailed readable report + CSV (${data.count} events) and purged archived logs from D1!`);
+                    await recordEditLog('Archived & Purged', 'Visitor Logs', 'Monthly Report', `Sent ${data.count} events via Web3Forms`);
+                } else {
+                    showAdminFeedback(data.reason || 'No visitor logs to archive right now.');
+                }
+                await loadVisitorActivityFromCloud();
+            } catch (err) {
+                showAdminFeedback('Report failed: ' + (err.message || 'Check WEB3FORMS_ACCESS_KEY.'), true);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Email Report & Purge Now';
+                }
             }
         }
 
@@ -2371,7 +2605,7 @@
             if (!list) return;
 
             if (editLogs.length === 0) {
-                list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded in this session yet.</p>`;
+                list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
                 return;
             }
 
@@ -2469,6 +2703,7 @@
 
                 if (res.ok && data.success) {
                     playSoftGalleryChime('success');
+                    trackVisitorEvent('contact_submit', name);
                     feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
                     feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]';
                     feedback.classList.remove('hidden');
@@ -2880,6 +3115,8 @@
         window.resetArtistForm = resetArtistForm;
         window.deleteArtistFromAdmin = deleteArtistFromAdmin;
         window.saveGalleryAboutFromAdmin = saveGalleryAboutFromAdmin;
+        window.loadVisitorActivityFromCloud = loadVisitorActivityFromCloud;
+        window.triggerMonthlyReportNow = triggerMonthlyReportNow;
         window.downloadEditLogsCSV = downloadEditLogsCSV;
         window.downloadEditLogsJSON = downloadEditLogsJSON;
         window.exportArtworksJSON = exportArtworksJSON;
@@ -2888,6 +3125,7 @@
         window.playSoftGalleryChime = playSoftGalleryChime;
         window.playArtworkDragWhisper = playArtworkDragWhisper;
         window.initGalleryCardAnimations = initGalleryCardAnimations;
+        window.trackVisitorEvent = trackVisitorEvent;
 
         // Initial Render & Cloudflare D1 Startup
         renderGalleryAboutSection();
@@ -2898,6 +3136,8 @@
         updateSoundButtonUI();
         bindFirstInteractionAudioUnlock();
         startAmbientSoundscape();
+        initVisitorCounter();
+        trackVisitorEvent('page_view', 'home');
         loadCloudGallery(true);
     </script>
 </body>
