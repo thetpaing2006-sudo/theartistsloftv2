@@ -239,6 +239,17 @@
 </head>
 <body class="bg-[#F3EFE6] dark:bg-[#12110F] text-[#26231F] dark:text-[#EDE7DA] font-sans antialiased flex flex-col min-h-screen selection:bg-[#9C8265]/25 selection:text-[#26231F] dark:selection:text-[#EDE7DA]">
 
+    <!-- Global Ambient Lotus Paintings Backdrop (Visible on ALL pages in both Light & Dark Mode) -->
+    <div id="global-art-backdrop" class="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+        <div class="absolute inset-0 flex w-full h-full">
+            <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)" class="w-1/2 h-full object-cover opacity-30 dark:opacity-[0.24] mix-blend-multiply dark:mix-blend-normal dark:brightness-[0.78] dark:saturate-[0.88] transition-all duration-700">
+            <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II" onerror="handleBgFallback(this, 2)" class="w-1/2 h-full object-cover opacity-30 dark:opacity-[0.24] mix-blend-multiply dark:mix-blend-normal dark:brightness-[0.78] dark:saturate-[0.88] transition-all duration-700">
+        </div>
+        <!-- Soft Gradient Vignettes for Seamless Blending & Crisp Readability -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#F3EFE6]/90 dark:from-[#12110F]/85 via-[#F3EFE6]/30 dark:via-[#12110F]/40 to-[#F3EFE6]/90 dark:to-[#12110F]/90"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/65 dark:from-[#12110F]/65 via-transparent to-[#F3EFE6]/65 dark:to-[#12110F]/65"></div>
+    </div>
+
     <!-- Top Minimalist Navigation Header -->
     <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/20 dark:border-[#D4B483]/20 transition-all">
         <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -288,17 +299,7 @@
     </header>
 
     <!-- ==================== 1. HOME SECTION ==================== -->
-    <section id="section-home" class="page-section relative flex-grow flex flex-col justify-center items-center w-full px-6 py-16 md:py-24 min-h-[calc(100vh-105px)] text-center overflow-hidden">
-        
-        <!-- Side-by-side Background Lotus Paintings -->
-        <div class="absolute inset-0 z-0 flex w-full h-full pointer-events-none">
-            <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)" class="w-1/2 h-full object-cover opacity-35 dark:opacity-20 mix-blend-multiply dark:mix-blend-lighten">
-            <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II" onerror="handleBgFallback(this, 2)" class="w-1/2 h-full object-cover opacity-35 dark:opacity-20 mix-blend-multiply dark:mix-blend-lighten">
-        </div>
-
-        <!-- Soft Gradient Vignettes for Seamless Blending -->
-        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-[#F3EFE6] dark:from-[#12110F] via-transparent to-[#F3EFE6] dark:to-[#12110F]"></div>
-        <div class="absolute inset-0 z-0 pointer-events-none bg-gradient-to-r from-[#F3EFE6] dark:from-[#12110F] via-transparent to-[#F3EFE6] dark:to-[#12110F] opacity-55"></div>
+    <section id="section-home" class="page-section relative z-10 flex-grow flex flex-col justify-center items-center w-full px-6 py-16 md:py-24 min-h-[calc(100vh-105px)] text-center overflow-hidden">
 
         <!-- Frosted-Glass Editorial Hero Card -->
         <div class="relative z-10 w-full bg-[#FAF7F0]/75 dark:bg-[#1B1916]/80 backdrop-blur-md border border-[#9C8265]/30 dark:border-[#D4B483]/25 shadow-2xl shadow-[#9C8265]/15 dark:shadow-black/50 px-7 py-12 md:px-16 md:py-16 rounded-3xl max-w-3xl mx-auto my-auto">
@@ -322,7 +323,7 @@
     </section>
 
     <!-- ==================== 2. ARTWORKS SECTION (MULTI-ARTIST SELECTOR + PROFILE + WORKS) ==================== -->
-    <section id="section-artworks" class="page-section hidden flex-grow flex flex-col">
+    <section id="section-artworks" class="page-section hidden relative z-10 flex-grow flex flex-col">
         
         <!-- Top Artist Selector Bar -->
         <div class="w-full max-w-screen-xl mx-auto px-6 pt-12 pb-6 text-center">
@@ -358,7 +359,7 @@
     </section>
 
     <!-- ==================== 3. ABOUT SECTION (THE ARTIST'S LOFT GALLERY) ==================== -->
-    <section id="section-about" class="page-section hidden flex-grow">
+    <section id="section-about" class="page-section hidden relative z-10 flex-grow">
         <div class="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
             <div class="bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-8 sm:p-12 md:p-16 shadow-sm">
                 <div class="text-center max-w-3xl mx-auto mb-12">
@@ -410,7 +411,7 @@
     </section>
 
     <!-- ==================== 4. CONTACT US SECTION ==================== -->
-    <section id="section-contact" class="page-section hidden flex-grow flex items-center justify-center">
+    <section id="section-contact" class="page-section hidden relative z-10 flex-grow flex items-center justify-center">
         <div class="max-w-2xl w-full mx-auto px-6 py-20 md:py-24">
             <div class="text-center mb-12">
                 <p class="text-xs uppercase tracking-[0.35em] text-[#A69076] dark:text-[#D4B483] mb-3 font-medium">Inquiries &amp; Acquisitions</p>
@@ -796,7 +797,7 @@
     </div>
 
     <!-- Minimalist Footer (Double-click copyright text to open Admin Console) -->
-    <footer class="w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 bg-[#F3EFE6] dark:bg-[#12110F] text-center">
+    <footer class="relative z-10 w-full py-10 px-6 md:px-12 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 bg-[#F3EFE6]/85 dark:bg-[#12110F]/85 backdrop-blur-sm text-center">
         <div class="max-w-screen-xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.22em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">
             <span ondblclick="openAdminModal()" class="cursor-pointer select-none hover:text-[#26231F] dark:hover:text-[#EDE7DA] transition-colors" title="Double-click for Gallery Management">&copy; <span id="footer-year">2026</span> The Artist's Loft</span>
             <span>Curated Myanmar Fine Art Gallery</span>
@@ -982,10 +983,8 @@
                         const brightness = (r + g + b) / 3;
 
                         if (brightness >= 240 && chroma < 22) {
-                            // Pure / near-pure white background -> fully transparent
                             data[i + 3] = 0;
                         } else if (brightness > 205 && chroma < 30) {
-                            // Soft anti-aliased edge feathering to prevent white halos
                             const alphaFactor = (240 - brightness) / (240 - 205);
                             data[i + 3] = Math.round(a * Math.max(0, Math.min(1, alphaFactor)));
                         }
@@ -1149,11 +1148,11 @@
         window.addEventListener('load', verifyAllImagesLoaded);
     </script>
 
-    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync (APP_ID = theartists-loft-v2) -->
+    <!-- Application Logic with Multi-Artist & Live Firebase Cloud Sync (APP_ID = theartists-loft-v2, v2.2 No Auto-Seed) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.getElementById('footer-year').textContent = new Date().getFullYear();
 
@@ -1188,107 +1187,7 @@
             body: "Founded in Yangon, The Artist's Loft is an independent curatorial platform and private art space dedicated to presenting original fine artworks by distinguished and emerging artists from Myanmar.\n\nRooted in a deep respect for traditional craftsmanship and contemporary visual storytelling, our collection highlights works that capture the spiritual tranquility, cultural heritage, and poetic landscapes of Myanmar.\n\nEvery painting presented in our gallery is carefully curated directly from the artists' studios, ensuring authenticity, provenance, and a meaningful connection between creator and collector worldwide."
         };
 
-        // Default Seed Artworks with Museum Placard Details
-        const DEFAULT_ARTWORKS = [
-            {
-                id: 'art-1',
-                artistId: 'mt-oung',
-                title: 'Devotion in Saffron',
-                category: 'Sacred Art',
-                medium: 'Oil on Canvas',
-                size: '36 × 24 in (91.4 × 61.0 cm)',
-                year: '2023',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: '',
-                image: 'image_d698fb.jpg',
-                aspect: '3/4',
-                description: 'Young novices walking in serene morning light, capturing the quiet spiritual rhythm of Myanmar.',
-                order: 1
-            },
-            {
-                id: 'art-2',
-                artistId: 'mt-oung',
-                title: 'Sacred Lotus Bloom',
-                category: 'Floral & Still Life',
-                medium: 'Oil on Canvas',
-                size: '30 × 24 in (76.2 × 61.0 cm)',
-                year: '2024',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: '',
-                image: '05582-mtoung3.jpg',
-                aspect: '3/4',
-                description: 'Soft impasto petals emerging from tranquil waters, symbolizing purity and inner stillness.',
-                order: 2
-            },
-            {
-                id: 'art-3',
-                artistId: 'mt-oung',
-                title: 'Morning Mist on the Irrawaddy',
-                category: 'Landscapes',
-                medium: 'Oil on Canvas',
-                size: '24 × 36 in (61.0 × 91.4 cm)',
-                year: '2022',
-                provenance: 'Private Collection',
-                status: 'Sold',
-                price: '',
-                image: '179362955683157.jpg',
-                aspect: '4/3',
-                description: 'Luminous reflections across the river at dawn, painted with fluid impressionistic brushwork.',
-                order: 3
-            },
-            {
-                id: 'art-4',
-                artistId: 'mt-oung',
-                title: "Mother's Love",
-                category: 'Portraits',
-                medium: 'Oil on Canvas',
-                size: '36 × 28 in (91.4 × 71.1 cm)',
-                year: '2023',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: '',
-                image: '20160602-mtoung5.jpg',
-                aspect: '3/4',
-                description: 'An intimate, tender study of maternal warmth rendered in earthy ochre and warm umber tones.',
-                order: 4
-            },
-            {
-                id: 'art-5',
-                artistId: 'mt-oung',
-                title: 'Lotus Pond Reverie',
-                category: 'Floral & Still Life',
-                medium: 'Oil on Canvas',
-                size: '30 × 24 in (76.2 × 61.0 cm)',
-                year: '2024',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: '',
-                image: '8899c-mtoung4.jpg',
-                aspect: '3/4',
-                description: 'Delicate interplay of sunlight and shadow across blooming lotus leaves.',
-                order: 5
-            },
-            {
-                id: 'art-6',
-                artistId: 'mt-oung',
-                title: "Melody's Rest",
-                category: 'Portraits',
-                medium: 'Oil on Canvas',
-                size: '24 × 30 in (61.0 × 76.2 cm)',
-                year: '2023',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: '',
-                image: 'images.jpg',
-                aspect: '4/3',
-                description: 'A quiet moment of contemplation alongside a classical harp, celebrating Burmese musical heritage.',
-                order: 6
-            }
-        ];
-
-        // Live State
+        // Live State (No hardcoded default artworks — 100% driven by Firestore)
         let artists = [...DEFAULT_ARTISTS];
         let artworks = [];
         let galleryAbout = { ...DEFAULT_GALLERY_ABOUT };
@@ -1301,7 +1200,6 @@
         let auth = null;
         let currentUser = null;
         let cloudReady = false;
-        let artworksSeededFlag = false;
 
         const LIVE_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAaT5T_BABWliAqxvNr_KADw-VItLSxWlc",
@@ -1342,10 +1240,6 @@
             return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'admin_security');
         }
 
-        function getGalleryMetaDocRef() {
-            return doc(db, 'artifacts', APP_ID, 'public', 'data', 'settings', 'gallery_meta');
-        }
-
         async function recordEditLog(action, targetType, targetName, details = '') {
             const logEntry = {
                 id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
@@ -1384,16 +1278,6 @@
                 } else {
                     const cred = await signInAnonymously(auth);
                     currentUser = cred.user;
-                }
-
-                // Check persistent seed flag so deleted default artworks never re-appear
-                try {
-                    const metaSnap = await getDoc(getGalleryMetaDocRef());
-                    if (metaSnap.exists() && metaSnap.data().artworksSeeded === true) {
-                        artworksSeededFlag = true;
-                    }
-                } catch (err) {
-                    console.warn('Gallery meta check notice:', err);
                 }
 
                 // 1. Sync Passcode Security
@@ -1445,22 +1329,9 @@
                     }
                 }, (err) => console.warn('Artists sync notice:', err));
 
-                // 4. Sync Artworks (Never auto-reseed default artworks when collection is empty)
+                // 4. Sync Artworks (Strictly NO auto-seeding when empty)
                 const colRef = getArtworksCollectionRef();
                 onSnapshot(colRef, (snapshot) => {
-                    if (snapshot.empty) {
-                        artworks = [];
-                        updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Live Sync Active`);
-                        renderSelectedArtistProfile();
-                        renderCategoryFilterBar();
-                        renderArtworksGrid();
-                        if (isAdminUnlocked) {
-                            populateAdminCategoryDropdown();
-                            renderAdminArtworksList();
-                        }
-                        return;
-                    }
-
                     const loaded = [];
                     snapshot.forEach((docSnap) => {
                         const data = docSnap.data();
@@ -1470,7 +1341,7 @@
 
                     loaded.sort((a, b) => (a.order || 999) - (b.order || 999));
                     artworks = loaded;
-                    updateCloudStatus(true, `Connected to Cloud (${APP_ID}) — Live Sync Active`);
+                    updateCloudStatus(true, `Connected (${APP_ID}) • v2.2 No Auto-Seed`);
                     renderSelectedArtistProfile();
                     renderCategoryFilterBar();
                     renderArtworksGrid();
@@ -2435,7 +2306,6 @@
                     updatedAt: Date.now()
                 };
 
-                // Immediately update local UI so artist profile updates without waiting
                 if (editId) {
                     const idx = artists.findIndex(a => a.id === editId);
                     if (idx !== -1) artists[idx] = artistPayload;
@@ -2688,15 +2558,14 @@
                     lerpSpeed: parseFloat(card.dataset.randLerp)
                 };
             }
-            // Subtle deterministic-random organic variance per card so same-row cards never move robotically in unison
             const r1 = Math.random();
             const r2 = Math.random();
             const r3 = Math.random();
-            const phase = (r1 - 0.5) * 0.26;          // Slight vertical timing offset
-            const scaleMin = 0.81 + (r2 * 0.065);     // Noticeable smooth zoom range (0.81 - 0.875)
-            const yOffset = 34 + Math.round(r3 * 22); // Gentle floating travel distance
-            const easePower = 1.35 + (r2 * 0.45);     // Subtle curve variance
-            const lerpSpeed = 0.095 + (r1 * 0.045);   // Slight lag variance for fluid organic motion
+            const phase = (r1 - 0.5) * 0.26;
+            const scaleMin = 0.81 + (r2 * 0.065);
+            const yOffset = 34 + Math.round(r3 * 22);
+            const easePower = 1.35 + (r2 * 0.45);
+            const lerpSpeed = 0.095 + (r1 * 0.045);
 
             card.dataset.randSeeded = 'true';
             card.dataset.randPhase = phase.toFixed(3);
@@ -2712,13 +2581,11 @@
             const cardCenter = (rect.top + rect.bottom) * 0.5;
             const { phase, easePower } = getCardRandomSeed(card, idx);
 
-            // Sweet-spot focal center slightly below header
             const focalCenter = vh * 0.52;
             const focalRadius = Math.max(vh * 0.56, 360);
             const adjustedCenter = cardCenter + (phase * vh * 0.22);
             const normalizedDist = Math.min(1, Math.abs(adjustedCenter - focalCenter) / focalRadius);
 
-            // Smooth cosine-inspired bell curve with a comfortable crisp center plateau
             const plateauDist = Math.max(0, (normalizedDist - 0.16) / 0.84);
             const raw = Math.max(0, Math.min(1, 1 - Math.pow(plateauDist, easePower)));
             const eased = raw * raw * (3 - 2 * raw);
@@ -2751,7 +2618,6 @@
                     cardAnimStates.set(card, state);
                 }
 
-                // Smooth physics lerp for buttery-soft zoom-in / zoom-out
                 const diff = target - state.current;
                 if (Math.abs(diff) > 0.0015) {
                     state.current += diff * lerpSpeed;
