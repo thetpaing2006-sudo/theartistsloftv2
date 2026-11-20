@@ -2102,30 +2102,34 @@
         }
 
         function editArtworkInAdmin(id) {
-            const art = artworks.find(a => a.id === id);
-            if (!art) return;
+    const art = artworks.find(a => a.id === id);
+    if (!art) return;
 
-            document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
-            document.getElementById('edit-artwork-id').value = art.id;
-            populateAdminArtistDropdown(art.artistId || 'mt-oung');
-            document.getElementById('art-title-input').value = art.title || '';
-            populateAdminCategoryDropdown(art.category);
-            document.getElementById('art-new-category-input').value = '';
-            document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
-            document.getElementById('art-size-input').value = art.size || '';
-            document.getElementById('art-year-input').value = art.year || '';
-            document.getElementById('art-provenance-input').value = art.provenance || '';
-            document.getElementById('art-status-select').value = art.status || 'Available';
-            document.getElementById('art-price-input').value = art.price || '';
-            const currentImg = String(art.image || '');
-            document.getElementById('art-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
-            document.getElementById('art-desc-input').value = art.description || '';
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
+    document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
+    document.getElementById('edit-artwork-id').value = art.id;
+    populateAdminArtistDropdown(art.artistId || 'mt-oung');
+    document.getElementById('art-title-input').value = art.title || '';
+    populateAdminCategoryDropdown(art.category);
+    document.getElementById('art-new-category-input').value = '';
+    document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
+    document.getElementById('art-size-input').value = art.size || '';
+    document.getElementById('art-year-input').value = art.year || '';
+    document.getElementById('art-provenance-input').value = art.provenance || '';
+    document.getElementById('art-status-select').value = art.status || 'Available';
+    document.getElementById('art-price-input').value = art.price || '';
+    const currentImg = String(art.image || '');
+    document.getElementById('art-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
+    document.getElementById('art-desc-input').value = art.description || '';
+    document.getElementById('cancel-edit-btn').classList.remove('hidden');
+    document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
 
-            const modalBody = document.getElementById('admin-modal-body');
-            if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    const formContainer = document.getElementById('admin-form-container');
+    if (formContainer) {
+        setTimeout(() => {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+    }
+}
 
         function resetAdminForm() {
             document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
@@ -2268,23 +2272,27 @@
             }
         }
 
-        function editArtistInAdmin(id) {
-            const artist = artists.find(a => a.id === id);
-            if (!artist) return;
+      function editArtistInAdmin(id) {
+    const artist = artists.find(a => a.id === id);
+    if (!artist) return;
 
-            document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
-            document.getElementById('edit-artist-id').value = artist.id;
-            document.getElementById('artist-name-input').value = artist.name || '';
-            document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
-            const currentImg = String(artist.image || '');
-            document.getElementById('artist-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
-            document.getElementById('artist-bio-input').value = artist.bio || '';
-            document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
-            document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
+    document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
+    document.getElementById('edit-artist-id').value = artist.id;
+    document.getElementById('artist-name-input').value = artist.name || '';
+    document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
+    const currentImg = String(artist.image || '');
+    document.getElementById('artist-url-input').value = currentImg.startsWith('data:') ? '' : currentImg;
+    document.getElementById('artist-bio-input').value = artist.bio || '';
+    document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
+    document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
 
-            const modalBody = document.getElementById('admin-modal-body');
-            if (modalBody) modalBody.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    const artistFormContainer = document.getElementById('admin-artist-form-container');
+    if (artistFormContainer) {
+        setTimeout(() => {
+            artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+    }
+}
 
         function resetArtistForm() {
             document.getElementById('admin-artist-form-heading').textContent = 'Add New Artist Profile';
