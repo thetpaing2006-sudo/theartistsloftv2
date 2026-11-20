@@ -1585,6 +1585,8 @@
                 const safeDesc = escapeHTML(art.description || '');
                 const safeImg = escapeHTML(art.image);
                 const safeAspect = escapeHTML(art.aspect || '3/4');
+                const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
+                const artistName = artist ? escapeHTML(artist.name) : 'MT. Oung';
 
                 const placardMeta = [safeMedium, safeSize, safeYear].filter(Boolean).join(' • ');
 
@@ -1610,8 +1612,18 @@
                                 <span class="block text-[10px] uppercase tracking-[0.26em] text-[#9C8265] dark:text-[#D4B483] mb-1.5">${safeCat}</span>
                                 <h3 class="font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 group-hover:text-[#9C8265] dark:group-hover:text-[#D4B483] transition-colors">${safeTitle}</h3>
                                 <p class="text-xs text-[#26231F]/60 dark:text-[#EDE7DA]/60 mb-3">${placardMeta}</p>
+                                ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2 mb-4">${safeDesc}</p>` : ''}
                             </div>
-                            ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2">${safeDesc}</p>` : ''}
+                            <div class="pt-3.5 mt-auto border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 flex items-center justify-between gap-2">
+                                <span class="text-xs font-medium text-[#26231F]/70 dark:text-[#EDE7DA]/70 truncate">${isSold ? 'In Private Collection' : (escapeHTML(art.price) || 'Price Upon Request')}</span>
+                                ${!isSold ? `
+                                    <button type="button" onclick="event.stopPropagation(); inquireAboutArtwork('${safeTitle.replace(/'/g, "\\'")}', '${artistName.replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full bg-[#26231F] dark:bg-[#D4B483] text-[#F3EFE6] dark:text-[#12110F] hover:bg-[#9C8265] dark:hover:bg-[#E5C99B] text-[10px] uppercase tracking-[0.18em] font-medium transition-colors shadow-sm flex-shrink-0">
+                                        Price Inquiry
+                                    </button>
+                                ` : `
+                                    <span class="text-[10px] uppercase tracking-[0.18em] text-red-500/80 dark:text-red-400/80 font-medium flex-shrink-0">Collected</span>
+                                `}
+                            </div>
                         </div>
                     </article>
                 `;
@@ -1633,7 +1645,10 @@
 
         function inquireAboutArtwork(artTitle, artistName) {
             playSoftGalleryChime('inquiry');
-            closeLightbox();
+            const modal = document.getElementById('lightbox-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                closeLightbox();
+            }
             showSection('contact');
             const msgBox = document.getElementById('contact-message');
             if (msgBox) {
@@ -2941,6 +2956,7 @@
         window.scrollToArtistWorks = scrollToArtistWorks;
         window.filterByCategory = filterByCategory;
         window.openLightboxById = openLightboxById;
+        window.inquireAboutArtwork = inquireAboutArtwork;
         window.navigateLightbox = navigateLightbox;
         window.closeLightbox = closeLightbox;
         window.openAdminModal = openAdminModal;
