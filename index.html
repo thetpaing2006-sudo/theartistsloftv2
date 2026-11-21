@@ -478,6 +478,14 @@
         .wall-spotlight-cone.is-off {
             opacity: 0;
         }
+        .wall-room-dimmer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: rgba(10, 9, 8, 0);
+            transition: background-color 0.25s ease;
+            z-index: 2;
+        }
         .wall-hanging-unit {
             transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
                         opacity 0.34s ease,
@@ -881,6 +889,8 @@
 
         <!-- Center Architectural Gallery Wall Stage (Full Credenza + Legs + Floor Visible) -->
         <div id="wall-canvas-stage" class="wall-canvas-stage max-w-6xl w-full mx-auto flex-1 min-h-[430px] sm:min-h-[490px] rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col items-center justify-between px-3 sm:px-6 pt-4 sm:pt-5 pb-0 border border-[#D4B483]/25" onclick="event.stopPropagation()">
+            <!-- Room Ambient Dimmer Overlay -->
+            <div id="wall-room-dimmer" class="wall-room-dimmer"></div>
             <!-- Gallery Track Spotlight Cone -->
             <div id="wall-spotlight-cone" class="wall-spotlight-cone"></div>
 
@@ -955,19 +965,19 @@
                             <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-end pr-1.5">
                                 <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
                             </div>
-                            <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-center">
-                                <span class="w-3 h-0.5 rounded-full bg-[#D4B483]/80"></span>
-                            </div>
-                            <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-start pl-1.5">
-                                <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
-                            </div>
+                    <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                        <div class="flex items-center gap-2">
+                            <label for="wall-ambient-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Room Light:</label>
+                            <input id="wall-ambient-slider" type="range" min="35" max="115" step="5" value="100" oninput="setWallRoomBrightness(this.value)" class="w-20 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-8">100%</span>
                         </div>
-                    </div>
-
-                    <!-- Full Tapered Credenza Legs Resting on Hardwood Floor -->
-                    <div class="w-[78%] sm:w-[66%] h-6 sm:h-7 flex justify-between px-3 relative z-10 -mb-1.5">
-                        <div class="w-1.5 h-full bg-gradient-to-b from-[#2B1A0F] to-[#1A0F08] -skew-x-6 shadow-md"></div>
-                        <div class="w-1.5 h-full bg-gradient-to-b from-[#2B1A0F] to-[#1A0F08] skew-x-6 shadow-md"></div>
+                        <div class="flex items-center gap-2">
+                            <label for="wall-scale-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Size:</label>
+                            <input id="wall-scale-slider" type="range" min="60" max="130" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-20 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <button type="button" onclick="resetWallAutoScale()" title="Reset to True Physical Room Scale" class="px-2 py-0.5 rounded border border-white/20 text-[9px] uppercase tracking-wider text-[#FAF9F6]/75 hover:border-[#D4B483] hover:text-[#D4B483] transition-colors">
+                                True Size
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1146,9 +1156,18 @@
                                     <input id="art-medium-input" type="text" value="Oil on Canvas" placeholder="e.g., Oil on Canvas" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
                                 </div>
 
-                                <div>
-                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Size</label>
-                                    <input id="art-size-input" type="text" placeholder="e.g., 36 × 48 in (91.4 × 121.9 cm)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
+                                <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/25">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label for="art-width-in-input" class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1">Width (in) *</label>
+                                            <input id="art-width-in-input" type="number" step="0.1" min="1" max="300" required placeholder="e.g., 36" oninput="updateComputedSizePreview()" class="w-full px-3 py-2 rounded-lg border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        </div>
+                                        <div>
+                                            <label for="art-height-in-input" class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1">Height (in) *</label>
+                                            <input id="art-height-in-input" type="number" step="0.1" min="1" max="300" required placeholder="e.g., 48" oninput="updateComputedSizePreview()" class="w-full px-3 py-2 rounded-lg border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        </div>
+                                    </div>
+                                    <p id="art-computed-size-preview" class="text-[11px] text-[#9C8265] dark:text-[#D4B483] mt-1.5 font-medium">Enter width &amp; height in inches (cm auto-calculated)</p>
                                 </div>
 
                                 <div>
@@ -2369,6 +2388,7 @@
         let currentWallColorName = 'Museum Warm White';
         let currentWallFrameName = 'Matte Black + Ivory Mat';
         let currentWallScalePct = 100;
+        let currentWallRoomBrightnessPct = 100;
         let wallSpotlightMode = 'warm'; // 'warm' | 'neutral' | 'off'
         let isWallFurnitureOn = true;
         let isWallArtSwitching = false;
@@ -2378,9 +2398,24 @@
             const raw = String(sizeStr || '').trim();
             const isLandscapeHint = fallbackAspect === '4/3';
 
-            // Try matching inches first: e.g., "36 x 48 in", "24 × 18 in", "60x48\""
+            // Primary standardized format: "W × H in (... cm)" -> first number is Width (in), second is Height (in)
+            const stdInMatch = raw.match(/^(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*in\b/i);
+            if (stdInMatch) {
+                const widthIn = parseFloat(stdInMatch[1]);
+                const heightIn = parseFloat(stdInMatch[2]);
+                if (!Number.isNaN(widthIn) && !Number.isNaN(heightIn) && widthIn > 0 && heightIn > 0) {
+                    const maxSide = Math.max(widthIn, heightIn);
+                    let sizeTier = 'Medium';
+                    if (maxSide >= 46) sizeTier = 'Monumental';
+                    else if (maxSide >= 34) sizeTier = 'Large';
+                    else if (maxSide <= 18) sizeTier = 'Intimate';
+                    return { widthIn, heightIn, sizeTier };
+                }
+            }
+
+            // Fallback matching inches anywhere: e.g., "36 x 48 in", "24 × 18 in"
             const inMatch = raw.match(/(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*(?:in\b|inch|inches|")/i);
-            // Try matching cm: e.g., "H 61cm x W 46cm", "91.4 × 121.9 cm"
+            // Fallback matching cm: e.g., "H 61cm x W 46cm", "91.4 × 121.9 cm"
             const cmMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:cm)?\s*[x×*]\s*(\d+(?:\.\d+)?)\s*cm\b/i);
 
             let dimA = null;
@@ -2396,7 +2431,6 @@
                 if (genericMatch) {
                     const a = parseFloat(genericMatch[1]);
                     const b = parseFloat(genericMatch[2]);
-                    // Values > 75 are usually cm
                     if (Math.max(a, b) > 75) {
                         dimA = a / 2.54;
                         dimB = b / 2.54;
@@ -2411,7 +2445,6 @@
                 return { widthIn: 24, heightIn: 30, sizeTier: 'Medium' };
             }
 
-            // Detect explicit H / W prefixes if present (e.g., "H 61cm x W 46cm")
             const explicitH = raw.match(/H\s*(\d+(?:\.\d+)?)\s*(cm|in)?/i);
             const explicitW = raw.match(/W\s*(\d+(?:\.\d+)?)\s*(cm|in)?/i);
             let widthIn = isLandscapeHint ? Math.max(dimA, dimB) : Math.min(dimA, dimB);
@@ -2434,45 +2467,26 @@
             return { widthIn, heightIn, sizeTier };
         }
 
-        function applyProportionalWallSizing(art, scalePct = 100) {
-            const unit = document.getElementById('wall-hanging-unit');
-            const imgEl = document.getElementById('wall-preview-img');
-            const pill = document.getElementById('wall-scale-pill');
-            if (!unit || !imgEl) return;
+        function formatInchesWithCm(widthIn, heightIn) {
+            const w = Number(widthIn);
+            const h = Number(heightIn);
+            if (!w || !h || Number.isNaN(w) || Number.isNaN(h)) return '';
+            const wStr = Number.isInteger(w) ? String(w) : w.toFixed(1);
+            const hStr = Number.isInteger(h) ? String(h) : h.toFixed(1);
+            const wCm = (w * 2.54).toFixed(1);
+            const hCm = (h * 2.54).toFixed(1);
+            return `${wStr} × ${hStr} in (${wCm} × ${hCm} cm)`;
+        }
 
-            const { widthIn, heightIn, sizeTier } = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
-            const ratio = Math.max(60, Math.min(130, Number(scalePct) || 100)) / 100;
-
-            // Credenza width in stage is ~72% of stage width (~64 inches in real life)
-            // Large 60"+ paintings span almost the full credenza width; small 12"-16" works occupy ~20-26%
-            const credenzaRefInches = 64;
-            const widthFractionOfCredenza = Math.max(0.22, Math.min(0.98, (widthIn / credenzaRefInches) * ratio));
-            const targetMaxWidthVw = (widthFractionOfCredenza * 56).toFixed(1);
-
-            // Height scaling relative to wall clearance above credenza (~48 inches vertical clearance = 33vh)
-            const heightFractionOfWall = Math.max(0.32, Math.min(1.0, (heightIn / 48) * ratio));
-            const targetMaxHeightVh = (heightFractionOfWall * 33).toFixed(1);
-
-            imgEl.style.maxWidth = `${targetMaxWidthVw}vw`;
-            imgEl.style.maxHeight = `${targetMaxHeightVh}vh`;
-
-            // Inverse Frame & Matting Thickness:
-            // Large monumental works get sleek, thin museum frames; small intimate works get wider matting & thicker gallery frames
-            const maxDim = Math.max(widthIn, heightIn) * ratio;
-            const sizeNorm = Math.max(0, Math.min(1, (maxDim - 14) / 44)); // 0 = small (~14in), 1 = large (~58in)
-
-            const frameThickPx = Math.round(14 - (sizeNorm * 9));   // 14px for small -> 5px for large
-            const matPadPx = Math.round(22 - (sizeNorm * 16));      // 22px wide mat for small -> 6px narrow mat for large
-            const slimThickPx = Math.round(10 - (sizeNorm * 6));    // 10px for small -> 4px for large
-
-            unit.style.setProperty('--wall-frame-thick', `${frameThickPx}px`);
-            unit.style.setProperty('--wall-mat-pad', `${matPadPx}px`);
-            unit.style.setProperty('--wall-slim-thick', `${slimThickPx}px`);
-            unit.style.transform = 'none';
-
-            if (pill) {
-                const dimText = art && art.size ? `${art.size}` : `${Math.round(widthIn)} × ${Math.round(heightIn)} in`;
-                pill.textContent = `${sizeTier} Scale (${Math.round(ratio * 100)}%) • ${dimText}`;
+        function updateAdminCmPreview() {
+            const wVal = parseFloat(document.getElementById('art-width-in-input')?.value || '');
+            const hVal = parseFloat(document.getElementById('art-height-in-input')?.value || '');
+            const label = document.getElementById('art-cm-live-preview');
+            if (!label) return;
+            if (wVal > 0 && hVal > 0) {
+                label.textContent = `Saved Format: ${formatInchesWithCm(wVal, hVal)}`;
+            } else {
+                label.textContent = 'Auto-calculated: — cm (Width × Height in inches)';
             }
         }
 
@@ -2665,6 +2679,25 @@
             }
         }
 
+        function setWallRoomBrightness(pctValue) {
+            const pct = Math.max(35, Math.min(115, Number(pctValue) || 100));
+            currentWallRoomBrightnessPct = pct;
+            const dimmer = document.getElementById('wall-room-dimmer');
+            const label = document.getElementById('wall-ambient-label');
+            if (label) label.textContent = `${pct}%`;
+            if (dimmer) {
+                if (pct < 100) {
+                    const darkness = ((100 - pct) / 65) * 0.62;
+                    dimmer.style.backgroundColor = `rgba(10, 9, 8, ${darkness.toFixed(3)})`;
+                } else if (pct > 100) {
+                    const daylight = ((pct - 100) / 15) * 0.14;
+                    dimmer.style.backgroundColor = `rgba(255, 250, 240, ${daylight.toFixed(3)})`;
+                } else {
+                    dimmer.style.backgroundColor = 'rgba(10, 9, 8, 0)';
+                }
+            }
+        }
+
         function cycleWallSpotlight() {
             playSoftGalleryChime('select');
             const order = ['warm', 'neutral', 'off'];
@@ -2692,6 +2725,35 @@
                     off: 'Spotlight: Off'
                 };
                 btn.textContent = labels[wallSpotlightMode];
+            }
+        }
+
+        function applyProportionalWallSizing(art, scalePct = 100) {
+            const unit = document.getElementById('wall-hanging-unit');
+            const imgEl = document.getElementById('wall-preview-img');
+            const pillEl = document.getElementById('wall-scale-pill');
+            if (!unit || !imgEl) return;
+
+            const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
+            const factor = Math.max(0.6, Math.min(1.3, (Number(scalePct) || 100) / 100));
+
+            // Credenza width is ~64 in; map artwork physical inches proportionally to viewport stage
+            const baseWidthVw = Math.min(54, Math.max(14, (dims.widthIn / 64) * 44 * factor));
+            const baseHeightVh = Math.min(34, Math.max(14, (dims.heightIn / 48) * 28 * factor));
+
+            imgEl.style.maxWidth = `${baseWidthVw.toFixed(1)}vw`;
+            imgEl.style.maxHeight = `${baseHeightVh.toFixed(1)}vh`;
+
+            // Thinner frame & mat for monumental/large works; thicker mat & frame for intimate works
+            const isLarge = dims.sizeTier === 'Monumental' || dims.sizeTier === 'Large';
+            const isSmall = dims.sizeTier === 'Intimate';
+            unit.style.setProperty('--wall-frame-thick', isLarge ? '6px' : (isSmall ? '14px' : '10px'));
+            unit.style.setProperty('--wall-mat-pad', isLarge ? '8px' : (isSmall ? '20px' : '14px'));
+            unit.style.setProperty('--wall-slim-thick', isLarge ? '5px' : (isSmall ? '9px' : '7px'));
+
+            if (pillEl) {
+                const sizeText = art?.size ? ` • Original: ${art.size}` : '';
+                pillEl.textContent = `Scale: ${Math.round(factor * 100)}% (${dims.sizeTier})${sizeText}`;
             }
         }
 
@@ -3153,6 +3215,28 @@
             }).join('');
         }
 
+        function formatArtworkDimensionsFromInches(widthInVal, heightInVal) {
+            const w = parseFloat(widthInVal);
+            const h = parseFloat(heightInVal);
+            if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) return '';
+            const wInStr = Number.isInteger(w) ? String(w) : w.toFixed(1).replace(/\.0$/, '');
+            const hInStr = Number.isInteger(h) ? String(h) : h.toFixed(1).replace(/\.0$/, '');
+            const wCmStr = (w * 2.54).toFixed(1).replace(/\.0$/, '');
+            const hCmStr = (h * 2.54).toFixed(1).replace(/\.0$/, '');
+            return `${wInStr} × ${hInStr} in (${wCmStr} × ${hCmStr} cm)`;
+        }
+
+        function updateComputedSizePreview() {
+            const wInput = document.getElementById('art-width-in-input');
+            const hInput = document.getElementById('art-height-in-input');
+            const previewEl = document.getElementById('art-computed-size-preview');
+            if (!wInput || !hInput || !previewEl) return;
+            const formatted = formatArtworkDimensionsFromInches(wInput.value, hInput.value);
+            previewEl.textContent = formatted
+                ? `Saved Format: ${formatted}`
+                : 'Enter width & height in inches (cm auto-calculated)';
+        }
+
         async function saveArtworkFromAdmin(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('save-artwork-btn');
@@ -3169,7 +3253,12 @@
                 const newCat = document.getElementById('art-new-category-input').value.trim();
                 const category = newCat !== '' ? newCat : selectedCat;
                 const medium = document.getElementById('art-medium-input').value.trim() || 'Oil on Canvas';
-                const size = document.getElementById('art-size-input').value.trim();
+                const widthInRaw = document.getElementById('art-width-in-input').value;
+                const heightInRaw = document.getElementById('art-height-in-input').value;
+                const size = formatArtworkDimensionsFromInches(widthInRaw, heightInRaw);
+                if (!size) {
+                    throw new Error('Please enter valid Width (in) and Height (in) in inches.');
+                }
                 const year = document.getElementById('art-year-input').value.trim();
                 const provenance = document.getElementById('art-provenance-input').value.trim();
                 const status = document.getElementById('art-status-select').value || 'Available';
@@ -3179,7 +3268,7 @@
                 const fileInput = document.getElementById('art-file-input');
 
                 let imageSrc = urlInput;
-                let aspect = '3/4';
+                let aspect = parseFloat(widthInRaw) > parseFloat(heightInRaw) ? '4/3' : '3/4';
 
                 if (fileInput.files && fileInput.files[0]) {
                     submitBtn.textContent = 'Uploading to R2...';
@@ -3190,10 +3279,10 @@
                     const existing = artworks.find(a => a.id === editId);
                     if (existing) {
                         imageSrc = existing.image;
-                        aspect = existing.aspect || '3/4';
+                        aspect = existing.aspect || aspect;
                     }
                 } else if (!imageSrc) {
-                    imageSrc = createArtPlaceholderDataURL(title, category, '3/4');
+                    imageSrc = createArtPlaceholderDataURL(title, category, aspect);
                 }
 
                 const docId = editId || ('art-' + Date.now());
@@ -3232,10 +3321,10 @@
                     editId ? 'Updated' : 'Added',
                     'Artwork',
                     title,
-                    `${category} • ${medium}${size ? ' • ' + size : ''} (${status})`
+                    `${category} • ${medium} • ${size} (${status})`
                 );
 
-                showAdminFeedback(`"${title}" saved to Cloudflare D1 & R2!`);
+                showAdminFeedback(`"${title}" (${size}) saved to Cloudflare D1 & R2!`);
                 resetAdminForm();
                 populateAdminCategoryDropdown();
             } catch (err) {
@@ -3258,7 +3347,14 @@
             populateAdminCategoryDropdown(art.category);
             document.getElementById('art-new-category-input').value = '';
             document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
-            document.getElementById('art-size-input').value = art.size || '';
+
+            const parsedDims = parseArtworkPhysicalDimensions(art.size, art.aspect || '3/4');
+            const wInput = document.getElementById('art-width-in-input');
+            const hInput = document.getElementById('art-height-in-input');
+            if (wInput) wInput.value = art.size ? String(Math.round(parsedDims.widthIn * 10) / 10) : '';
+            if (hInput) hInput.value = art.size ? String(Math.round(parsedDims.heightIn * 10) / 10) : '';
+            updateComputedSizePreview();
+
             document.getElementById('art-year-input').value = art.year || '';
             document.getElementById('art-provenance-input').value = art.provenance || '';
             document.getElementById('art-status-select').value = art.status || 'Available';
@@ -3283,6 +3379,7 @@
             document.getElementById('edit-artwork-id').value = '';
             document.getElementById('art-medium-input').value = 'Oil on Canvas';
             document.getElementById('art-status-select').value = 'Available';
+            updateComputedSizePreview();
             document.getElementById('cancel-edit-btn').classList.add('hidden');
             document.getElementById('save-artwork-btn').textContent = 'Publish to Live Gallery';
             const statusEl = document.getElementById('art-file-status');
@@ -4490,8 +4587,10 @@
         window.setWallPreviewColor = setWallPreviewColor;
         window.setWallPreviewFrame = setWallPreviewFrame;
         window.setWallPreviewScale = setWallPreviewScale;
+        window.setWallRoomBrightness = setWallRoomBrightness;
         window.cycleWallSpotlight = cycleWallSpotlight;
         window.toggleWallFurniture = toggleWallFurniture;
+        window.resetWallAutoScale = resetWallAutoScale;
         window.openLightboxById = openLightboxById;
         window.navigateLightbox = navigateLightbox;
         window.closeLightbox = closeLightbox;
@@ -4504,6 +4603,7 @@
         window.editArtworkInAdmin = editArtworkInAdmin;
         window.resetAdminForm = resetAdminForm;
         window.deleteArtworkFromAdmin = deleteArtworkFromAdmin;
+        window.updateComputedSizePreview = updateComputedSizePreview;
         window.saveArtistFromAdmin = saveArtistFromAdmin;
         window.editArtistInAdmin = editArtistInAdmin;
         window.resetArtistForm = resetArtistForm;
