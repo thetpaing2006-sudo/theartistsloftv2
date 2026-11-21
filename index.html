@@ -191,7 +191,7 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .reveal-item, .tilt-card, .tilt-card::after, .tilt-glare,
-            #wall-artwork-stage-layer, #wall-furniture-silhouette, .wall-hanging-unit {
+            #wall-artwork-stage-layer, #wall-furniture-silhouette, .wall-hanging-unit, #wall-preview-img {
                 transition-duration: 0.01ms !important;
                 animation-duration: 0.01ms !important;
             }
@@ -481,11 +481,26 @@
         .wall-hanging-unit {
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+            transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        padding 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.58s cubic-bezier(0.22, 1, 0.36, 1),
                         opacity 0.36s ease,
                         filter 0.45s ease,
                         box-shadow 0.45s ease;
-            will-change: transform, opacity, filter;
+            will-change: width, height, transform, opacity, filter;
+        }
+        #wall-preview-img {
+            transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: width, height;
+        }
+        #wall-furniture-silhouette {
+            flex-shrink: 0;
+        }
+        @media (max-width: 639px) {
+            .wall-hanging-unit, #wall-preview-img { transition-duration: 0.72s; }
         }
         .wall-hanging-unit.is-unlit {
             filter: brightness(0.84) contrast(0.96);
@@ -2981,6 +2996,8 @@
             if (btnEl) {
                 btnEl.className = 'wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
             }
+            const currentArt = artworks.find(a => a.id === currentWallArtworkId);
+            if (currentArt) applyProportionalWallSizing(currentArt, currentWallScalePct);
         }
 
         function setWallPreviewScale(pctValue) {
@@ -3145,6 +3162,14 @@
             unit.style.setProperty('--wall-mat-pad', `${matPadPx}px`);
             unit.style.setProperty('--wall-slim-thick', `${slimThickPx}px`);
             unit.style.setProperty('--wall-floater-gap', `${floaterGapPx}px`);
+            const noFrame = unit.classList.contains('wall-frame-none');
+            const floaterFrame = unit.classList.contains('wall-frame-oak-slim') || unit.classList.contains('wall-frame-walnut-floater');
+            const framePadding = noFrame ? 0 : (floaterFrame ? floaterGapPx : matPadPx);
+            const frameBorder = noFrame ? 0 : (floaterFrame ? slimThickPx : frameThickPx);
+            const horizontalFrame = 2 * (framePadding + frameBorder);
+            const verticalFrame = 2 * (framePadding + frameBorder);
+            unit.style.width = `${Math.round(targetW + horizontalFrame)}px`;
+            unit.style.height = `${Math.round(targetH + verticalFrame)}px`;
 
             if (pillEl) {
                 const sizeText = art?.size ? ` • ${art.size}` : '';
@@ -4406,7 +4431,9 @@
 
                 const opacity = (galleryExperience.scrollOpacityMin + ((galleryExperience.scrollOpacityMax - galleryExperience.scrollOpacityMin) * eased)) / 100;
                 const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
-                const scale = 0.985 + (0.015 * eased);
+                // Ease each card from a lightly zoomed-out resting size to full scale at the gallery focal zone.
+                // The per-card seed adds only a subtle organic variation; hover tilt remains a separate interaction.
+                const scale = scaleMin + ((1 - scaleMin) * eased);
                 const blurPx = (1 - eased) * 0.7;
 
                 card.style.opacity = opacity.toFixed(3);
