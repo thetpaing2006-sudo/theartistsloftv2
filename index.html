@@ -372,7 +372,7 @@
         }
         .wall-canvas-stage {
             position: relative;
-            background-color: #F3EFE6;
+            background-color: #D6CFC4;
             background-image:
                 radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28) 0%, transparent 65%),
                 repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.014) 0px, rgba(0, 0, 0, 0.014) 1px, transparent 1px, transparent 3px),
@@ -401,7 +401,7 @@
                 ),
                 linear-gradient(180deg, var(--spotlight-wash) 0%, rgba(255, 255, 255, 0.025) 38%, transparent 76%),
                 radial-gradient(ellipse 19% 20% at 50% 7%, var(--spotlight-source) 0%, var(--spotlight-halo) 48%, transparent 100%);
-            opacity: 0.88;
+            opacity: var(--spotlight-strength, 0.85);
             transform-origin: 50% 8%;
             transition: opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 14;
@@ -417,8 +417,8 @@
             transform: translateX(-50%);
             border-radius: 50%;
             background: radial-gradient(ellipse at 50% 0%, var(--spotlight-beam) 0%, rgba(255, 255, 255, 0.035) 44%, transparent 78%);
-            filter: blur(20px);
-            opacity: 0.72;
+            filter: blur(var(--spotlight-softness, 22px));
+            opacity: var(--spotlight-beam-opacity, 0.612);
             transition: background 0.7s ease, opacity 0.7s ease;
         }
         .wall-spotlight-cone::after {
@@ -430,8 +430,8 @@
             height: 3.5rem;
             transform: translateX(-50%);
             background: radial-gradient(ellipse, var(--spotlight-source) 0%, var(--spotlight-halo) 42%, transparent 78%);
-            filter: blur(8px);
-            opacity: 0.82;
+            filter: blur(calc(var(--spotlight-softness, 22px) * 0.4));
+            opacity: var(--spotlight-bulb-opacity, 0.697);
             transition: background 0.7s ease, opacity 0.7s ease;
         }
         .wall-spotlight-cone.is-neutral {
@@ -1015,22 +1015,22 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-2.5">
                     <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#D4B483] mr-0.5">Wall (8):</span>
-                        <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
+                        <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
                         <button type="button" onclick="setWallPreviewColor('#E8DFCE', 'Linen Cream', this)" title="Linen Cream" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#E8DFCE;"></button>
-                        <button type="button" onclick="setWallPreviewColor('#D6CFC4', 'Soft Greige', this)" title="Soft Greige" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#D6CFC4;"></button>
+                        <button type="button" onclick="setWallPreviewColor('#D6CFC4', 'Soft Greige', this)" title="Soft Greige" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#D6CFC4;"></button>
                         <button type="button" onclick="setWallPreviewColor('#C7CFC4', 'Heritage Sage', this)" title="Heritage Sage" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C7CFC4;"></button>
                         <button type="button" onclick="setWallPreviewColor('#8A927E', 'Dusty Olive', this)" title="Dusty Olive" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#8A927E;"></button>
                         <button type="button" onclick="setWallPreviewColor('#C88F77', 'Terracotta Clay', this)" title="Terracotta Clay" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C88F77;"></button>
                         <button type="button" onclick="setWallPreviewColor('#2B3038', 'Midnight Slate', this)" title="Midnight Slate" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#2B3038;"></button>
                         <button type="button" onclick="setWallPreviewColor('#191A1D', 'Deep Charcoal', this)" title="Deep Charcoal" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#191A1D;"></button>
-                        <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/75 ml-1 hidden lg:inline">Museum Warm White</span>
+                        <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/75 ml-1 hidden lg:inline">Soft Greige</span>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 sm:gap-4">
                         <div class="flex items-center gap-1.5">
                             <label for="wall-ambient-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Light:</label>
-                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="50" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
-                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">50%</span>
+                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="65" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">65%</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <label for="wall-scale-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Size:</label>
@@ -1126,6 +1126,9 @@
                         </button>
                         <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Gallery About
+                        </button>
+                        <button type="button" onclick="switchAdminTab('experience')" id="admin-tab-btn-experience" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Experience
                         </button>
                         <button type="button" onclick="switchAdminTab('backdrop')" id="admin-tab-btn-backdrop" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Backdrop &amp; Layout
@@ -1319,6 +1322,36 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- ==================== ADMIN TAB: GALLERY EXPERIENCE ==================== -->
+                    <div id="admin-panel-experience" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-6">
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                                <div><h4 class="font-serif text-xl mb-2">Gallery Viewing Experience</h4>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Tune Preview on Wall, artwork scroll presence, and the soft spotlight. Saved to gallery settings.</p></div>
+                                <button type="button" onclick="resetGalleryExperienceAdmin()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white">Restore Recommended</button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="space-y-2"><label for="experience-wall-color" class="block text-[11px] uppercase tracking-wider">Default Preview Wall</label>
+                                    <select id="experience-wall-color" onchange="previewGalleryExperienceSettings()" class="w-full px-3 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm"></select>
+                                    <div class="flex items-center gap-2 text-xs"><span id="experience-wall-swatch" class="w-5 h-5 rounded-full border border-black/15"></span><span id="experience-wall-hex"></span></div></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-room-light" class="text-[11px] uppercase tracking-wider">Room Light Default</label><span id="experience-room-light-label" class="text-xs font-medium">65%</span></div>
+                                    <input id="experience-room-light" type="range" min="30" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"><p class="text-[11px] opacity-60 mt-1">Recommended: 65% for warm, controlled gallery ambience.</p></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-scroll-min" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Minimum</label><span id="experience-scroll-min-label" class="text-xs font-medium">42%</span></div>
+                                    <input id="experience-scroll-min" type="range" min="25" max="65" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-scroll-max" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Maximum</label><span id="experience-scroll-max-label" class="text-xs font-medium">72%</span></div>
+                                    <input id="experience-scroll-max" type="range" min="55" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-spotlight-intensity" class="text-[11px] uppercase tracking-wider">Spotlight Intensity</label><span id="experience-spotlight-intensity-label" class="text-xs font-medium">85%</span></div>
+                                    <input id="experience-spotlight-intensity" type="range" min="25" max="100" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-spotlight-softness" class="text-[11px] uppercase tracking-wider">Spotlight Feather / Softness</label><span id="experience-spotlight-softness-label" class="text-xs font-medium">22 px</span></div>
+                                    <input id="experience-spotlight-softness" type="range" min="8" max="36" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#A69076]/20 pt-4">
+                                <p id="experience-save-status" aria-live="polite" class="text-xs opacity-70">Recommended: Soft Greige · 65% room light · 42–72% scroll opacity.</p>
+                                <button type="button" id="save-experience-btn" onclick="saveGalleryExperienceFromAdmin()" class="px-7 py-3 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs uppercase tracking-[0.18em] font-medium disabled:opacity-50">Save Experience Settings</button>
+                            </div>
                         </div>
                     </div>
 
@@ -2241,6 +2274,10 @@
                 }
 
                 if (data.settings && typeof data.settings === 'object') {
+                    if (data.settings.gallery_experience && typeof data.settings.gallery_experience === 'object') {
+                        galleryExperience = normalizeGalleryExperience(data.settings.gallery_experience);
+                        applyGalleryExperienceSettings();
+                    }
                     if (data.settings.gallery_about && typeof data.settings.gallery_about === 'object') {
                         galleryAbout = {
                             ...DEFAULT_GALLERY_ABOUT,
@@ -2280,6 +2317,7 @@
                     renderAdminArtistsList();
                     populateGalleryAboutAdminForm();
                     populateBackdropAdminUI();
+                    populateExperienceAdminUI();
                     renderAdminAudioManager();
                 }
             } catch (err) {
@@ -2590,10 +2628,29 @@
 
         // ==================== INTERACTIVE WALL & FRAME PREVIEW STUDIO LOGIC ====================
         let currentWallArtworkId = null;
-        let currentWallColorName = 'Museum Warm White';
+        const WALL_COLOR_PRESETS = [
+            { name: 'Museum Warm White', hex: '#F3EFE6' },
+            { name: 'Linen Cream', hex: '#E8DFCE' },
+            { name: 'Soft Greige', hex: '#D6CFC4' },
+            { name: 'Heritage Sage', hex: '#C7CFC4' },
+            { name: 'Dusty Olive', hex: '#8A927E' },
+            { name: 'Terracotta Clay', hex: '#C88F77' },
+            { name: 'Midnight Slate', hex: '#2B3038' },
+            { name: 'Deep Charcoal', hex: '#191A1D' }
+        ];
+        const DEFAULT_GALLERY_EXPERIENCE = {
+            defaultWallColor: 'Soft Greige',
+            roomBrightness: 65,
+            scrollOpacityMin: 42,
+            scrollOpacityMax: 72,
+            spotlightIntensity: 85,
+            spotlightSoftness: 22
+        };
+        let galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
+        let currentWallColorName = 'Soft Greige';
         let currentWallFrameName = 'Matte Black + Ivory Mat';
         let currentWallScalePct = 100;
-        let currentWallRoomBrightnessPct = 50;
+        let currentWallRoomBrightnessPct = 65;
         let isWallArtSwitching = false;
         let wallSpotlightMode = 'warm';
         let isWallFurnitureOn = true;
@@ -2757,9 +2814,10 @@
             const slider = document.getElementById('wall-scale-slider');
             if (slider) slider.value = '100';
             currentWallScalePct = 100;
+            applyWallPreviewDefaultColor();
             const lightSlider = document.getElementById('wall-ambient-slider');
-            if (lightSlider) lightSlider.value = '50';
-            setWallRoomBrightness(50);
+            if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
+            setWallRoomBrightness(galleryExperience.roomBrightness);
 
             populateWallPreviewContent(art);
 
@@ -2851,6 +2909,57 @@
             if (btnEl) {
                 btnEl.classList.add('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
             }
+        }
+
+        function applyWallPreviewDefaultColor() {
+            const preset = WALL_COLOR_PRESETS.find(item => item.name === galleryExperience.defaultWallColor) || WALL_COLOR_PRESETS[2];
+            currentWallColorName = preset.name;
+            const stage = document.getElementById('wall-canvas-stage');
+            const label = document.getElementById('wall-color-name');
+            if (stage) stage.style.backgroundColor = preset.hex;
+            if (label) label.textContent = preset.name;
+            let selected = null;
+            document.querySelectorAll('.wall-swatch-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
+                if (btn.title === preset.name) selected = btn;
+            });
+            if (selected) selected.classList.add('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
+        }
+
+        function normalizeGalleryExperience(input = {}) {
+            const wallName = WALL_COLOR_PRESETS.some(item => item.name === input.defaultWallColor)
+                ? input.defaultWallColor
+                : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor;
+            const minOpacity = Math.max(25, Math.min(65, Number(input.scrollOpacityMin) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMin));
+            let maxOpacity = Math.max(55, Math.min(90, Number(input.scrollOpacityMax) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMax));
+            if (maxOpacity <= minOpacity) maxOpacity = Math.min(90, minOpacity + 10);
+            return {
+                defaultWallColor: wallName,
+                roomBrightness: Math.max(30, Math.min(90, Number(input.roomBrightness) || DEFAULT_GALLERY_EXPERIENCE.roomBrightness)),
+                scrollOpacityMin: minOpacity,
+                scrollOpacityMax: maxOpacity,
+                spotlightIntensity: Math.max(25, Math.min(100, Number(input.spotlightIntensity) || DEFAULT_GALLERY_EXPERIENCE.spotlightIntensity)),
+                spotlightSoftness: Math.max(8, Math.min(36, Number(input.spotlightSoftness) || DEFAULT_GALLERY_EXPERIENCE.spotlightSoftness))
+            };
+        }
+
+        function applyGalleryExperienceSettings() {
+            galleryExperience = normalizeGalleryExperience(galleryExperience);
+            currentWallRoomBrightnessPct = galleryExperience.roomBrightness;
+            applyWallPreviewDefaultColor();
+            const lightSlider = document.getElementById('wall-ambient-slider');
+            if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
+            const lightLabel = document.getElementById('wall-ambient-label');
+            if (lightLabel) lightLabel.textContent = `${galleryExperience.roomBrightness}%`;
+            const cone = document.getElementById('wall-spotlight-cone');
+            if (cone) {
+                const strength = galleryExperience.spotlightIntensity / 100;
+                cone.style.setProperty('--spotlight-softness', `${galleryExperience.spotlightSoftness}px`);
+                cone.style.setProperty('--spotlight-beam-opacity', (0.72 * strength).toFixed(3));
+                cone.style.setProperty('--spotlight-bulb-opacity', (0.82 * strength).toFixed(3));
+                cone.style.setProperty('--spotlight-strength', strength.toFixed(3));
+            }
+            requestGalleryScrollUpdate();
         }
 
         function setWallPreviewFrame(frameClass, frameLabel, btnEl) {
@@ -3272,7 +3381,7 @@
         // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
         function switchAdminTab(tabName) {
             playSoftGalleryChime('select');
-            ['artworks', 'artists', 'gallery', 'backdrop', 'audio', 'visitors', 'logs'].forEach(t => {
+            ['artworks', 'artists', 'gallery', 'experience', 'backdrop', 'audio', 'visitors', 'logs'].forEach(t => {
                 const panel = document.getElementById('admin-panel-' + t);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 const isSelected = t === tabName;
@@ -3285,6 +3394,7 @@
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
             if (tabName === 'backdrop') populateBackdropAdminUI();
+            if (tabName === 'experience') populateExperienceAdminUI();
             if (tabName === 'audio') renderAdminAudioManager();
             if (tabName === 'artists') renderAdminArtistsList();
             if (tabName === 'visitors') loadVisitorActivityFromCloud();
@@ -3411,6 +3521,103 @@
             }
         }
 
+        function populateExperienceAdminUI() {
+            const select = document.getElementById('experience-wall-color');
+            if (!select) return;
+            select.innerHTML = WALL_COLOR_PRESETS.map(p => `<option value="${escapeHTML(p.name)}">${escapeHTML(p.name)} — ${p.hex}</option>`).join('');
+            const values = normalizeGalleryExperience(galleryExperience);
+            select.value = values.defaultWallColor;
+            const fields = {
+                'experience-room-light': values.roomBrightness,
+                'experience-scroll-min': values.scrollOpacityMin,
+                'experience-scroll-max': values.scrollOpacityMax,
+                'experience-spotlight-intensity': values.spotlightIntensity,
+                'experience-spotlight-softness': values.spotlightSoftness
+            };
+            Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = String(value); });
+            previewGalleryExperienceSettings();
+        }
+
+        function readGalleryExperienceAdminForm() {
+            return normalizeGalleryExperience({
+                defaultWallColor: document.getElementById('experience-wall-color')?.value,
+                roomBrightness: document.getElementById('experience-room-light')?.value,
+                scrollOpacityMin: document.getElementById('experience-scroll-min')?.value,
+                scrollOpacityMax: document.getElementById('experience-scroll-max')?.value,
+                spotlightIntensity: document.getElementById('experience-spotlight-intensity')?.value,
+                spotlightSoftness: document.getElementById('experience-spotlight-softness')?.value
+            });
+        }
+
+        function previewGalleryExperienceSettings() {
+            const next = readGalleryExperienceAdminForm();
+            const preset = WALL_COLOR_PRESETS.find(p => p.name === next.defaultWallColor) || WALL_COLOR_PRESETS[2];
+            const swatch = document.getElementById('experience-wall-swatch');
+            const hex = document.getElementById('experience-wall-hex');
+            if (swatch) swatch.style.backgroundColor = preset.hex;
+            if (hex) hex.textContent = preset.hex;
+            const labels = {
+                'experience-room-light-label': `${next.roomBrightness}%`,
+                'experience-scroll-min-label': `${next.scrollOpacityMin}%`,
+                'experience-scroll-max-label': `${next.scrollOpacityMax}%`,
+                'experience-spotlight-intensity-label': `${next.spotlightIntensity}%`,
+                'experience-spotlight-softness-label': `${next.spotlightSoftness} px`
+            };
+            Object.entries(labels).forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
+            const status = document.getElementById('experience-save-status');
+            if (status) status.textContent = `Preview: ${preset.name} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
+            // Preview the actual wall and lighting while the modal is open; retain settings as unsaved until Save is pressed.
+            const stage = document.getElementById('wall-canvas-stage');
+            const wallLabel = document.getElementById('wall-color-name');
+            const modal = document.getElementById('wall-preview-modal');
+            if (stage && modal && !modal.classList.contains('hidden')) {
+                stage.style.backgroundColor = preset.hex;
+                if (wallLabel) wallLabel.textContent = preset.name;
+                setWallRoomBrightness(next.roomBrightness);
+                const cone = document.getElementById('wall-spotlight-cone');
+                if (cone) {
+                    const strength = next.spotlightIntensity / 100;
+                    cone.style.setProperty('--spotlight-softness', `${next.spotlightSoftness}px`);
+                    cone.style.setProperty('--spotlight-beam-opacity', (0.72 * strength).toFixed(3));
+                    cone.style.setProperty('--spotlight-bulb-opacity', (0.82 * strength).toFixed(3));
+                    cone.style.setProperty('--spotlight-strength', strength.toFixed(3));
+                }
+            }
+            requestGalleryScrollUpdate();
+            return next;
+        }
+
+        function resetGalleryExperienceAdmin() {
+            galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
+            populateExperienceAdminUI();
+            const status = document.getElementById('experience-save-status');
+            if (status) status.textContent = 'Recommended values restored in the form. Save to persist them.';
+        }
+
+        async function saveGalleryExperienceFromAdmin() {
+            const button = document.getElementById('save-experience-btn');
+            const status = document.getElementById('experience-save-status');
+            if (button) { button.disabled = true; button.textContent = 'Saving…'; }
+            try {
+                const next = readGalleryExperienceAdminForm();
+                const res = await fetch(API_ENDPOINTS.settings, {
+                    method: 'POST',
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ key: 'gallery_experience', value: next })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.ok) throw new Error(data.error || `Settings save failed (${res.status})`);
+                galleryExperience = next;
+                applyGalleryExperienceSettings();
+                if (status) status.textContent = 'Experience settings saved.';
+                await recordEditLog('Updated', 'Gallery Experience', 'Viewing defaults', `Wall: ${next.defaultWallColor}; room light: ${next.roomBrightness}%; scroll opacity ${next.scrollOpacityMin}–${next.scrollOpacityMax}%; spotlight ${next.spotlightIntensity}% / ${next.spotlightSoftness}px`);
+            } catch (err) {
+                if (status) status.textContent = `Could not save: ${err.message || 'Please try again.'}`;
+            } finally {
+                if (button) { button.disabled = false; button.textContent = 'Save Experience Settings'; }
+            }
+        }
+
         function showAdminDashboard() {
             document.getElementById('admin-login-view').classList.add('hidden');
             document.getElementById('admin-dashboard-view').classList.remove('hidden');
@@ -3421,6 +3628,7 @@
             renderAdminEditLogsList();
             populateGalleryAboutAdminForm();
             populateBackdropAdminUI();
+            populateExperienceAdminUI();
             renderAdminAudioManager();
         }
 
@@ -4193,7 +4401,7 @@
                 progress = Math.max(0, Math.min(1, progress));
                 const eased = progress * progress * (3 - 2 * progress);
 
-                const opacity = 0.42 + (0.32 * eased);
+                const opacity = (galleryExperience.scrollOpacityMin + ((galleryExperience.scrollOpacityMax - galleryExperience.scrollOpacityMin) * eased)) / 100;
                 const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
                 const scale = 0.985 + (0.015 * eased);
                 const blurPx = (1 - eased) * 0.7;
