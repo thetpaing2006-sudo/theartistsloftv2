@@ -482,9 +482,19 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: rgba(10, 9, 8, 0);
+            background: rgba(6, 5, 5, 0);
             transition: background-color 0.25s ease;
-            z-index: 2;
+            z-index: 12;
+        }
+        #wall-spotlight-cone {
+            z-index: 14;
+            mix-blend-mode: screen;
+        }
+        #wall-artwork-stage-layer {
+            z-index: 16;
+        }
+        #wall-furniture-silhouette {
+            z-index: 10;
         }
         .wall-hanging-unit {
             transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
@@ -909,25 +919,25 @@
             </button>
 
             <!-- Subtle Ceiling Track Fixture Hint -->
-            <div class="relative z-10 flex items-center gap-1.5 opacity-45 pointer-events-none select-none mb-1">
-                <div class="w-12 h-1 rounded-full bg-black/50"></div>
-                <div class="w-2.5 h-2.5 rounded-b-sm bg-black/75"></div>
-                <div class="w-12 h-1 rounded-full bg-black/50"></div>
+            <div class="relative z-20 flex items-center gap-1.5 opacity-60 pointer-events-none select-none mb-1">
+                <div class="w-12 h-1 rounded-full bg-black/60"></div>
+                <div class="w-2.5 h-2.5 rounded-b-sm bg-black/85"></div>
+                <div class="w-12 h-1 rounded-full bg-black/60"></div>
             </div>
 
             <!-- Hanging Artwork + Selected Frame -->
-            <div class="relative z-10 flex-1 w-full flex flex-col items-center justify-center my-auto py-1">
+            <div id="wall-artwork-stage-layer" class="relative flex-1 w-full flex flex-col items-center justify-center my-auto py-1">
                 <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
-                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none transition-all duration-300" style="max-height: 28vh; max-width: 42vw;">
+                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none transition-all duration-300">
                 </div>
                 <!-- Subtle Dimension Scale Badge -->
-                <div id="wall-scale-pill" class="mt-2.5 px-3 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] border border-white/15">
+                <div id="wall-scale-pill" class="mt-2.5 px-3 py-0.5 rounded-full bg-black/65 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] border border-white/15">
                     Scale: 100% • Standard Gallery Eye-Level
                 </div>
             </div>
 
             <!-- Complete Realistic Interior Furniture: Props, Full Walnut Credenza, Tapered Legs, Baseboard & Hardwood Floor -->
-            <div id="wall-furniture-silhouette" class="relative z-10 w-full flex flex-col items-center pointer-events-none select-none transition-opacity duration-300 mt-1">
+            <div id="wall-furniture-silhouette" class="relative w-full flex flex-col items-center pointer-events-none select-none transition-opacity duration-300 mt-1">
                 <div class="w-full max-w-4xl mx-auto flex flex-col items-center">
                     <!-- Tabletop Props Row -->
                     <div class="w-[82%] sm:w-[68%] flex items-end justify-between px-4 sm:px-8 -mb-[1px]">
@@ -959,8 +969,8 @@
                         </div>
                     </div>
 
-                    <!-- Full Mid-Century Walnut Credenza / Sideboard Cabinet -->
-                    <div class="relative w-[88%] sm:w-[74%] h-12 sm:h-14 rounded-t-[3px] bg-gradient-to-b from-[#6B472E] via-[#533521] to-[#3B2415] shadow-2xl border-t border-[#9A6D4C]/60 flex flex-col justify-between p-1.5 sm:p-2 z-10">
+                    <!-- Full Mid-Century Walnut Credenza / Sideboard Cabinet (64 in Reference Width) -->
+                    <div id="wall-credenza-ref" class="relative w-[88%] sm:w-[74%] h-12 sm:h-14 rounded-t-[3px] bg-gradient-to-b from-[#6B472E] via-[#533521] to-[#3B2415] shadow-2xl border-t border-[#9A6D4C]/60 flex flex-col justify-between p-1.5 sm:p-2 z-10">
                         <div class="grid grid-cols-3 gap-1.5 sm:gap-2 w-full h-full">
                             <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-end pr-1.5">
                                 <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
@@ -1023,7 +1033,7 @@
                     <div class="flex flex-wrap items-center gap-3 sm:gap-4">
                         <div class="flex items-center gap-2">
                             <label for="wall-ambient-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Room Light:</label>
-                            <input id="wall-ambient-slider" type="range" min="35" max="115" step="5" value="100" oninput="setWallRoomBrightness(this.value)" class="w-20 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="100" oninput="setWallRoomBrightness(this.value)" class="w-20 sm:w-24 accent-[#D4B483] cursor-pointer">
                             <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-8">100%</span>
                         </div>
                         <div class="flex items-center gap-2">
@@ -1372,6 +1382,8 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div class="p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 space-y-3">
                                     <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483] font-medium block">Primary / Left Background Image</span>
+                                    <input id="backdrop-left-file-input" type="file" accept="image/*" onchange="uploadBackdropFileToR2('left', this)" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                    <p id="backdrop-left-upload-status" class="hidden text-[11px] text-[#9C8265] font-medium"></p>
                                     <select id="backdrop-left-select" onchange="onBackdropSelectChange('left', this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                         <option value="05582-mtoung3.jpg">Default: Lotus Study I (05582-mtoung3.jpg)</option>
                                     </select>
@@ -1383,6 +1395,8 @@
 
                                 <div id="backdrop-right-picker-box" class="p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 space-y-3">
                                     <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483] font-medium block">Secondary / Right Background Image</span>
+                                    <input id="backdrop-right-file-input" type="file" accept="image/*" onchange="uploadBackdropFileToR2('right', this)" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                    <p id="backdrop-right-upload-status" class="hidden text-[11px] text-[#9C8265] font-medium"></p>
                                     <select id="backdrop-right-select" onchange="onBackdropSelectChange('right', this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                         <option value="8899c-mtoung4.jpg">Default: Lotus Study II (8899c-mtoung4.jpg)</option>
                                     </select>
@@ -2705,6 +2719,7 @@
             void modal.offsetWidth;
             requestAnimationFrame(() => {
                 modal.classList.add('is-open');
+                applyProportionalWallSizing(art, currentWallScalePct);
             });
             document.body.style.overflow = 'hidden';
         }
@@ -2806,21 +2821,120 @@
         }
 
         function setWallRoomBrightness(pctValue) {
-            const pct = Math.max(35, Math.min(115, Number(pctValue) || 100));
+            const pct = Math.max(5, Math.min(115, Number(pctValue) || 100));
             currentWallRoomBrightnessPct = pct;
             const dimmer = document.getElementById('wall-room-dimmer');
             const label = document.getElementById('wall-ambient-label');
+            const unit = document.getElementById('wall-hanging-unit');
             if (label) label.textContent = `${pct}%`;
             if (dimmer) {
                 if (pct < 100) {
-                    const darkness = ((100 - pct) / 65) * 0.62;
-                    dimmer.style.backgroundColor = `rgba(10, 9, 8, ${darkness.toFixed(3)})`;
+                    const darkness = ((100 - pct) / 95) * 0.90;
+                    dimmer.style.backgroundColor = `rgba(6, 5, 5, ${darkness.toFixed(3)})`;
                 } else if (pct > 100) {
                     const daylight = ((pct - 100) / 15) * 0.14;
                     dimmer.style.backgroundColor = `rgba(255, 250, 240, ${daylight.toFixed(3)})`;
                 } else {
-                    dimmer.style.backgroundColor = 'rgba(10, 9, 8, 0)';
+                    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0)';
                 }
+            }
+            if (unit) {
+                if (wallSpotlightMode === 'off') {
+                    const unlitBright = 0.22 + (pct / 100) * 0.62;
+                    unit.style.filter = `brightness(${unlitBright.toFixed(2)}) contrast(0.96)`;
+                } else {
+                    unit.style.filter = '';
+                }
+            }
+        }
+
+        function cycleWallSpotlight() {
+            playSoftGalleryChime('select');
+            const order = ['warm', 'neutral', 'off'];
+            wallSpotlightMode = order[(order.indexOf(wallSpotlightMode) + 1) % order.length];
+
+            const cone = document.getElementById('wall-spotlight-cone');
+            const btn = document.getElementById('wall-spotlight-btn');
+            const unit = document.getElementById('wall-hanging-unit');
+
+            if (cone) {
+                cone.classList.remove('is-neutral', 'is-off');
+                if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
+                if (wallSpotlightMode === 'off') cone.classList.add('is-off');
+            }
+            if (unit) {
+                unit.classList.remove('is-unlit', 'is-lit-warm', 'is-lit-neutral');
+                unit.style.filter = '';
+                if (wallSpotlightMode === 'off') {
+                    unit.classList.add('is-unlit');
+                    setWallRoomBrightness(currentWallRoomBrightnessPct);
+                } else if (wallSpotlightMode === 'neutral') {
+                    unit.classList.add('is-lit-neutral');
+                } else {
+                    unit.classList.add('is-lit-warm');
+                }
+            }
+            if (btn) {
+                const labels = {
+                    warm: 'Spotlight: Warm 3000K',
+                    neutral: 'Spotlight: Neutral 4000K',
+                    off: 'Spotlight: Off'
+                };
+                btn.textContent = labels[wallSpotlightMode];
+            }
+        }
+
+        function applyProportionalWallSizing(art, scalePct = 100) {
+            const unit = document.getElementById('wall-hanging-unit');
+            const imgEl = document.getElementById('wall-preview-img');
+            const pillEl = document.getElementById('wall-scale-pill');
+            const stageEl = document.getElementById('wall-canvas-stage');
+            const credenzaEl = document.getElementById('wall-credenza-ref');
+            if (!unit || !imgEl) return;
+
+            const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
+            const factor = Math.max(0.6, Math.min(1.3, (Number(scalePct) || 100) / 100));
+
+            // Credenza width is physically 64 in (162.5 cm); measure its rendered pixel width for true 1:1 room scale
+            const stageW = stageEl?.clientWidth || Math.min(window.innerWidth - 32, 1152);
+            const credenzaPx = (credenzaEl && credenzaEl.offsetWidth > 120)
+                ? credenzaEl.offsetWidth
+                : stageW * (window.innerWidth >= 640 ? 0.74 : 0.88);
+            const pxPerInch = credenzaPx / 64;
+
+            const stageH = stageEl?.clientHeight || 480;
+            const maxAllowedHeightPx = Math.max(130, stageH * 0.56);
+            const maxAllowedWidthPx = Math.max(160, stageW * 0.84);
+
+            let targetW = dims.widthIn * pxPerInch * factor;
+            let targetH = dims.heightIn * pxPerInch * factor;
+
+            if (targetH > maxAllowedHeightPx) {
+                const clampRatio = maxAllowedHeightPx / targetH;
+                targetH *= clampRatio;
+                targetW *= clampRatio;
+            }
+            if (targetW > maxAllowedWidthPx) {
+                const clampRatio = maxAllowedWidthPx / targetW;
+                targetW *= clampRatio;
+                targetH *= clampRatio;
+            }
+
+            imgEl.style.width = `${Math.round(targetW)}px`;
+            imgEl.style.height = `${Math.round(targetH)}px`;
+            imgEl.style.maxWidth = 'none';
+            imgEl.style.maxHeight = 'none';
+
+            // Thinner frame & mat for monumental/large works; thicker mat & frame for intimate works
+            const isLarge = dims.sizeTier === 'Monumental' || dims.sizeTier === 'Large';
+            const isSmall = dims.sizeTier === 'Intimate';
+            unit.style.setProperty('--wall-frame-thick', isLarge ? '6px' : (isSmall ? '13px' : '9px'));
+            unit.style.setProperty('--wall-mat-pad', isLarge ? '7px' : (isSmall ? '18px' : '12px'));
+            unit.style.setProperty('--wall-slim-thick', isLarge ? '5px' : (isSmall ? '8px' : '6px'));
+
+            if (pillEl) {
+                const sizeText = art?.size ? ` • Original: ${art.size}` : '';
+                pillEl.textContent = `True Room Scale: ${Math.round(factor * 100)}% (${dims.sizeTier} • vs 64" Credenza)${sizeText}`;
             }
         }
 
@@ -4869,6 +4983,41 @@
             applyGlobalBackdropConfig();
         }
 
+        async function uploadBackdropFileToR2(side, inputEl) {
+            const file = inputEl?.files?.[0];
+            if (!file) return;
+            const statusEl = document.getElementById(side === 'left' ? 'backdrop-left-upload-status' : 'backdrop-right-upload-status');
+            if (statusEl) {
+                statusEl.textContent = `Uploading ${file.name} to R2...`;
+                statusEl.classList.remove('hidden');
+            }
+            try {
+                const uploaded = await uploadFileToR2(file, 'backdrops');
+                if (side === 'left') {
+                    backdropConfig.leftImage = uploaded.url;
+                    const prev = document.getElementById('backdrop-left-preview');
+                    const urlIn = document.getElementById('backdrop-left-url-input');
+                    if (prev) prev.src = uploaded.url;
+                    if (urlIn) urlIn.value = uploaded.url;
+                } else {
+                    backdropConfig.rightImage = uploaded.url;
+                    const prev = document.getElementById('backdrop-right-preview');
+                    const urlIn = document.getElementById('backdrop-right-url-input');
+                    if (prev) prev.src = uploaded.url;
+                    if (urlIn) urlIn.value = uploaded.url;
+                }
+                applyGlobalBackdropConfig();
+                if (statusEl) {
+                    statusEl.textContent = 'Uploaded to R2! Click "Save Backdrop & Layout" below to publish.';
+                }
+            } catch (err) {
+                if (statusEl) {
+                    statusEl.textContent = 'Upload failed: ' + (err.message || 'Check ADMIN_API_TOKEN.');
+                }
+                showAdminFeedback('Backdrop upload failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+            }
+        }
+
         function resetBackdropSettingsToDefault() {
             playSoftGalleryChime('select');
             backdropConfig = { ...DEFAULT_BACKDROP_CONFIG };
@@ -4919,6 +5068,7 @@
         window.previewBackdropOpacity = previewBackdropOpacity;
         window.onBackdropSelectChange = onBackdropSelectChange;
         window.onBackdropCustomUrlInput = onBackdropCustomUrlInput;
+        window.uploadBackdropFileToR2 = uploadBackdropFileToR2;
         window.resetBackdropSettingsToDefault = resetBackdropSettingsToDefault;
         window.saveBackdropSettingsToCloud = saveBackdropSettingsToCloud;
         window.selectArtist = selectArtist;
