@@ -619,6 +619,9 @@
                         <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Gallery About
                         </button>
+                        <button type="button" onclick="switchAdminTab('audio')" id="admin-tab-btn-audio" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Ambient Audio
+                        </button>
                         <button type="button" onclick="switchAdminTab('visitors')" id="admin-tab-btn-visitors" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Visitors (30d)
                         </button>
@@ -804,6 +807,75 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- ==================== ADMIN TAB: AMBIENT AUDIO (R2 + PLAYLIST + VOLUME) ==================== -->
+                    <div id="admin-panel-audio" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-6">
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div>
+                                    <h4 class="font-serif text-xl">Background Ambience Tracks &amp; Volume</h4>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Upload MP3 files directly to Cloudflare R2 (<code>media.theartistsloftmm.art</code>), select tracks to play, or adjust background volume.</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="previewNextRandomAmbience()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
+                                        Random Next
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Volume Slider & Playback Mode -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label for="admin-ambience-volume" class="text-[11px] uppercase tracking-wider text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 font-medium">Background Volume</label>
+                                        <span id="admin-ambience-volume-label" class="text-xs font-medium text-[#9C8265] dark:text-[#D4B483]">7%</span>
+                                    </div>
+                                    <input id="admin-ambience-volume" type="range" min="0" max="40" step="1" value="7"
+                                           oninput="setAmbienceVolumePercent(this.value)"
+                                           class="w-full accent-[#26231F] dark:accent-[#D4B483] cursor-pointer">
+                                    <p class="text-[11px] opacity-60 mt-1">Recommended: 5% – 15% for a subtle, non-intrusive gallery atmosphere.</p>
+                                </div>
+                                <div class="flex flex-col justify-between">
+                                    <span class="text-[11px] uppercase tracking-wider text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 font-medium mb-2">Rotation Mode</span>
+                                    <label class="inline-flex items-center gap-2.5 text-xs cursor-pointer select-none">
+                                        <input id="admin-ambience-random-toggle" type="checkbox" checked onchange="toggleAmbienceRandomMode(this.checked)" class="w-4 h-4 accent-[#26231F] dark:accent-[#D4B483] rounded">
+                                        <span>Random rotation across enabled tracks</span>
+                                    </label>
+                                    <p id="admin-now-playing-label" class="text-[11px] text-[#9C8265] dark:text-[#D4B483] mt-2 truncate">Now Playing: —</p>
+                                </div>
+                            </div>
+
+                            <!-- Add New MP3 (Upload to R2 or Paste URL) -->
+                            <form onsubmit="addAmbienceTrackFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
+                                <div>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Track Title (Optional)</label>
+                                    <input id="audio-title-input" type="text" placeholder="e.g., Soft Rain & Piano" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: MP3 URL / Filename</label>
+                                    <input id="audio-url-input" type="text" placeholder="e.g., https://media.theartistsloftmm.art/audio/ambience1.mp3" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option A: Upload MP3 File Directly to Cloudflare R2</label>
+                                    <input id="audio-file-input" type="file" accept="audio/mpeg,audio/mp3,audio/*" onchange="previewAdminSelectedFile(this, 'audio-file-status')" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
+                                    <p id="audio-file-status" class="hidden text-[11px] text-[#9C8265] mt-1.5 font-medium"></p>
+                                </div>
+                                <div class="md:col-span-2 flex justify-end">
+                                    <button type="submit" id="save-audio-track-btn" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.2em] font-medium transition-colors disabled:opacity-50">
+                                        Add &amp; Save Track
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Playlist List (Select/Play, Enable/Disable, Delete) -->
+                            <div>
+                                <h5 class="font-serif text-lg mb-3">Ambience Playlist (<span id="admin-audio-count">0</span>)</h5>
+                                <div id="admin-audio-tracks-list" class="space-y-3">
+                                    <!-- Populated via JS -->
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1505,6 +1577,13 @@
                     galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...aboutObj };
                 }
 
+                if (data.settings && data.settings.ambient_audio) {
+                    const audioCfg = typeof data.settings.ambient_audio === 'string'
+                        ? JSON.parse(data.settings.ambient_audio)
+                        : data.settings.ambient_audio;
+                    applySavedAudioConfig(audioCfg);
+                }
+
                 isLoadingArtworks = false;
                 updateCloudStatus(true, `Connected • ${GALLERY_BUILD_TAG}`);
 
@@ -2009,7 +2088,7 @@
         // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
         function switchAdminTab(tabName) {
             playSoftGalleryChime('select');
-            ['artworks', 'artists', 'gallery', 'visitors', 'logs'].forEach(t => {
+            ['artworks', 'artists', 'gallery', 'audio', 'visitors', 'logs'].forEach(t => {
                 const panel = document.getElementById('admin-panel-' + t);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 const isSelected = t === tabName;
@@ -2021,6 +2100,7 @@
                 }
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
+            if (tabName === 'audio') renderAdminAudioManager();
             if (tabName === 'artists') renderAdminArtistsList();
             if (tabName === 'visitors') loadVisitorActivityFromCloud();
             if (tabName === 'logs') {
@@ -2141,6 +2221,7 @@
             renderAdminArtistsList();
             renderAdminEditLogsList();
             populateGalleryAboutAdminForm();
+            renderAdminAudioManager();
         }
 
         async function uploadFileToR2(file, folder = 'artworks') {
@@ -2937,23 +3018,25 @@
             updateGalleryScrollPresence();
         }
 
-        // ==================== SOFT MP3 AMBIENCE ROTATION & GENTLE GALLERY UI SOUNDS ====================
-        // Place Ambience1.mp3 .. Ambience5.mp3 in your repo root (or edit AMBIENCE_TRACKS below).
-        // Very gentle background volume (~0.07) so it sits softly in the background.
-        const AMBIENCE_TRACKS = [
-            'Ambience1.mp3',
-            'Ambience2.mp3',
-            'Ambience3.mp3',
-            'Ambience4.mp3',
-            'Ambience5.mp3'
+        // ==================== R2-BACKED RANDOM MP3 AMBIENCE, VOLUME & GENTLE UI SOUNDS ====================
+        const AMBIENCE_STORAGE_KEY = 'tal_ambient_audio_v1';
+        const DEFAULT_AMBIENCE_TRACKS = [
+            { id: 'amb-1', title: 'Ambience 1', url: 'https://media.theartistsloftmm.art/Ambience1.mp3', enabled: true },
+            { id: 'amb-2', title: 'Ambience 2', url: 'https://media.theartistsloftmm.art/Ambience2.mp3', enabled: true },
+            { id: 'amb-3', title: 'Ambience 3', url: 'https://media.theartistsloftmm.art/Ambience3.mp3', enabled: true },
+            { id: 'amb-4', title: 'Ambience 4', url: 'https://media.theartistsloftmm.art/Ambience4.mp3', enabled: true },
+            { id: 'amb-5', title: 'Ambience 5', url: 'https://media.theartistsloftmm.art/Ambience5.mp3', enabled: true }
         ];
-        const AMBIENCE_TARGET_VOLUME = 0.07;
+
+        let ambienceTracks = DEFAULT_AMBIENCE_TRACKS.map(t => ({ ...t }));
+        let ambienceTargetVolume = 0.07; // 7% default soft background volume
+        let ambienceRandomMode = true;
 
         let audioCtx = null;
         let masterGain = null;
         let isSoundEnabled = true;
         let audioUnlockBound = false;
-        let currentTrackIndex = 0;
+        let currentTrackIndex = -1;
         let ambienceFadeTimer = null;
         let isAmbienceStarted = false;
 
@@ -2961,6 +3044,78 @@
         let lastScrollY = window.scrollY || 0;
         let scrollChimeBound = false;
         let lastDragWhisperTime = 0;
+
+        function loadLocalAudioConfig() {
+            try {
+                const raw = localStorage.getItem(AMBIENCE_STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                applySavedAudioConfig(parsed);
+            } catch (e) {}
+        }
+
+        function saveLocalAudioConfig() {
+            try {
+                localStorage.setItem(AMBIENCE_STORAGE_KEY, JSON.stringify({
+                    tracks: ambienceTracks,
+                    volume: ambienceTargetVolume,
+                    randomMode: ambienceRandomMode
+                }));
+            } catch (e) {}
+        }
+
+        async function persistAudioConfigToCloud(logAction = null) {
+            saveLocalAudioConfig();
+            renderAdminAudioManager();
+
+            if (getSavedAdminToken()) {
+                try {
+                    await fetch(API_ENDPOINTS.settings, {
+                        method: 'POST',
+                        headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                        body: JSON.stringify({
+                            key: 'ambient_audio',
+                            value: {
+                                tracks: ambienceTracks,
+                                volume: ambienceTargetVolume,
+                                randomMode: ambienceRandomMode,
+                                updatedAt: Date.now()
+                            }
+                        })
+                    });
+                } catch (e) {}
+            }
+
+            if (logAction && typeof recordEditLog === 'function') {
+                recordEditLog(logAction.action, 'Ambient Audio', logAction.name, logAction.details || '');
+            }
+        }
+
+        function applySavedAudioConfig(cfg) {
+            if (!cfg || typeof cfg !== 'object') return;
+            if (Array.isArray(cfg.tracks) && cfg.tracks.length > 0) {
+                ambienceTracks = cfg.tracks
+                    .filter(t => t && t.url)
+                    .map((t, idx) => ({
+                        id: t.id || ('amb-' + (idx + 1)),
+                        title: t.title || `Ambience ${idx + 1}`,
+                        url: String(t.url).trim(),
+                        enabled: t.enabled !== false
+                    }));
+            }
+            if (typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
+                ambienceTargetVolume = Math.max(0, Math.min(0.6, cfg.volume));
+            }
+            if (typeof cfg.randomMode === 'boolean') {
+                ambienceRandomMode = cfg.randomMode;
+            }
+            syncVolumeSliderUI();
+            renderAdminAudioManager();
+        }
+
+        function getEnabledAmbienceTracks() {
+            return ambienceTracks.filter(t => t.enabled !== false && t.url);
+        }
 
         function getGalleryAudioElement() {
             let el = document.getElementById('gallery-bg-audio');
@@ -2979,9 +3134,8 @@
                 if (!AudioContextClass) return Promise.resolve(null);
                 audioCtx = new AudioContextClass();
 
-                // Soft master gain for gentle UI & scroll micro-sounds
                 masterGain = audioCtx.createGain();
-                masterGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
                 masterGain.connect(audioCtx.destination);
             }
             if (audioCtx.state === 'suspended') {
@@ -3003,6 +3157,39 @@
             }
         }
 
+        function syncVolumeSliderUI() {
+            const pct = Math.round(ambienceTargetVolume * 100);
+            const slider = document.getElementById('admin-ambience-volume');
+            const label = document.getElementById('admin-ambience-volume-label');
+            const randomToggle = document.getElementById('admin-ambience-random-toggle');
+            if (slider) slider.value = String(pct);
+            if (label) label.textContent = `${pct}%`;
+            if (randomToggle) randomToggle.checked = Boolean(ambienceRandomMode);
+        }
+
+        function setAmbienceVolumePercent(percentValue) {
+            const pct = Math.max(0, Math.min(60, Number(percentValue) || 0));
+            ambienceTargetVolume = pct / 100;
+            const label = document.getElementById('admin-ambience-volume-label');
+            if (label) label.textContent = `${pct}%`;
+
+            const audioEl = getGalleryAudioElement();
+            if (audioEl && isSoundEnabled && !audioEl.paused) {
+                clearAmbienceFade();
+                audioEl.volume = ambienceTargetVolume;
+            }
+            saveLocalAudioConfig();
+        }
+
+        function toggleAmbienceRandomMode(checked) {
+            ambienceRandomMode = Boolean(checked);
+            persistAudioConfigToCloud({
+                action: 'Updated',
+                name: 'Rotation Mode',
+                details: ambienceRandomMode ? 'Random rotation enabled' : 'Sequential rotation enabled'
+            });
+        }
+
         function clearAmbienceFade() {
             if (ambienceFadeTimer) {
                 clearInterval(ambienceFadeTimer);
@@ -3010,7 +3197,7 @@
             }
         }
 
-        function fadeAmbienceTo(targetVol, durationMs = 1200, onComplete = null) {
+        function fadeAmbienceTo(targetVol, durationMs = 1000, onComplete = null) {
             const audioEl = getGalleryAudioElement();
             if (!audioEl) {
                 if (onComplete) onComplete();
@@ -3019,7 +3206,7 @@
             clearAmbienceFade();
             const clampedTarget = Math.max(0, Math.min(1, targetVol));
             const startVol = Number.isFinite(audioEl.volume) ? audioEl.volume : 0;
-            const steps = 20;
+            const steps = 18;
             const stepMs = Math.max(20, Math.round(durationMs / steps));
             let step = 0;
 
@@ -3036,45 +3223,97 @@
             }, stepMs);
         }
 
-        function playAmbienceTrackAt(index, retryCount = 0) {
-            if (!isSoundEnabled || !Array.isArray(AMBIENCE_TRACKS) || AMBIENCE_TRACKS.length === 0) return;
+        function pickNextTrackIndex(enabledList, excludeIndex = -1) {
+            const len = enabledList.length;
+            if (len <= 0) return -1;
+            if (len === 1) return 0;
+
+            if (ambienceRandomMode) {
+                let nextIdx = Math.floor(Math.random() * len);
+                if (nextIdx === excludeIndex) {
+                    nextIdx = (nextIdx + 1 + Math.floor(Math.random() * (len - 1))) % len;
+                }
+                return nextIdx;
+            }
+            return ((excludeIndex + 1) % len + len) % len;
+        }
+
+        function updateNowPlayingLabel(trackObj) {
+            const el = document.getElementById('admin-now-playing-label');
+            if (!el) return;
+            if (!isSoundEnabled || !trackObj) {
+                el.textContent = isSoundEnabled ? 'Now Playing: Ready' : 'Now Playing: Sound Muted';
+                return;
+            }
+            el.textContent = `Now Playing: ${trackObj.title || trackObj.url}`;
+        }
+
+        function playAmbienceTrackById(trackId, forceSelect = true, attemptedIds = new Set()) {
+            if (!isSoundEnabled) return;
+            const enabled = getEnabledAmbienceTracks();
+            if (enabled.length === 0) {
+                updateNowPlayingLabel(null);
+                return;
+            }
+
+            let chosen = null;
+            if (trackId) {
+                chosen = enabled.find(t => t.id === trackId) || null;
+            }
+            if (!chosen) {
+                const currentIdx = enabled.findIndex(t => t.id === currentTrackIndex);
+                const nextIdx = pickNextTrackIndex(enabled, currentIdx);
+                chosen = enabled[nextIdx] || enabled[0];
+            }
+
+            currentTrackIndex = chosen.id;
+            const nextAttempted = new Set(attemptedIds);
+            nextAttempted.add(chosen.id);
 
             const audioEl = getGalleryAudioElement();
-            currentTrackIndex = ((index % AMBIENCE_TRACKS.length) + AMBIENCE_TRACKS.length) % AMBIENCE_TRACKS.length;
-            const trackSrc = AMBIENCE_TRACKS[currentTrackIndex];
-
             audioEl.onended = () => {
                 if (!isSoundEnabled) return;
-                fadeAmbienceTo(0, 700, () => {
-                    playAmbienceTrackAt(currentTrackIndex + 1, 0);
+                fadeAmbienceTo(0, 650, () => {
+                    playAmbienceTrackById(null, true, new Set());
                 });
             };
 
             audioEl.onerror = () => {
                 if (!isSoundEnabled) return;
-                // Skip gracefully if an optional track file is not uploaded yet
-                if (retryCount < AMBIENCE_TRACKS.length - 1) {
+                const remaining = enabled.filter(t => !nextAttempted.has(t.id));
+                if (remaining.length > 0) {
+                    const fallback = remaining[Math.floor(Math.random() * remaining.length)];
                     setTimeout(() => {
-                        playAmbienceTrackAt(currentTrackIndex + 1, retryCount + 1);
+                        playAmbienceTrackById(fallback.id, true, nextAttempted);
                     }, 350);
                 }
             };
 
-            audioEl.src = trackSrc;
+            audioEl.src = chosen.url;
             audioEl.volume = 0.002;
+            updateNowPlayingLabel(chosen);
+            renderAdminAudioManager();
 
             const playPromise = audioEl.play();
             if (playPromise && typeof playPromise.then === 'function') {
                 playPromise.then(() => {
                     isAmbienceStarted = true;
-                    fadeAmbienceTo(AMBIENCE_TARGET_VOLUME, 1400);
+                    fadeAmbienceTo(ambienceTargetVolume, 1200);
                 }).catch(() => {
                     // Autoplay before user gesture may be blocked until first interaction
                 });
             } else {
                 isAmbienceStarted = true;
-                fadeAmbienceTo(AMBIENCE_TARGET_VOLUME, 1400);
+                fadeAmbienceTo(ambienceTargetVolume, 1200);
             }
+        }
+
+        function previewNextRandomAmbience() {
+            if (!isSoundEnabled) {
+                isSoundEnabled = true;
+                updateSoundButtonUI();
+            }
+            playAmbienceTrackById(null, true, new Set());
         }
 
         function startAmbientSoundscape() {
@@ -3082,25 +3321,26 @@
             const audioEl = getGalleryAudioElement();
             if (isAmbienceStarted && audioEl.src && audioEl.paused && audioEl.currentTime > 0 && audioEl.currentTime < audioEl.duration) {
                 audioEl.play().then(() => {
-                    fadeAmbienceTo(AMBIENCE_TARGET_VOLUME, 1000);
+                    fadeAmbienceTo(ambienceTargetVolume, 900);
                 }).catch(() => {
-                    playAmbienceTrackAt(currentTrackIndex, 0);
+                    playAmbienceTrackById(null, true, new Set());
                 });
                 return;
             }
-            playAmbienceTrackAt(currentTrackIndex, 0);
+            playAmbienceTrackById(null, true, new Set());
         }
 
         function stopAmbientSoundscape() {
             clearAmbienceFade();
             const audioEl = getGalleryAudioElement();
             if (audioEl && !audioEl.paused) {
-                fadeAmbienceTo(0, 450, () => {
+                fadeAmbienceTo(0, 400, () => {
                     audioEl.pause();
                 });
             } else if (audioEl) {
                 audioEl.pause();
             }
+            updateNowPlayingLabel(null);
         }
 
         async function toggleGallerySound(event) {
@@ -3116,8 +3356,176 @@
             }
         }
 
-        // Very soft, delicate sine/triangle touch (barely a whisper, never harsh)
-        async function triggerGentleTone(freq, startOffset = 0, duration = 0.45, peakGain = 0.014, endFreq = null) {
+        // ==================== ADMIN AMBIENT AUDIO MANAGER ====================
+        function renderAdminAudioManager() {
+            syncVolumeSliderUI();
+            const countEl = document.getElementById('admin-audio-count');
+            const listEl = document.getElementById('admin-audio-tracks-list');
+            if (countEl) countEl.textContent = ambienceTracks.length;
+            if (!listEl) return;
+
+            if (ambienceTracks.length === 0) {
+                listEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No ambience tracks added yet. Upload an MP3 to R2 above.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = ambienceTracks.map((track, idx) => {
+                const isPlaying = currentTrackIndex === track.id && isSoundEnabled;
+                const isEnabled = track.enabled !== false;
+                const safeId = escapeHTML(track.id);
+                const safeTitle = escapeHTML(track.title || `Track ${idx + 1}`);
+                const safeUrl = escapeHTML(track.url);
+
+                return `
+                    <div class="p-3.5 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isPlaying ? 'border-[#9C8265] dark:border-[#D4B483]' : 'border-[#A69076]/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full ${isPlaying ? 'bg-emerald-500' : (isEnabled ? 'bg-[#9C8265]' : 'bg-gray-400')}"></span>
+                                <h6 class="font-serif text-sm font-medium truncate">${safeTitle}</h6>
+                                ${isPlaying ? '<span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-300 font-medium">Playing</span>' : ''}
+                            </div>
+                            <p class="text-[11px] opacity-60 truncate mt-0.5">${safeUrl}</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button type="button" onclick="selectAndPlayAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs hover:bg-[#9C8265] transition-colors">
+                                Play
+                            </button>
+                            <button type="button" onclick="toggleAmbienceTrackEnabled('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
+                                ${isEnabled ? 'Disable' : 'Enable'}
+                            </button>
+                            <button type="button" onclick="deleteAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectAndPlayAmbienceTrack(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            if (!target) return;
+            target.enabled = true;
+            if (!isSoundEnabled) {
+                isSoundEnabled = true;
+                updateSoundButtonUI();
+            }
+            saveLocalAudioConfig();
+            playAmbienceTrackById(trackId, true, new Set());
+        }
+
+        function toggleAmbienceTrackEnabled(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            if (!target) return;
+            target.enabled = target.enabled === false ? true : false;
+            if (!target.enabled && currentTrackIndex === trackId) {
+                playAmbienceTrackById(null, true, new Set());
+            }
+            persistAudioConfigToCloud({
+                action: 'Updated',
+                name: target.title || 'Ambience Track',
+                details: target.enabled ? 'Enabled in playlist' : 'Disabled in playlist'
+            });
+        }
+
+        function deleteAmbienceTrack(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            ambienceTracks = ambienceTracks.filter(t => t.id !== trackId);
+            if (currentTrackIndex === trackId) {
+                currentTrackIndex = -1;
+                const audioEl = getGalleryAudioElement();
+                audioEl.pause();
+                audioEl.removeAttribute('src');
+                if (isSoundEnabled && getEnabledAmbienceTracks().length > 0) {
+                    playAmbienceTrackById(null, true, new Set());
+                } else {
+                    updateNowPlayingLabel(null);
+                }
+            }
+            persistAudioConfigToCloud({
+                action: 'Deleted',
+                name: target?.title || 'Ambience Track',
+                details: 'Removed from ambience playlist'
+            });
+        }
+
+        async function uploadAudioFileToR2(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'audio');
+
+            const res = await fetch(API_ENDPOINTS.upload, {
+                method: 'POST',
+                headers: getAdminAuthHeaders(),
+                body: formData
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok || !data.url) {
+                throw new Error(data.error || `Audio upload failed (${res.status})`);
+            }
+            return data.url;
+        }
+
+        async function addAmbienceTrackFromAdmin(event) {
+            event.preventDefault();
+            const btn = document.getElementById('save-audio-track-btn');
+            const titleInput = document.getElementById('audio-title-input');
+            const urlInput = document.getElementById('audio-url-input');
+            const fileInput = document.getElementById('audio-file-input');
+            const statusEl = document.getElementById('audio-file-status');
+
+            const rawTitle = titleInput.value.trim();
+            let finalUrl = urlInput.value.trim();
+
+            if (!finalUrl && !(fileInput.files && fileInput.files[0])) {
+                showAdminFeedback('Please choose an MP3 file to upload to R2 or enter an audio URL.', true);
+                return;
+            }
+
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Uploading to R2...';
+            }
+
+            try {
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await uploadAudioFileToR2(fileInput.files[0]);
+                }
+                const derivedTitle = rawTitle
+                    || (fileInput.files && fileInput.files[0] ? fileInput.files[0].name.replace(/\.[^/.]+$/, '') : '')
+                    || `Ambience ${ambienceTracks.length + 1}`;
+
+                const newTrack = {
+                    id: 'amb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5),
+                    title: derivedTitle,
+                    url: finalUrl,
+                    enabled: true
+                };
+                ambienceTracks.push(newTrack);
+
+                await persistAudioConfigToCloud({
+                    action: 'Added',
+                    name: derivedTitle,
+                    details: finalUrl
+                });
+
+                titleInput.value = '';
+                urlInput.value = '';
+                fileInput.value = '';
+                if (statusEl) statusEl.classList.add('hidden');
+                showAdminFeedback(`Added "${derivedTitle}" to Ambient Playlist!`);
+            } catch (err) {
+                showAdminFeedback('Audio add failed: ' + (err.message || 'Check ADMIN_API_TOKEN & /api/upload.'), true);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Add & Save Track';
+                }
+            }
+        }
+
+        // Soft, delicate tone for UI & scroll interactions
+        async function triggerGentleTone(freq, startOffset = 0, duration = 0.45, peakGain = 0.045, endFreq = null) {
             if (!isSoundEnabled) return;
             try {
                 const ctx = await ensureAudioContext();
@@ -3133,12 +3541,12 @@
 
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1350, now);
+                filter.frequency.setValueAtTime(2400, now);
 
                 const gain = ctx.createGain();
-                const safePeak = Math.max(0.002, Math.min(0.025, peakGain));
+                const safePeak = Math.max(0.005, Math.min(0.08, peakGain));
                 gain.gain.setValueAtTime(0.0001, now);
-                gain.gain.linearRampToValueAtTime(safePeak, now + Math.min(0.04, duration * 0.2));
+                gain.gain.linearRampToValueAtTime(safePeak, now + Math.min(0.035, duration * 0.2));
                 gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
                 osc.connect(filter);
@@ -3150,37 +3558,33 @@
             } catch (e) {}
         }
 
-        // Soft button / transition sound effects
         async function playSoftGalleryChime(type = 'nav') {
             if (!isSoundEnabled) return;
             if (type === 'artist') {
-                // Soft transition wash across artist switch
-                triggerGentleTone(440.00, 0, 0.55, 0.011, 466.16);
-                triggerGentleTone(659.25, 0.09, 0.65, 0.009, 659.25);
+                triggerGentleTone(440.00, 0, 0.55, 0.042, 493.88);
+                triggerGentleTone(659.25, 0.09, 0.65, 0.036, 659.25);
                 return;
             }
             if (type === 'select' || type === 'filter') {
-                triggerGentleTone(523.25, 0, 0.28, 0.010, 554.37);
+                triggerGentleTone(523.25, 0, 0.28, 0.038, 587.33);
                 return;
             }
             if (type === 'click' || type === 'open') {
-                triggerGentleTone(392.00, 0, 0.34, 0.011, 440.00);
+                triggerGentleTone(392.00, 0, 0.34, 0.042, 440.00);
                 return;
             }
             if (type === 'close') {
-                triggerGentleTone(440.00, 0, 0.30, 0.009, 349.23);
+                triggerGentleTone(440.00, 0, 0.30, 0.034, 349.23);
                 return;
             }
             if (type === 'success') {
-                triggerGentleTone(523.25, 0, 0.32, 0.010);
-                triggerGentleTone(659.25, 0.08, 0.42, 0.009);
+                triggerGentleTone(523.25, 0, 0.32, 0.040);
+                triggerGentleTone(659.25, 0.08, 0.42, 0.036);
                 return;
             }
-            // Default gentle navigation transition
-            triggerGentleTone(493.88, 0, 0.30, 0.009, 523.25);
+            triggerGentleTone(493.88, 0, 0.30, 0.036, 523.25);
         }
 
-        // Ultra-soft scroll tick/brush sound (throttled & barely audible)
         function handleGentleScrollSound() {
             if (!isSoundEnabled) return;
             const nowMs = Date.now();
@@ -3188,11 +3592,11 @@
             const deltaY = Math.abs(currentY - lastScrollY);
             lastScrollY = currentY;
 
-            if (deltaY < 24 || nowMs - lastScrollChimeTime < 260) return;
+            if (deltaY < 14 || nowMs - lastScrollChimeTime < 220) return;
             lastScrollChimeTime = nowMs;
 
-            const pitch = 330 + ((currentY % 180) * 0.45);
-            triggerGentleTone(pitch, 0, 0.14, 0.0045, pitch * 1.03);
+            const pitch = 360 + ((currentY % 180) * 0.5);
+            triggerGentleTone(pitch, 0, 0.16, 0.016, pitch * 1.04);
         }
 
         function bindGentleScrollSound() {
@@ -3202,7 +3606,6 @@
             window.addEventListener('scroll', handleGentleScrollSound, { passive: true });
         }
 
-        // Soft touch/drag whisper in lightbox
         async function playArtworkDragWhisper(intensity = 0.4) {
             if (!isSoundEnabled) return;
             const nowMs = Date.now();
@@ -3229,6 +3632,7 @@
             });
         }
 
+        loadLocalAudioConfig();
         bindGentleScrollSound();
 
         // Expose functions globally for inline HTML event handlers
@@ -3260,6 +3664,13 @@
         window.exportArtworksJSON = exportArtworksJSON;
         window.handleContactSubmit = handleContactSubmit;
         window.toggleGallerySound = toggleGallerySound;
+        window.setAmbienceVolumePercent = setAmbienceVolumePercent;
+        window.toggleAmbienceRandomMode = toggleAmbienceRandomMode;
+        window.previewNextRandomAmbience = previewNextRandomAmbience;
+        window.addAmbienceTrackFromAdmin = addAmbienceTrackFromAdmin;
+        window.selectAndPlayAmbienceTrack = selectAndPlayAmbienceTrack;
+        window.toggleAmbienceTrackEnabled = toggleAmbienceTrackEnabled;
+        window.deleteAmbienceTrack = deleteAmbienceTrack;
         window.playSoftGalleryChime = playSoftGalleryChime;
         window.playArtworkDragWhisper = playArtworkDragWhisper;
         window.initGalleryCardAnimations = initGalleryCardAnimations;
