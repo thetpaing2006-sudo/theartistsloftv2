@@ -180,7 +180,7 @@
         /* Restrained gallery presence on scroll; pointer movement creates the clear focal point. */
         .reveal-item {
             opacity: 0.48;
-            transform: translate3d(0, 10px, 0) scale(0.985);
+            transform: translate3d(0, 10px, 0) scale(1);
             filter: blur(0.7px) saturate(0.82);
             transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
                         opacity 0.34s ease,
@@ -483,8 +483,8 @@
             backface-visibility: hidden;
             transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
                         height 0.68s cubic-bezier(0.22, 1, 0.36, 1),
-                        padding 0.58s cubic-bezier(0.22, 1, 0.36, 1),
-                        border-width 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+                        padding 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
                         transform 0.58s cubic-bezier(0.22, 1, 0.36, 1),
                         opacity 0.36s ease,
                         filter 0.45s ease,
@@ -495,12 +495,17 @@
             transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
                         height 0.68s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: width, height;
+            flex: 0 0 auto;
+            display: block;
         }
         #wall-furniture-silhouette {
             flex-shrink: 0;
         }
         @media (max-width: 639px) {
             .wall-hanging-unit, #wall-preview-img { transition-duration: 0.72s; }
+            .wall-hanging-unit {
+                transition-property: width, height, padding, border-width, transform, opacity, filter, box-shadow;
+            }
         }
         .wall-hanging-unit.is-unlit {
             filter: brightness(0.84) contrast(0.96);
@@ -4431,9 +4436,12 @@
 
                 const opacity = (galleryExperience.scrollOpacityMin + ((galleryExperience.scrollOpacityMax - galleryExperience.scrollOpacityMin) * eased)) / 100;
                 const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
-                // Ease each card from a lightly zoomed-out resting size to full scale at the gallery focal zone.
-                // The per-card seed adds only a subtle organic variation; hover tilt remains a separate interaction.
-                const scale = scaleMin + ((1 - scaleMin) * eased);
+                // Scroll alone drives the zoom; return to a neutral scale as soon as scrolling settles.
+                // Keep reduced-motion users at a steady scale while preserving the opacity/fade treatment.
+                const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const scale = isGalleryScrolling && !reduceMotion
+                    ? scaleMin + ((1 - scaleMin) * eased)
+                    : 1;
                 const blurPx = (1 - eased) * 0.7;
 
                 card.style.opacity = opacity.toFixed(3);
