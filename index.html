@@ -320,7 +320,7 @@
         /* ==================== WALL PREVIEW STUDIO MODAL STYLES ==================== */
         #wall-preview-modal {
             opacity: 0;
-            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #wall-preview-modal.is-open {
             opacity: 1;
@@ -329,17 +329,32 @@
             position: relative;
             background-color: #F3EFE6;
             background-image:
-                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.015) 0px, rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 3px),
+                radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28) 0%, transparent 65%),
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.014) 0px, rgba(0, 0, 0, 0.014) 1px, transparent 1px, transparent 3px),
                 repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.012) 0px, rgba(0, 0, 0, 0.012) 1px, transparent 1px, transparent 3px);
-            box-shadow: inset 0 -48px 70px -24px rgba(0, 0, 0, 0.16), inset 0 24px 55px rgba(255, 255, 255, 0.14);
+            box-shadow:
+                inset 0 -75px 95px -30px rgba(0, 0, 0, 0.24),
+                inset 0 28px 65px rgba(255, 255, 255, 0.16);
             transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .wall-spotlight-cone {
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: radial-gradient(ellipse 56% 64% at 50% 34%, rgba(255, 248, 232, 0.42) 0%, rgba(255, 244, 218, 0.14) 48%, rgba(0, 0, 0, 0.22) 100%);
-            transition: opacity 0.45s ease;
+            background:
+                /* Focused museum beam centered tightly around the artwork */
+                radial-gradient(ellipse 30% 42% at 50% 40%, rgba(255, 244, 214, 0.56) 0%, rgba(255, 238, 198, 0.24) 44%, rgba(18, 16, 14, 0.14) 72%, rgba(12, 11, 9, 0.46) 100%),
+                /* Narrow directional ceiling-to-canvas light shaft */
+                radial-gradient(ellipse 14% 34% at 50% 14%, rgba(255, 248, 228, 0.34) 0%, rgba(255, 242, 210, 0.08) 65%, transparent 100%),
+                /* Subtle architectural ceiling & corner falloff for gallery intimacy */
+                linear-gradient(180deg, rgba(15, 13, 11, 0.22) 0%, transparent 18%, transparent 78%, rgba(15, 13, 11, 0.28) 100%);
+            transition: opacity 0.45s ease, background 0.45s ease;
+        }
+        .wall-spotlight-cone.is-neutral {
+            background:
+                radial-gradient(ellipse 31% 43% at 50% 40%, rgba(248, 251, 255, 0.54) 0%, rgba(240, 246, 255, 0.22) 44%, rgba(18, 20, 24, 0.14) 72%, rgba(12, 13, 16, 0.44) 100%),
+                radial-gradient(ellipse 14% 34% at 50% 14%, rgba(250, 252, 255, 0.32) 0%, rgba(242, 247, 255, 0.08) 65%, transparent 100%),
+                linear-gradient(180deg, rgba(14, 15, 18, 0.22) 0%, transparent 18%, transparent 78%, rgba(14, 15, 18, 0.28) 100%);
         }
         .wall-spotlight-cone.is-off {
             opacity: 0;
@@ -354,8 +369,8 @@
             border: none;
             background: transparent;
             box-shadow:
-                0 22px 38px -10px rgba(0, 0, 0, 0.42),
-                0 6px 14px -3px rgba(0, 0, 0, 0.25),
+                0 24px 40px -10px rgba(0, 0, 0, 0.45),
+                0 8px 16px -3px rgba(0, 0, 0, 0.28),
                 3px 4px 0px rgba(45, 40, 35, 0.45);
         }
         .wall-frame-black-mat {
@@ -363,8 +378,8 @@
             background: linear-gradient(145deg, #FAF8F2, #EFECE3);
             border: clamp(8px, 1.4vw, 14px) solid #191817;
             box-shadow:
-                0 26px 46px -12px rgba(0, 0, 0, 0.48),
-                0 8px 18px -4px rgba(0, 0, 0, 0.28),
+                0 28px 48px -12px rgba(0, 0, 0, 0.5),
+                0 10px 20px -4px rgba(0, 0, 0, 0.3),
                 inset 0 2px 5px rgba(0, 0, 0, 0.18),
                 inset 0 0 0 1px rgba(156, 130, 101, 0.32);
         }
@@ -373,8 +388,8 @@
             background: linear-gradient(145deg, #FAF8F2, #EFECE3);
             border: clamp(8px, 1.4vw, 14px) solid #6B4427;
             box-shadow:
-                0 26px 46px -12px rgba(0, 0, 0, 0.46),
-                0 8px 18px -4px rgba(0, 0, 0, 0.26),
+                0 28px 48px -12px rgba(0, 0, 0, 0.48),
+                0 10px 20px -4px rgba(0, 0, 0, 0.28),
                 inset 0 2px 5px rgba(0, 0, 0, 0.18),
                 inset 0 0 0 1px rgba(180, 135, 95, 0.4);
         }
@@ -383,8 +398,8 @@
             background: linear-gradient(145deg, #FBF9F4, #F0ECE1);
             border: clamp(8px, 1.4vw, 14px) solid #B49252;
             box-shadow:
-                0 26px 46px -12px rgba(0, 0, 0, 0.46),
-                0 8px 18px -4px rgba(0, 0, 0, 0.26),
+                0 28px 48px -12px rgba(0, 0, 0, 0.48),
+                0 10px 20px -4px rgba(0, 0, 0, 0.28),
                 inset 0 2px 6px rgba(0, 0, 0, 0.2),
                 inset 0 0 0 1px rgba(235, 208, 150, 0.65);
         }
@@ -393,8 +408,8 @@
             background: #2C2620;
             border: clamp(5px, 0.9vw, 8px) solid #C49E72;
             box-shadow:
-                0 24px 42px -10px rgba(0, 0, 0, 0.44),
-                0 6px 14px -3px rgba(0, 0, 0, 0.24),
+                0 26px 44px -10px rgba(0, 0, 0, 0.46),
+                0 8px 16px -3px rgba(0, 0, 0, 0.26),
                 inset 0 0 0 1px rgba(255, 240, 218, 0.35);
         }
     </style>
@@ -678,9 +693,9 @@
     </div>
 
     <!-- ==================== 5B. INTERACTIVE WALL & FRAME PREVIEW STUDIO MODAL ==================== -->
-    <div id="wall-preview-modal" class="fixed inset-0 z-50 hidden bg-[#12110F]/95 backdrop-blur-md flex flex-col justify-between p-3 sm:p-5 md:p-7 overflow-y-auto" onclick="closeWallPreview(event)">
+    <div id="wall-preview-modal" class="fixed inset-0 z-50 hidden bg-[#12110F]/95 backdrop-blur-md flex flex-col justify-between p-3 sm:p-5 md:p-6 overflow-y-auto" onclick="closeWallPreview(event)">
         <!-- Top Header Bar -->
-        <div class="max-w-6xl w-full mx-auto flex items-center justify-between gap-4 pb-3 text-[#FAF9F6]" onclick="event.stopPropagation()">
+        <div class="max-w-6xl w-full mx-auto flex items-center justify-between gap-3 pb-3 text-[#FAF9F6]" onclick="event.stopPropagation()">
             <div class="min-w-0">
                 <span class="block text-[10px] uppercase tracking-[0.3em] text-[#D4B483]">Curator Room &amp; Frame Visualizer</span>
                 <div class="flex flex-wrap items-baseline gap-2">
@@ -688,86 +703,138 @@
                     <span id="wall-preview-meta" class="text-xs text-[#FAF9F6]/60 truncate">Artist • Dimensions</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2.5 flex-shrink-0">
-                <button type="button" id="wall-spotlight-btn" onclick="toggleWallSpotlight()" class="px-3.5 py-2 rounded-full border border-[#D4B483]/50 bg-[#D4B483]/15 text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#D4B483] hover:text-[#12110F] transition-colors">
-                    Spotlight: On
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" id="wall-spotlight-btn" onclick="cycleWallSpotlight()" class="px-3.5 py-2 rounded-full border border-[#D4B483]/55 bg-[#D4B483]/15 text-[#FAF9F6] text-[10px] uppercase tracking-[0.18em] font-medium hover:bg-[#D4B483] hover:text-[#12110F] transition-colors">
+                    Spotlight: Warm 3000K
                 </button>
-                <button type="button" id="wall-furniture-btn" onclick="toggleWallFurniture()" class="hidden sm:inline-flex px-3.5 py-2 rounded-full border border-[#FAF9F6]/25 bg-[#1E1C19]/80 text-[#FAF9F6]/85 text-[10px] uppercase tracking-[0.2em] font-medium hover:border-[#D4B483] transition-colors">
-                    Room Scale: On
+                <button type="button" id="wall-furniture-btn" onclick="toggleWallFurniture()" class="hidden sm:inline-flex px-3.5 py-2 rounded-full border border-[#FAF9F6]/25 bg-[#1E1C19]/80 text-[#FAF9F6]/85 text-[10px] uppercase tracking-[0.18em] font-medium hover:border-[#D4B483] transition-colors">
+                    Room Interior: On
                 </button>
                 <button type="button" onclick="closeWallPreview(event)" class="w-10 h-10 rounded-full border border-[#FAF9F6]/25 bg-[#1E1C19]/80 text-[#FAF9F6] hover:bg-[#D4B483] hover:text-[#12110F] text-2xl leading-none flex items-center justify-center transition-colors" aria-label="Close Wall Preview">&times;</button>
             </div>
         </div>
 
         <!-- Center Architectural Gallery Wall Stage -->
-        <div id="wall-canvas-stage" class="wall-canvas-stage max-w-6xl w-full mx-auto flex-1 min-h-[340px] sm:min-h-[430px] rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col items-center justify-between px-4 pt-8 sm:pt-12 pb-0 border border-[#D4B483]/25" onclick="event.stopPropagation()">
-            <!-- Gallery Spotlight Cone -->
+        <div id="wall-canvas-stage" class="wall-canvas-stage max-w-6xl w-full mx-auto flex-1 min-h-[370px] sm:min-h-[450px] rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col items-center justify-between px-4 pt-7 sm:pt-10 pb-0 border border-[#D4B483]/25" onclick="event.stopPropagation()">
+            <!-- Gallery Track Spotlight Cone -->
             <div id="wall-spotlight-cone" class="wall-spotlight-cone"></div>
 
+            <!-- Subtle Ceiling Track Fixture Hint -->
+            <div class="relative z-10 flex items-center gap-1.5 opacity-45 pointer-events-none select-none -mt-5 mb-1">
+                <div class="w-14 h-1 rounded-full bg-black/50"></div>
+                <div class="w-2.5 h-3 rounded-b-sm bg-black/75"></div>
+                <div class="w-14 h-1 rounded-full bg-black/50"></div>
+            </div>
+
             <!-- Hanging Artwork + Selected Frame -->
-            <div class="relative z-10 flex-1 w-full flex flex-col items-center justify-center my-auto py-3">
+            <div class="relative z-10 flex-1 w-full flex flex-col items-center justify-center my-auto py-2">
                 <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
-                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="max-h-[34vh] sm:max-h-[40vh] max-w-[66vw] sm:max-w-[44vw] w-auto h-auto object-contain block select-none">
+                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="max-h-[31vh] sm:max-h-[37vh] max-w-[64vw] sm:max-w-[42vw] w-auto h-auto object-contain block select-none">
                 </div>
                 <!-- Subtle Dimension Scale Badge -->
-                <div id="wall-scale-pill" class="mt-4 px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.22em] border border-white/15">
+                <div id="wall-scale-pill" class="mt-3.5 px-3.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.22em] border border-white/15">
                     Scale: 100% • Standard Gallery Eye-Level
                 </div>
             </div>
 
-            <!-- Minimalist Gallery Credenza / Bench Silhouette for Real-World Scale Reference -->
-            <div id="wall-furniture-silhouette" class="relative z-10 w-full max-w-2xl mx-auto pt-2 flex flex-col items-center pointer-events-none select-none transition-opacity duration-300">
-                <div class="w-full flex items-end justify-between px-6 sm:px-12">
-                    <!-- Minimalist Ceramic Vessel -->
-                    <div class="flex flex-col items-center opacity-80">
-                        <div class="w-5 h-7 rounded-t-full rounded-b-lg bg-gradient-to-b from-[#D6CEC0] to-[#9E9281] shadow-md"></div>
+            <!-- Realistic Interior Furniture: Walnut Credenza, Ceramic Vase + Botanicals, Art Books & Baseboard -->
+            <div id="wall-furniture-silhouette" class="relative z-10 w-full max-w-4xl mx-auto pt-1 flex flex-col items-center pointer-events-none select-none transition-opacity duration-300">
+                <!-- Tabletop Props Row -->
+                <div class="w-[82%] sm:w-[68%] flex items-end justify-between px-4 sm:px-8 -mb-[1px]">
+                    <!-- Left: Artisan Stoneware Vase with Dried Botanical Branches -->
+                    <div class="flex flex-col items-center">
+                        <svg class="w-14 h-16 sm:w-16 sm:h-20 text-[#4A4137] drop-shadow-sm -mb-2" viewBox="0 0 64 72" fill="none">
+                            <path d="M32 68 C31 48, 22 34, 12 16" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            <path d="M32 68 C33 45, 41 30, 50 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                            <path d="M32 68 C32 50, 30 32, 33 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                            <ellipse cx="15" cy="21" rx="3.2" ry="1.6" transform="rotate(-35 15 21)" fill="#6D7662"/>
+                            <ellipse cx="22" cy="31" rx="3.4" ry="1.7" transform="rotate(-25 22 31)" fill="#7A846E"/>
+                            <ellipse cx="46" cy="19" rx="3.2" ry="1.6" transform="rotate(32 46 19)" fill="#6D7662"/>
+                            <ellipse cx="39" cy="29" rx="3.4" ry="1.7" transform="rotate(25 39 29)" fill="#7A846E"/>
+                            <ellipse cx="33" cy="14" rx="2.8" ry="1.5" transform="rotate(-10 33 14)" fill="#858F79"/>
+                        </svg>
+                        <!-- Ceramic Vase Body -->
+                        <div class="w-3.5 h-2.5 bg-gradient-to-r from-[#C8BFA8] via-[#E5DEC9] to-[#A89E88] rounded-t-sm"></div>
+                        <div class="w-8 h-9 sm:w-9 sm:h-11 rounded-t-2xl rounded-b-xl bg-gradient-to-br from-[#EAE3D2] via-[#CFC5B0] to-[#988D79] shadow-md border-t border-white/40"></div>
                     </div>
-                    <!-- Minimalist Art Book Stack -->
-                    <div class="hidden sm:flex flex-col items-center opacity-80">
-                        <div class="w-16 h-1.5 bg-[#EAE4D7] rounded-xs shadow-sm"></div>
-                        <div class="w-20 h-2 bg-[#2C2824] rounded-xs shadow-md"></div>
+
+                    <!-- Right: Stacked Monograph Art Books + Brass Sculpture Sphere -->
+                    <div class="flex items-end gap-3">
+                        <div class="hidden sm:flex flex-col items-center">
+                            <div class="w-4 h-4 rounded-full bg-gradient-to-br from-[#E6C78A] via-[#B8924C] to-[#6E5322] shadow-md mb-0.5"></div>
+                            <div class="w-16 h-1.5 bg-gradient-to-r from-[#D5CEC0] via-[#F2EDE2] to-[#C4BCAE] rounded-[1px] shadow-xs"></div>
+                            <div class="w-20 h-2 bg-gradient-to-r from-[#262320] via-[#3A3530] to-[#1D1B18] rounded-[1px] shadow-sm"></div>
+                            <div class="w-22 h-2 bg-gradient-to-r from-[#6E4930] via-[#85593B] to-[#563824] rounded-[1px] shadow-md"></div>
+                        </div>
                     </div>
                 </div>
-                <!-- Gallery Bench / Credenza Top & Legs -->
-                <div class="w-[86%] sm:w-[78%] h-3.5 rounded-t-sm bg-gradient-to-r from-[#3D3126] via-[#544334] to-[#3D3126] shadow-lg border-t border-white/15"></div>
-                <div class="w-[74%] sm:w-[66%] h-6 flex justify-between px-4">
-                    <div class="w-2 h-full bg-[#2B221A]"></div>
-                    <div class="w-2 h-full bg-[#2B221A]"></div>
+
+                <!-- Mid-Century Walnut Credenza / Sideboard Cabinet -->
+                <div class="relative w-[86%] sm:w-[72%] h-11 sm:h-14 rounded-t-[3px] bg-gradient-to-b from-[#6B472E] via-[#533521] to-[#3B2415] shadow-2xl border-t border-[#9A6D4C]/60 flex flex-col justify-between p-1.5 sm:p-2">
+                    <!-- 3 Beveled Cabinet Doors with Brass Handles -->
+                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2 w-full h-full">
+                        <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-end pr-1.5">
+                            <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
+                        </div>
+                        <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-center">
+                            <span class="w-3 h-0.5 rounded-full bg-[#D4B483]/80"></span>
+                        </div>
+                        <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-start pl-1.5">
+                            <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tapered Credenza Legs + Floor Baseboard & Cast Shadow -->
+                <div class="relative w-full flex flex-col items-center">
+                    <div class="w-[76%] sm:w-[64%] h-5 sm:h-6 flex justify-between px-3 z-10">
+                        <div class="w-1.5 h-full bg-gradient-to-b from-[#2B1A0F] to-[#1A0F08] -skew-x-6 shadow-md"></div>
+                        <div class="w-1.5 h-full bg-gradient-to-b from-[#2B1A0F] to-[#1A0F08] skew-x-6 shadow-md"></div>
+                    </div>
+                    <!-- Wall Baseboard Trim -->
+                    <div class="w-full h-2.5 bg-gradient-to-b from-white/25 to-black/20 border-t border-white/15 -mt-2"></div>
+                    <!-- Hardwood / Stone Floor Strip -->
+                    <div class="w-full h-3 bg-gradient-to-b from-[#3A3128] to-[#241E18] flex items-center justify-center">
+                        <div class="w-[80%] sm:w-[68%] h-1.5 rounded-full bg-black/55 blur-[2px]"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Interactive Controls: Wall Colors, Frame Styles, Size Slider & Inquiry -->
-        <div class="max-w-6xl w-full mx-auto pt-3.5 text-[#FAF9F6]" onclick="event.stopPropagation()">
-            <div class="bg-[#1B1916]/95 border border-[#D4B483]/25 rounded-2xl p-3.5 sm:p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
+        <!-- Bottom Interactive Controls: 8 Wall Colors, 5 Frame Styles, Size Slider & Inquiry -->
+        <div class="max-w-6xl w-full mx-auto pt-3 text-[#FAF9F6]" onclick="event.stopPropagation()">
+            <div class="bg-[#1B1916]/95 border border-[#D4B483]/25 rounded-2xl p-3 sm:p-4 flex flex-col lg:flex-row items-center justify-between gap-3.5">
                 
-                <!-- 1. Wall Paint Color Swatches -->
-                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
-                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#D4B483] mr-1">Wall Color:</span>
-                    <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
-                    <button type="button" onclick="setWallPreviewColor('#E6DEC8', 'Gallery Linen Cream', this)" title="Gallery Linen Cream" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#E6DEC8;"></button>
-                    <button type="button" onclick="setWallPreviewColor('#CDD3C6', 'Heritage Sage', this)" title="Heritage Sage" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#CDD3C6;"></button>
-                    <button type="button" onclick="setWallPreviewColor('#C69C84', 'Terracotta Clay', this)" title="Terracotta Clay" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C69C84;"></button>
-                    <button type="button" onclick="setWallPreviewColor('#232528', 'Midnight Gallery Slate', this)" title="Midnight Gallery Slate" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#232528;"></button>
-                    <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/70 ml-1 hidden sm:inline">Museum Warm White</span>
+                <!-- 1. 8 Wall Paint Color Swatches -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483] mr-1">Wall (8):</span>
+                    <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#E8DFCE', 'Linen Cream', this)" title="Linen Cream" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#E8DFCE;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#D6CFC4', 'Soft Greige', this)" title="Soft Greige" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#D6CFC4;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#C7CFC4', 'Heritage Sage', this)" title="Heritage Sage" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C7CFC4;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#8A927E', 'Dusty Olive', this)" title="Dusty Olive" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#8A927E;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#C88F77', 'Terracotta Clay', this)" title="Terracotta Clay" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C88F77;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#2B3038', 'Midnight Slate', this)" title="Midnight Slate" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#2B3038;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#191A1D', 'Deep Charcoal', this)" title="Deep Charcoal" class="wall-swatch-btn w-6 h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#191A1D;"></button>
+                    <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/75 ml-1 hidden xl:inline">Museum Warm White</span>
                 </div>
 
                 <!-- 2. Frame & Matting Selector -->
                 <div class="flex flex-wrap items-center justify-center gap-1.5">
-                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#D4B483] mr-1">Frame:</span>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-none', 'No Frame (Gallery Wrap)', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483] mr-1">Frame:</span>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-none', 'No Frame (Gallery Wrap)', this)" class="wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
                         No Frame
                     </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-black-mat', 'Matte Black + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-[#D4B483] text-[#12110F] font-medium transition-colors">
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-black-mat', 'Matte Black + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] bg-[#D4B483] text-[#12110F] font-medium transition-colors">
                         Black + Mat
                     </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-teak-mat', 'Warm Teak + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-teak-mat', 'Burmese Teak + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
                         Teak + Mat
                     </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-gold-mat', 'Antique Gold + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-gold-mat', 'Antique Gold + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
                         Gold + Mat
                     </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-oak-slim', 'Natural Oak Slim', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-oak-slim', 'Natural Oak Slim', this)" class="wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
                         Oak Slim
                     </button>
                 </div>
@@ -776,9 +843,9 @@
                 <div class="flex flex-wrap items-center justify-center gap-3">
                     <div class="flex items-center gap-2">
                         <label for="wall-scale-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Size:</label>
-                        <input id="wall-scale-slider" type="range" min="65" max="125" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-24 accent-[#D4B483] cursor-pointer">
+                        <input id="wall-scale-slider" type="range" min="60" max="130" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-20 sm:w-24 accent-[#D4B483] cursor-pointer">
                     </div>
-                    <button id="wall-inquiry-btn" type="button" class="px-4 py-2 rounded-full bg-[#D4B483] text-[#12110F] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#FAF9F6] transition-colors">
+                    <button id="wall-inquiry-btn" type="button" class="px-4 py-2 rounded-full bg-[#D4B483] text-[#12110F] text-[10px] uppercase tracking-[0.18em] font-medium hover:bg-[#FAF9F6] transition-colors">
                         Inquire With Frame
                     </button>
                 </div>
@@ -2205,11 +2272,11 @@
         let currentWallColorName = 'Museum Warm White';
         let currentWallFrameName = 'Matte Black + Ivory Mat';
         let currentWallScalePct = 100;
-        let isWallSpotlightOn = true;
+        let wallSpotlightMode = 'warm'; // 'warm' | 'neutral' | 'off'
         let isWallFurnitureOn = true;
 
         function openWallPreviewById(id) {
-            const art = artworks.find(a => a.id === id);
+            const art = artworks.find(a => a.id === id) || artworks[0];
             if (!art) return;
 
             playSoftGalleryChime('open');
@@ -2237,7 +2304,6 @@
                 imgEl.onerror = () => applyArtFallback(imgEl, art.title, art.category, art.aspect || '3/4');
             }
 
-            // Reset scale slider cleanly
             const slider = document.getElementById('wall-scale-slider');
             if (slider) slider.value = '100';
             setWallPreviewScale(100);
@@ -2298,15 +2364,15 @@
             }
 
             document.querySelectorAll('.wall-frame-btn').forEach(btn => {
-                btn.className = 'wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors';
+                btn.className = 'wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors';
             });
             if (btnEl) {
-                btnEl.className = 'wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
+                btnEl.className = 'wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
             }
         }
 
         function setWallPreviewScale(pctValue) {
-            currentWallScalePct = Math.max(65, Math.min(125, Number(pctValue) || 100));
+            currentWallScalePct = Math.max(60, Math.min(130, Number(pctValue) || 100));
             const ratio = currentWallScalePct / 100;
             const unit = document.getElementById('wall-hanging-unit');
             const pill = document.getElementById('wall-scale-pill');
@@ -2321,13 +2387,27 @@
             }
         }
 
-        function toggleWallSpotlight() {
+        function cycleWallSpotlight() {
             playSoftGalleryChime('select');
-            isWallSpotlightOn = !isWallSpotlightOn;
+            const order = ['warm', 'neutral', 'off'];
+            wallSpotlightMode = order[(order.indexOf(wallSpotlightMode) + 1) % order.length];
+
             const cone = document.getElementById('wall-spotlight-cone');
             const btn = document.getElementById('wall-spotlight-btn');
-            if (cone) cone.classList.toggle('is-off', !isWallSpotlightOn);
-            if (btn) btn.textContent = `Spotlight: ${isWallSpotlightOn ? 'On' : 'Off'}`;
+
+            if (cone) {
+                cone.classList.remove('is-neutral', 'is-off');
+                if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
+                if (wallSpotlightMode === 'off') cone.classList.add('is-off');
+            }
+            if (btn) {
+                const labels = {
+                    warm: 'Spotlight: Warm 3000K',
+                    neutral: 'Spotlight: Neutral 4000K',
+                    off: 'Spotlight: Off'
+                };
+                btn.textContent = labels[wallSpotlightMode];
+            }
         }
 
         function toggleWallFurniture() {
@@ -2336,7 +2416,7 @@
             const bench = document.getElementById('wall-furniture-silhouette');
             const btn = document.getElementById('wall-furniture-btn');
             if (bench) bench.style.opacity = isWallFurnitureOn ? '1' : '0';
-            if (btn) btn.textContent = `Room Scale: ${isWallFurnitureOn ? 'On' : 'Off'}`;
+            if (btn) btn.textContent = `Room Interior: ${isWallFurnitureOn ? 'On' : 'Off'}`;
         }
 
         function inquireAboutArtworkWithFrame(artTitle, artistName, frameLabel) {
@@ -4117,7 +4197,7 @@
         window.setWallPreviewColor = setWallPreviewColor;
         window.setWallPreviewFrame = setWallPreviewFrame;
         window.setWallPreviewScale = setWallPreviewScale;
-        window.toggleWallSpotlight = toggleWallSpotlight;
+        window.cycleWallSpotlight = cycleWallSpotlight;
         window.toggleWallFurniture = toggleWallFurniture;
         window.openLightboxById = openLightboxById;
         window.navigateLightbox = navigateLightbox;
