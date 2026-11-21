@@ -177,17 +177,17 @@
             transform: scaleY(0.35);
         }
 
-        /* Smooth Continuous Scroll-Driven Reveal & Zoom with Smooth Physics Transitions */
+        /* Restrained gallery presence on scroll; pointer movement creates the clear focal point. */
         .reveal-item {
-            opacity: 0.22;
-            transform: translate3d(0, 20px, 0) scale(0.955);
-            filter: blur(1.35px);
-            transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1),
-                        filter 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity: 0.48;
+            transform: translate3d(0, 10px, 0) scale(0.985);
+            filter: blur(0.7px) saturate(0.82);
+            transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.34s ease,
+                        filter 0.34s ease,
                         box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
                         border-color 0.55s ease;
-            will-change: opacity, transform, filter;
+            will-change: transform, opacity, filter;
         }
         @media (prefers-reduced-motion: reduce) {
             .reveal-item, .tilt-card, .tilt-card::after, .tilt-glare,
@@ -206,7 +206,7 @@
                         box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
                         border-color 0.55s ease;
         }
-        .tilt-card:hover, .tilt-card:focus-within {
+        .tilt-card.is-pointer-lit, .tilt-card:focus-within {
             box-shadow: 0 28px 54px -20px rgba(38, 35, 31, 0.3), 0 10px 24px -10px rgba(156, 130, 101, 0.32);
             border-color: rgba(212, 180, 131, 0.85);
         }
@@ -233,9 +233,13 @@
             z-index: 21;
             border-radius: inherit;
         }
-        .tilt-card:hover::after {
+        .tilt-card.is-pointer-lit::after {
             transform: translateX(130%);
         }
+        .tilt-card.is-pointer-lit .artwork-card-image { transform: scale(1.04); }
+        .tilt-card.is-pointer-lit .artwork-card-overlay { opacity: 1; }
+        .tilt-card.is-pointer-lit .artwork-card-title { color: #9C8265; }
+        .dark .tilt-card.is-pointer-lit .artwork-card-title { color: #D4B483; }
 
         /* Smooth Section Fade */
         .page-section {
@@ -2546,8 +2550,8 @@
                                  data-category="${safeCat}"
                                  data-aspect="${safeAspect}"
                                  onerror="handleCardImageError(this)"
-                                 class="w-full h-full object-contain block drop-shadow-sm transition-transform duration-1000 ease-out group-hover:scale-[1.04]">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#26231F]/18 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                 class="artwork-card-image w-full h-full object-contain block drop-shadow-sm transition-transform duration-1000 ease-out">
+                            <div class="artwork-card-overlay absolute inset-0 bg-gradient-to-t from-[#26231F]/18 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none"></div>
                             <div class="absolute top-3.5 right-3.5 px-3 py-1 rounded-full bg-[#26231F]/80 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] flex items-center gap-1.5 z-10">
                                 <span class="w-2 h-2 rounded-full ${dotClass}"></span>
                                 <span>${statusLabel}</span>
@@ -2556,7 +2560,7 @@
                         <div class="p-6 flex-1 flex flex-col justify-between border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 bg-[#FAF7F0]/95 dark:bg-[#1B1916]/95">
                             <div>
                                 <span class="block text-[10px] uppercase tracking-[0.26em] text-[#9C8265] dark:text-[#D4B483] mb-1.5">${safeCat}</span>
-                                <h3 class="font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 group-hover:text-[#9C8265] dark:group-hover:text-[#D4B483] transition-colors">${safeTitle}</h3>
+                                <h3 class="artwork-card-title font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 transition-colors">${safeTitle}</h3>
                                 <p class="text-xs text-[#26231F]/60 dark:text-[#EDE7DA]/60 mb-3">${placardMeta}</p>
                                 ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2 mb-4">${safeDesc}</p>` : ''}
                             </div>
@@ -4130,6 +4134,8 @@
         // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
         let galleryScrollRaf = null;
         let galleryScrollBound = false;
+        let galleryScrollSettleTimer = null;
+        let isGalleryScrolling = false;
 
         function getCardRandomSeed(card, idx) {
             if (card.dataset.randSeeded === 'true') {
@@ -4166,7 +4172,7 @@
             const bottomFadeEnd = vh * 0.68;
 
             cards.forEach((card, idx) => {
-                if (card.dataset.hovered === 'true') {
+                if (card.dataset.hovered === 'true' && !isGalleryScrolling) {
                     card.style.opacity = '1';
                     card.style.filter = 'none';
                     return;
@@ -4187,15 +4193,32 @@
                 progress = Math.max(0, Math.min(1, progress));
                 const eased = progress * progress * (3 - 2 * progress);
 
-                const opacity = 0.22 + (0.78 * eased);
-                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -18 : Math.min(yOffset, 24));
-                const scale = 0.955 + (0.045 * eased);
-                const blurPx = (1 - eased) * 1.35;
+                const opacity = 0.42 + (0.32 * eased);
+                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
+                const scale = 0.985 + (0.015 * eased);
+                const blurPx = (1 - eased) * 0.7;
 
                 card.style.opacity = opacity.toFixed(3);
-                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
+                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px) saturate(0.82)` : 'saturate(0.88)';
                 card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
             });
+        }
+
+        function handleGalleryScroll() {
+            isGalleryScrolling = true;
+            if (galleryScrollSettleTimer) clearTimeout(galleryScrollSettleTimer);
+            document.querySelectorAll('#artworks-masonry-grid .reveal-item[data-hovered="true"]').forEach(card => {
+                card.dataset.hovered = 'false';
+                card.classList.remove('is-pointer-lit');
+                const glare = card.querySelector('.tilt-glare');
+                if (glare) glare.style.opacity = '0';
+            });
+            requestGalleryScrollUpdate();
+            galleryScrollSettleTimer = setTimeout(() => {
+                isGalleryScrolling = false;
+                galleryScrollSettleTimer = null;
+                requestGalleryScrollUpdate();
+            }, 180);
         }
 
         function requestGalleryScrollUpdate() {
@@ -4207,7 +4230,7 @@
         function initGalleryCardAnimations() {
             if (!galleryScrollBound) {
                 galleryScrollBound = true;
-                window.addEventListener('scroll', requestGalleryScrollUpdate, { passive: true });
+                window.addEventListener('scroll', handleGalleryScroll, { passive: true });
                 window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
             }
 
@@ -4216,13 +4239,12 @@
                 card.dataset.tiltBound = 'true';
                 const glare = card.querySelector('.tilt-glare');
 
-                card.addEventListener('mouseenter', () => {
+                card.addEventListener('mousemove', (e) => {
+                    if (isGalleryScrolling) return;
                     card.dataset.hovered = 'true';
+                    card.classList.add('is-pointer-lit');
                     card.style.opacity = '1';
                     card.style.filter = 'none';
-                });
-
-                card.addEventListener('mousemove', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
@@ -4239,8 +4261,27 @@
                     }
                 });
 
+                card.addEventListener('focusin', () => {
+                    if (isGalleryScrolling) return;
+                    card.dataset.hovered = 'true';
+                    card.classList.add('is-pointer-lit');
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                });
+
+                card.addEventListener('focusout', () => {
+                    requestAnimationFrame(() => {
+                        if (!card.contains(document.activeElement)) {
+                            card.dataset.hovered = 'false';
+                            card.classList.remove('is-pointer-lit');
+                            requestGalleryScrollUpdate();
+                        }
+                    });
+                });
+
                 card.addEventListener('mouseleave', () => {
                     card.dataset.hovered = 'false';
+                    card.classList.remove('is-pointer-lit');
                     if (glare) glare.style.opacity = '0';
                     requestGalleryScrollUpdate();
                 });
