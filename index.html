@@ -399,8 +399,9 @@
                     var(--spotlight-wash) 66%,
                     transparent 100%
                 ),
-                linear-gradient(180deg, var(--spotlight-wash) 0%, rgba(255, 255, 255, 0.025) 38%, transparent 76%),
                 radial-gradient(ellipse 19% 20% at 50% 7%, var(--spotlight-source) 0%, var(--spotlight-halo) 48%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 46% 60% at 50% 39%, #000 0%, rgba(0, 0, 0, 0.86) 48%, rgba(0, 0, 0, 0.36) 72%, transparent 100%);
+            mask-image: radial-gradient(ellipse 46% 60% at 50% 39%, #000 0%, rgba(0, 0, 0, 0.86) 48%, rgba(0, 0, 0, 0.36) 72%, transparent 100%);
             opacity: var(--spotlight-strength, 0.85);
             transform-origin: 50% 8%;
             transition: opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1335,12 +1336,12 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div class="space-y-2"><label for="experience-wall-color" class="block text-[11px] uppercase tracking-wider">Default Preview Wall</label>
-                                    <select id="experience-wall-color" onchange="previewGalleryExperienceSettings()" class="w-full px-3 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm"></select>
-                                    <div class="flex items-center gap-2 text-xs"><span id="experience-wall-swatch" class="w-5 h-5 rounded-full border border-black/15"></span><span id="experience-wall-hex"></span></div></div>
+                                    <div class="flex items-center gap-3"><input id="experience-wall-color" type="color" value="#D6CFC4" aria-label="Choose default wall color" onchange="previewGalleryExperienceSettings()" class="h-11 w-14 cursor-pointer rounded-lg border border-[#A69076]/40 bg-transparent p-1">
+                                        <div class="text-xs"><span id="experience-wall-hex" class="block font-medium">#D6CFC4</span><span id="experience-wall-preset-name" class="opacity-60">Soft Greige</span></div></div></div>
                                 <div><div class="flex justify-between mb-2"><label for="experience-room-light" class="text-[11px] uppercase tracking-wider">Room Light Default</label><span id="experience-room-light-label" class="text-xs font-medium">65%</span></div>
                                     <input id="experience-room-light" type="range" min="30" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"><p class="text-[11px] opacity-60 mt-1">Recommended: 65% for warm, controlled gallery ambience.</p></div>
                                 <div><div class="flex justify-between mb-2"><label for="experience-scroll-min" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Minimum</label><span id="experience-scroll-min-label" class="text-xs font-medium">42%</span></div>
-                                    <input id="experience-scroll-min" type="range" min="25" max="65" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                    <input id="experience-scroll-min" type="range" min="0" max="65" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
                                 <div><div class="flex justify-between mb-2"><label for="experience-scroll-max" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Maximum</label><span id="experience-scroll-max-label" class="text-xs font-medium">72%</span></div>
                                     <input id="experience-scroll-max" type="range" min="55" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
                                 <div><div class="flex justify-between mb-2"><label for="experience-spotlight-intensity" class="text-[11px] uppercase tracking-wider">Spotlight Intensity</label><span id="experience-spotlight-intensity-label" class="text-xs font-medium">85%</span></div>
@@ -2639,7 +2640,7 @@
             { name: 'Deep Charcoal', hex: '#191A1D' }
         ];
         const DEFAULT_GALLERY_EXPERIENCE = {
-            defaultWallColor: 'Soft Greige',
+            defaultWallColor: '#D6CFC4',
             roomBrightness: 65,
             scrollOpacityMin: 42,
             scrollOpacityMax: 72,
@@ -2912,29 +2913,30 @@
         }
 
         function applyWallPreviewDefaultColor() {
-            const preset = WALL_COLOR_PRESETS.find(item => item.name === galleryExperience.defaultWallColor) || WALL_COLOR_PRESETS[2];
-            currentWallColorName = preset.name;
+            const rawColor = String(galleryExperience.defaultWallColor || DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const preset = WALL_COLOR_PRESETS.find(item => item.name === rawColor || item.hex.toLowerCase() === rawColor.toLowerCase());
+            const hexColor = preset ? preset.hex : (/^#[0-9a-f]{6}$/i.test(rawColor) ? rawColor : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const colorName = preset ? preset.name : 'Custom Wall';
+            currentWallColorName = colorName;
             const stage = document.getElementById('wall-canvas-stage');
             const label = document.getElementById('wall-color-name');
-            if (stage) stage.style.backgroundColor = preset.hex;
-            if (label) label.textContent = preset.name;
-            let selected = null;
-            document.querySelectorAll('.wall-swatch-btn').forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
-                if (btn.title === preset.name) selected = btn;
-            });
+            if (stage) stage.style.backgroundColor = hexColor;
+            if (label) label.textContent = colorName;
+            document.querySelectorAll('.wall-swatch-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]'));
+            const selected = preset && Array.from(document.querySelectorAll('.wall-swatch-btn')).find(btn => btn.title === preset.name);
             if (selected) selected.classList.add('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
         }
 
         function normalizeGalleryExperience(input = {}) {
-            const wallName = WALL_COLOR_PRESETS.some(item => item.name === input.defaultWallColor)
-                ? input.defaultWallColor
-                : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor;
-            const minOpacity = Math.max(25, Math.min(65, Number(input.scrollOpacityMin) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMin));
+            const rawWallColor = String(input.defaultWallColor ?? DEFAULT_GALLERY_EXPERIENCE.defaultWallColor).trim();
+            const matchedPreset = WALL_COLOR_PRESETS.find(item => item.name === rawWallColor || item.hex.toLowerCase() === rawWallColor.toLowerCase());
+            const wallColor = matchedPreset ? matchedPreset.hex : (/^#[0-9a-f]{6}$/i.test(rawWallColor) ? rawWallColor.toUpperCase() : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const minValue = Number(input.scrollOpacityMin);
+            const minOpacity = Math.max(0, Math.min(65, Number.isFinite(minValue) ? minValue : DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMin));
             let maxOpacity = Math.max(55, Math.min(90, Number(input.scrollOpacityMax) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMax));
             if (maxOpacity <= minOpacity) maxOpacity = Math.min(90, minOpacity + 10);
             return {
-                defaultWallColor: wallName,
+                defaultWallColor: wallColor,
                 roomBrightness: Math.max(30, Math.min(90, Number(input.roomBrightness) || DEFAULT_GALLERY_EXPERIENCE.roomBrightness)),
                 scrollOpacityMin: minOpacity,
                 scrollOpacityMax: maxOpacity,
@@ -3522,11 +3524,10 @@
         }
 
         function populateExperienceAdminUI() {
-            const select = document.getElementById('experience-wall-color');
-            if (!select) return;
-            select.innerHTML = WALL_COLOR_PRESETS.map(p => `<option value="${escapeHTML(p.name)}">${escapeHTML(p.name)} — ${p.hex}</option>`).join('');
+            const colorInput = document.getElementById('experience-wall-color');
+            if (!colorInput) return;
             const values = normalizeGalleryExperience(galleryExperience);
-            select.value = values.defaultWallColor;
+            colorInput.value = values.defaultWallColor;
             const fields = {
                 'experience-room-light': values.roomBrightness,
                 'experience-scroll-min': values.scrollOpacityMin,
@@ -3551,11 +3552,13 @@
 
         function previewGalleryExperienceSettings() {
             const next = readGalleryExperienceAdminForm();
-            const preset = WALL_COLOR_PRESETS.find(p => p.name === next.defaultWallColor) || WALL_COLOR_PRESETS[2];
-            const swatch = document.getElementById('experience-wall-swatch');
+            const preset = WALL_COLOR_PRESETS.find(p => p.hex.toLowerCase() === next.defaultWallColor.toLowerCase());
+            const chosenColor = next.defaultWallColor;
+            const colorName = preset ? preset.name : 'Custom Wall';
             const hex = document.getElementById('experience-wall-hex');
-            if (swatch) swatch.style.backgroundColor = preset.hex;
-            if (hex) hex.textContent = preset.hex;
+            const presetName = document.getElementById('experience-wall-preset-name');
+            if (hex) hex.textContent = chosenColor;
+            if (presetName) presetName.textContent = colorName;
             const labels = {
                 'experience-room-light-label': `${next.roomBrightness}%`,
                 'experience-scroll-min-label': `${next.scrollOpacityMin}%`,
@@ -3565,14 +3568,14 @@
             };
             Object.entries(labels).forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
             const status = document.getElementById('experience-save-status');
-            if (status) status.textContent = `Preview: ${preset.name} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
+            if (status) status.textContent = `Preview: ${colorName} ${chosenColor} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
             // Preview the actual wall and lighting while the modal is open; retain settings as unsaved until Save is pressed.
             const stage = document.getElementById('wall-canvas-stage');
             const wallLabel = document.getElementById('wall-color-name');
             const modal = document.getElementById('wall-preview-modal');
             if (stage && modal && !modal.classList.contains('hidden')) {
-                stage.style.backgroundColor = preset.hex;
-                if (wallLabel) wallLabel.textContent = preset.name;
+                stage.style.backgroundColor = chosenColor;
+                if (wallLabel) wallLabel.textContent = colorName;
                 setWallRoomBrightness(next.roomBrightness);
                 const cone = document.getElementById('wall-spotlight-cone');
                 if (cone) {
