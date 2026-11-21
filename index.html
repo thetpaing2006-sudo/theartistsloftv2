@@ -179,14 +179,14 @@
 
         /* Smooth Continuous Scroll-Driven Reveal & Zoom with Smooth Physics Transitions */
         .reveal-item {
-            opacity: 0.18;
-            transform: translate3d(0, 24px, 0) scale(0.94);
-            filter: blur(1.25px);
-            transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-                        opacity 0.62s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 0.62s ease,
-                        box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-color 0.45s ease;
+            opacity: 0.22;
+            transform: translate3d(0, 20px, 0) scale(0.955);
+            filter: blur(1.35px);
+            transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.55s ease;
             will-change: opacity, transform, filter;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -201,10 +201,10 @@
         .tilt-card {
             transform-style: preserve-3d;
             position: relative;
-        }
-        .tilt-card {
-            transition: box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.45s ease;
             transform-origin: center;
+            transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.55s ease;
         }
         .tilt-card:hover, .tilt-card:focus-within {
             box-shadow: 0 28px 54px -20px rgba(38, 35, 31, 0.3), 0 10px 24px -10px rgba(156, 130, 101, 0.32);
@@ -249,22 +249,25 @@
         /* Pronounced Gallery Lightbox Lift & Expand Transition (1.0s) */
         #lightbox-modal {
             opacity: 0;
-            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #lightbox-modal.is-open {
             opacity: 1;
         }
         #lightbox-img {
             opacity: 0;
-            transform: translateY(72px) scale(0.75);
-            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+            transform: translateY(34px) scale(0.88);
+            filter: blur(10px);
+            transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.05s cubic-bezier(0.16, 1, 0.3, 1),
                         box-shadow 1s ease;
             will-change: transform, opacity;
         }
         #lightbox-modal.is-open #lightbox-img {
             opacity: 1;
             transform: translateY(0) scale(1);
+            filter: blur(0);
         }
         #lightbox-caption {
             opacity: 0;
@@ -381,39 +384,57 @@
             pointer-events: none;
             background:
                 radial-gradient(
-                    ellipse 38% 54% at 50% 40%,
-                    rgba(255, 244, 214, 0.45) 0%,
-                    rgba(255, 240, 204, 0.28) 24%,
-                    rgba(255, 236, 194, 0.14) 44%,
-                    rgba(255, 232, 186, 0.04) 64%,
+                    ellipse 32% 48% at 50% 42%,
+                    rgba(255, 229, 174, 0.78) 0%,
+                    rgba(255, 222, 157, 0.52) 24%,
+                    rgba(255, 213, 143, 0.28) 48%,
+                    rgba(255, 207, 130, 0.08) 72%,
                     transparent 100%
                 ),
-                radial-gradient(
-                    ellipse 18% 36% at 50% 6%,
-                    rgba(255, 248, 228, 0.36) 0%,
-                    rgba(255, 242, 212, 0.14) 48%,
-                    transparent 100%
-                );
-            transition: opacity 0.45s ease, background 0.45s ease;
+                linear-gradient(180deg, rgba(255, 227, 174, 0.25) 0%, rgba(255, 220, 155, 0.12) 34%, transparent 78%),
+                radial-gradient(ellipse 19% 20% at 50% 7%, rgba(255, 247, 222, 0.8) 0%, rgba(255, 230, 180, 0.26) 58%, transparent 100%);
+            opacity: 0.96;
+            transform-origin: 50% 8%;
+            transition: opacity 0.58s ease, background 0.58s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 14;
-            mix-blend-mode: soft-light;
+            mix-blend-mode: screen;
+        }
+        .wall-spotlight-cone::before {
+            content: '';
+            position: absolute;
+            top: 3%;
+            left: 50%;
+            width: 58%;
+            height: 82%;
+            transform: translateX(-50%);
+            clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+            background: linear-gradient(180deg, rgba(255, 238, 195, 0.44) 0%, rgba(255, 224, 164, 0.23) 52%, rgba(255, 215, 150, 0.07) 100%);
+            filter: blur(9px);
+            opacity: 0.82;
+        }
+        .wall-spotlight-cone::after {
+            content: '';
+            position: absolute;
+            top: 1%;
+            left: 50%;
+            width: 11rem;
+            height: 3.5rem;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(255, 247, 220, 0.78) 0%, rgba(255, 226, 166, 0.3) 42%, transparent 78%);
+            filter: blur(5px);
+            opacity: 0.9;
         }
         .wall-spotlight-cone.is-neutral {
             background:
                 radial-gradient(
-                    ellipse 39% 55% at 50% 40%,
-                    rgba(244, 249, 255, 0.48) 0%,
-                    rgba(238, 246, 255, 0.28) 24%,
-                    rgba(234, 243, 255, 0.14) 44%,
-                    rgba(230, 240, 255, 0.04) 64%,
+                    ellipse 32% 48% at 50% 42%,
+                    rgba(222, 238, 255, 0.78) 0%,
+                    rgba(213, 232, 255, 0.5) 25%,
+                    rgba(205, 226, 255, 0.26) 50%,
                     transparent 100%
                 ),
-                radial-gradient(
-                    ellipse 18% 36% at 50% 6%,
-                    rgba(246, 250, 255, 0.36) 0%,
-                    rgba(240, 246, 255, 0.14) 48%,
-                    transparent 100%
-                );
+                linear-gradient(180deg, rgba(225, 240, 255, 0.24) 0%, rgba(216, 234, 255, 0.1) 38%, transparent 78%),
+                radial-gradient(ellipse 19% 20% at 50% 7%, rgba(244, 250, 255, 0.76) 0%, rgba(224, 238, 255, 0.24) 58%, transparent 100%);
         }
         .wall-spotlight-cone.is-off {
             opacity: 0;
@@ -430,13 +451,22 @@
             z-index: 16;
             perspective: 1200px;
             transform-origin: 50% 48%;
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
+        }
+        #wall-preview-modal .wall-canvas-stage {
+            opacity: 0.86;
+            transform: scale(0.975) translateY(8px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #wall-preview-modal.is-open .wall-canvas-stage {
+            opacity: 1;
+            transform: scale(1) translateY(0);
         }
         #wall-furniture-silhouette {
             z-index: 10;
             transform-origin: 50% 100%;
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             will-change: transform, opacity;
         }
         #wall-furniture-silhouette {
@@ -895,10 +925,6 @@
                 <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
                     <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none">
                 </div>
-                <!-- Subtle Dimension Scale Badge -->
-                <div id="wall-scale-pill" class="mt-2 max-w-full truncate px-2.5 sm:px-3 py-0.5 rounded-full bg-black/65 backdrop-blur-sm text-[#FAF9F6] text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] border border-white/15">
-                    Scale: 100% • Standard Gallery Eye-Level
-                </div>
             </div>
 
             <!-- Complete Realistic Interior Furniture: Props, Full Walnut Credenza, Tapered Legs, Baseboard & Hardwood Floor -->
@@ -998,8 +1024,8 @@
                     <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 sm:gap-4">
                         <div class="flex items-center gap-1.5">
                             <label for="wall-ambient-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Light:</label>
-                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="100" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
-                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">100%</span>
+                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="50" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">50%</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <label for="wall-scale-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Size:</label>
@@ -2562,7 +2588,7 @@
         let currentWallColorName = 'Museum Warm White';
         let currentWallFrameName = 'Matte Black + Ivory Mat';
         let currentWallScalePct = 100;
-        let currentWallRoomBrightnessPct = 100;
+        let currentWallRoomBrightnessPct = 50;
         let isWallArtSwitching = false;
         let wallSpotlightMode = 'warm';
         let isWallFurnitureOn = true;
@@ -2726,6 +2752,9 @@
             const slider = document.getElementById('wall-scale-slider');
             if (slider) slider.value = '100';
             currentWallScalePct = 100;
+            const lightSlider = document.getElementById('wall-ambient-slider');
+            if (lightSlider) lightSlider.value = '50';
+            setWallRoomBrightness(50);
 
             populateWallPreviewContent(art);
 
@@ -2855,7 +2884,7 @@
             if (label) label.textContent = `${pct}%`;
             if (dimmer) {
                 if (pct < 100) {
-                    const darkness = ((100 - pct) / 95) * 0.90;
+                    const darkness = ((100 - pct) / 100) * 0.58;
                     dimmer.style.backgroundColor = `rgba(6, 5, 5, ${darkness.toFixed(3)})`;
                 } else if (pct > 100) {
                     const daylight = ((pct - 100) / 15) * 0.14;
@@ -2963,19 +2992,26 @@
             imgEl.style.maxWidth = 'none';
             imgEl.style.maxHeight = 'none';
 
-            // Dolly-zoom feel: bring the artwork toward the viewer while the room recedes more gently.
-            // Furniture and spotlight stay in view longer, giving the zoom a room-wide camera feel.
+            // Camera dolly: the artwork advances most, while furniture and light beam move at
+            // progressively gentler rates so the whole room remains readable and the spotlight stays present.
             if (stageLayer) {
-                stageLayer.style.transform = `translateZ(0) scale(${factor.toFixed(3)})`;
+                const artLift = (factor - 1) * -7;
+                stageLayer.style.transform = `translate3d(0, ${artLift.toFixed(1)}px, 0) scale(${factor.toFixed(3)})`;
             }
             if (furnitureEl) {
-                const roomScale = Math.max(0.88, 1 + ((factor - 1) * 0.34));
-                furnitureEl.style.transform = `scale(${roomScale.toFixed(3)})`;
+                const roomScale = 1 + ((factor - 1) * 0.56);
+                const roomLift = (factor - 1) * 4;
+                furnitureEl.style.transform = `translate3d(0, ${roomLift.toFixed(1)}px, 0) scale(${roomScale.toFixed(3)})`;
             }
             if (spotlightEl) {
-                const beamScale = Math.max(0.82, 1 - ((factor - 1) * 0.11));
+                const beamScale = 1 + ((factor - 1) * 0.76);
                 spotlightEl.style.transform = `scale(${beamScale.toFixed(3)})`;
-                spotlightEl.style.transformOrigin = '50% 35%';
+            }
+            if (stageEl) {
+                const textureScale = Math.max(1, factor);
+                const grain = Math.max(3, 3 * textureScale);
+                stageEl.style.backgroundSize = `100% 100%, ${grain}px ${grain}px, ${grain}px ${grain}px`;
+                stageEl.style.backgroundPosition = 'center, center, center';
             }
 
             // Inverse frame & mat thickness: larger artworks use sleek slim frames; smaller works use richer frames/mats
@@ -4150,10 +4186,10 @@
                 progress = Math.max(0, Math.min(1, progress));
                 const eased = progress * progress * (3 - 2 * progress);
 
-                const opacity = 0.18 + (0.82 * eased);
-                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -16 : Math.min(yOffset, 24));
-                const scale = Math.max(0.94, scaleMin + ((1 - scaleMin) * eased));
-                const blurPx = (1 - eased) * 1.25;
+                const opacity = 0.22 + (0.78 * eased);
+                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -18 : Math.min(yOffset, 24));
+                const scale = 0.955 + (0.045 * eased);
+                const blurPx = (1 - eased) * 1.35;
 
                 card.style.opacity = opacity.toFixed(3);
                 card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px)` : 'none';
@@ -4191,8 +4227,8 @@
                     const y = e.clientY - rect.top;
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    const rotateX = ((y - centerY) / centerY) * -3.8;
-                    const rotateY = ((x - centerX) / centerX) * 3.8;
+                    const rotateX = ((y - centerY) / centerY) * -2.8;
+                    const rotateY = ((x - centerX) / centerX) * 2.8;
                     card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
                     if (glare) {
                         const pctX = (x / rect.width) * 100;
