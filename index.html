@@ -3020,13 +3020,7 @@
 
         // ==================== R2-BACKED RANDOM MP3 AMBIENCE, VOLUME & GENTLE UI SOUNDS ====================
         const AMBIENCE_STORAGE_KEY = 'tal_ambient_audio_v1';
-        const DEFAULT_AMBIENCE_TRACKS = [
-            { id: 'amb-1', title: 'Ambience 1', url: 'https://media.theartistsloftmm.art/Ambience1.mp3', enabled: true },
-            { id: 'amb-2', title: 'Ambience 2', url: 'https://media.theartistsloftmm.art/Ambience2.mp3', enabled: true },
-            { id: 'amb-3', title: 'Ambience 3', url: 'https://media.theartistsloftmm.art/Ambience3.mp3', enabled: true },
-            { id: 'amb-4', title: 'Ambience 4', url: 'https://media.theartistsloftmm.art/Ambience4.mp3', enabled: true },
-            { id: 'amb-5', title: 'Ambience 5', url: 'https://media.theartistsloftmm.art/Ambience5.mp3', enabled: true }
-        ];
+        const DEFAULT_AMBIENCE_TRACKS = [];
 
         let ambienceTracks = DEFAULT_AMBIENCE_TRACKS.map(t => ({ ...t }));
         let ambienceTargetVolume = 0.07; // 7% default soft background volume
@@ -3093,15 +3087,21 @@
 
         function applySavedAudioConfig(cfg) {
             if (!cfg || typeof cfg !== 'object') return;
-            if (Array.isArray(cfg.tracks) && cfg.tracks.length > 0) {
+            if (Array.isArray(cfg.tracks)) {
                 ambienceTracks = cfg.tracks
                     .filter(t => t && t.url)
-                    .map((t, idx) => ({
-                        id: t.id || ('amb-' + (idx + 1)),
-                        title: t.title || `Ambience ${idx + 1}`,
-                        url: String(t.url).trim(),
-                        enabled: t.enabled !== false
-                    }));
+                    .map((t, idx) => {
+                        const cleanUrl = String(t.url).trim().replace(
+                            'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
+                            'https://media.theartistsloftmm.art'
+                        );
+                        return {
+                            id: t.id || ('amb-' + (idx + 1)),
+                            title: t.title || `Ambience ${idx + 1}`,
+                            url: cleanUrl,
+                            enabled: t.enabled !== false
+                        };
+                    });
             }
             if (typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
                 ambienceTargetVolume = Math.max(0, Math.min(0.6, cfg.volume));
@@ -3495,10 +3495,14 @@
                     || (fileInput.files && fileInput.files[0] ? fileInput.files[0].name.replace(/\.[^/.]+$/, '') : '')
                     || `Ambience ${ambienceTracks.length + 1}`;
 
+                const normalizedAudioUrl = String(finalUrl).trim().replace(
+                    'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
+                    'https://media.theartistsloftmm.art'
+                );
                 const newTrack = {
                     id: 'amb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5),
                     title: derivedTitle,
-                    url: finalUrl,
+                    url: normalizedAudioUrl,
                     enabled: true
                 };
                 ambienceTracks.push(newTrack);
