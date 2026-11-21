@@ -416,6 +416,15 @@
         #wall-artwork-stage-layer {
             z-index: 16;
             perspective: 1200px;
+            transform-origin: 50% 48%;
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+        #wall-furniture-silhouette {
+            z-index: 10;
+            transform-origin: 50% 100%;
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            will-change: transform, opacity;
         }
         #wall-furniture-silhouette {
             z-index: 10;
@@ -546,9 +555,9 @@
     <!-- Global Soft Background Lotus Paintings Across All Pages -->
     <div id="global-art-backdrop" class="fixed inset-0 z-0 flex w-full h-full pointer-events-none select-none overflow-hidden" aria-hidden="true">
         <img id="home-bg-1" src="05582-mtoung3.jpg" alt="Lotus Study I" onerror="handleBgFallback(this, 1)"
-             class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal transition-all duration-500">
+             class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal">
         <img id="home-bg-2" src="8899c-mtoung4.jpg" alt="Lotus Study II" onerror="handleBgFallback(this, 2)"
-             class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal transition-all duration-500">
+             class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal">
         <div class="absolute inset-0 bg-gradient-to-b from-[#F3EFE6]/75 dark:from-[#12110F]/45 via-transparent to-[#F3EFE6]/80 dark:to-[#12110F]/55"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/55 dark:from-[#12110F]/35 via-transparent to-[#F3EFE6]/55 dark:to-[#12110F]/35"></div>
     </div>
@@ -2892,25 +2901,28 @@
             const pillEl = document.getElementById('wall-scale-pill');
             const stageEl = document.getElementById('wall-canvas-stage');
             const credenzaEl = document.getElementById('wall-credenza-ref');
+            const stageLayer = document.getElementById('wall-artwork-stage-layer');
+            const furnitureEl = document.getElementById('wall-furniture-silhouette');
+            const spotlightEl = document.getElementById('wall-spotlight-cone');
             if (!unit || !imgEl) return;
 
             const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
             const factor = Math.max(0.6, Math.min(1.3, (Number(scalePct) || 100) / 100));
 
-            // Credenza width is physically 64 in (162.5 cm); measure its rendered pixel width for true 1:1 room scale
-            const stageW = stageEl?.clientWidth || Math.min(window.innerWidth - 24, 1152);
-            const credenzaPx = (credenzaEl && credenzaEl.offsetWidth > 100)
+            // Keep artwork & frame at true 1:1 physical scale (vs 64" credenza), and apply user Size zoom across the room environment
+            const baseStageW = stageEl?.clientWidth || Math.min(window.innerWidth - 24, 1152);
+            const baseCredenzaPx = (credenzaEl && credenzaEl.offsetWidth > 100)
                 ? credenzaEl.offsetWidth
-                : stageW * (window.innerWidth >= 640 ? 0.52 : 0.74);
-            const pxPerInch = credenzaPx / 64;
+                : baseStageW * (window.innerWidth >= 640 ? 0.52 : 0.74);
+            const pxPerInch = baseCredenzaPx / 64;
 
             const stageH = stageEl?.clientHeight || 460;
             const isMobile = window.innerWidth < 640;
             const maxAllowedHeightPx = Math.max(100, stageH * (isMobile ? 0.48 : 0.54));
-            const maxAllowedWidthPx = Math.max(110, stageW * (isMobile ? 0.76 : 0.82));
+            const maxAllowedWidthPx = Math.max(110, baseStageW * (isMobile ? 0.76 : 0.82));
 
-            let targetW = dims.widthIn * pxPerInch * factor;
-            let targetH = dims.heightIn * pxPerInch * factor;
+            let targetW = dims.widthIn * pxPerInch;
+            let targetH = dims.heightIn * pxPerInch;
 
             if (targetH > maxAllowedHeightPx) {
                 const clampRatio = maxAllowedHeightPx / targetH;
@@ -2936,6 +2948,20 @@
             imgEl.style.maxWidth = 'none';
             imgEl.style.maxHeight = 'none';
 
+            // Move whole room environment (artwork, frame, credenza, props & spotlight beam) together on Size zoom
+            if (stageLayer) {
+                stageLayer.style.transform = `scale(${factor.toFixed(3)})`;
+            }
+            if (furnitureEl) {
+                const envScale = 1 + ((factor - 1) * 0.65);
+                furnitureEl.style.transform = `scale(${envScale.toFixed(3)})`;
+            }
+            if (spotlightEl) {
+                const beamScale = 1 + ((factor - 1) * 0.45);
+                spotlightEl.style.transform = `scale(${beamScale.toFixed(3)})`;
+                spotlightEl.style.transformOrigin = '50% 35%';
+            }
+
             // Inverse frame & mat thickness: larger artworks use sleek slim frames; smaller works use richer frames/mats
             const maxDimIn = Math.max(dims.widthIn, dims.heightIn);
             const isMonumental = maxDimIn >= 48;
@@ -2954,7 +2980,7 @@
 
             if (pillEl) {
                 const sizeText = art?.size ? ` • ${art.size}` : '';
-                pillEl.textContent = `Scale: ${Math.round(factor * 100)}% (${dims.sizeTier} • vs 64" Credenza)${sizeText}`;
+                pillEl.textContent = `Room Zoom: ${Math.round(factor * 100)}% (${dims.sizeTier} • vs 64" Credenza)${sizeText}`;
             }
         }
 
@@ -4823,6 +4849,10 @@
                 img2.src = rightSrc;
             }
 
+            img1.style.transition = 'none';
+            img2.style.transition = 'none';
+            img1.style.transform = 'none';
+            img2.style.transform = 'none';
             img1.style.opacity = effectiveOpacity.toFixed(3);
             img2.style.opacity = effectiveOpacity.toFixed(3);
 
