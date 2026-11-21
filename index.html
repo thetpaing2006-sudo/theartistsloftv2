@@ -4,11 +4,11 @@
     <!-- Primary SEO Meta Tags -->
 <meta name="description" content="The Artist's Loft is a curated Myanmar fine art gallery showcasing original paintings, portraits, landscapes, and contemporary works by Myanmar artists including MT. Oung.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://theartistsloftmm.art/">
+<link rel="canonical" href="https://theartistsloftmyanmar.com/">
 
 <!-- Open Graph / Social Sharing Tags -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://theartistsloftmm.art/">
+<meta property="og:url" content="https://theartistsloftmyanmar.com/">
 <meta property="og:site_name" content="The Artist's Loft">
 <meta property="og:title" content="The Artist's Loft — Curated Myanmar Fine Art">
 <meta property="og:description" content="Discover original paintings and curated fine art by artists from Myanmar at The Artist's Loft.">
@@ -26,7 +26,7 @@
   "@context": "https://schema.org",
   "@type": "ArtGallery",
   "name": "The Artist's Loft",
-  "url": "https://theartistsloftmm.art/",
+  "url": "https://theartistsloftmyanmar.com/",
   "description": "Curated fine art gallery sharing original artworks by artists from Myanmar.",
   "address": {
     "@type": "PostalAddress",
@@ -66,6 +66,11 @@
     </script>
 
     <style>
+        /* Crisp High-DPI Artwork Rendering */
+        img {
+            image-rendering: -webkit-optimize-contrast;
+        }
+
         /* MS PowerPoint Morph-Style Zero-Glitch View Transition */
         ::view-transition-old(root),
         ::view-transition-new(root) {
@@ -310,6 +315,87 @@
         .classic-artist-motif.is-active {
             opacity: 1;
             animation: classicMotifReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* ==================== WALL PREVIEW STUDIO MODAL STYLES ==================== */
+        #wall-preview-modal {
+            opacity: 0;
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #wall-preview-modal.is-open {
+            opacity: 1;
+        }
+        .wall-canvas-stage {
+            position: relative;
+            background-color: #F3EFE6;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.015) 0px, rgba(0, 0, 0, 0.015) 1px, transparent 1px, transparent 3px),
+                repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.012) 0px, rgba(0, 0, 0, 0.012) 1px, transparent 1px, transparent 3px);
+            box-shadow: inset 0 -48px 70px -24px rgba(0, 0, 0, 0.16), inset 0 24px 55px rgba(255, 255, 255, 0.14);
+            transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .wall-spotlight-cone {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 56% 64% at 50% 34%, rgba(255, 248, 232, 0.42) 0%, rgba(255, 244, 218, 0.14) 48%, rgba(0, 0, 0, 0.22) 100%);
+            transition: opacity 0.45s ease;
+        }
+        .wall-spotlight-cone.is-off {
+            opacity: 0;
+        }
+        .wall-hanging-unit {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            will-change: transform;
+        }
+        /* Frame Variants */
+        .wall-frame-none {
+            padding: 0;
+            border: none;
+            background: transparent;
+            box-shadow:
+                0 22px 38px -10px rgba(0, 0, 0, 0.42),
+                0 6px 14px -3px rgba(0, 0, 0, 0.25),
+                3px 4px 0px rgba(45, 40, 35, 0.45);
+        }
+        .wall-frame-black-mat {
+            padding: clamp(12px, 2.2vw, 22px);
+            background: linear-gradient(145deg, #FAF8F2, #EFECE3);
+            border: clamp(8px, 1.4vw, 14px) solid #191817;
+            box-shadow:
+                0 26px 46px -12px rgba(0, 0, 0, 0.48),
+                0 8px 18px -4px rgba(0, 0, 0, 0.28),
+                inset 0 2px 5px rgba(0, 0, 0, 0.18),
+                inset 0 0 0 1px rgba(156, 130, 101, 0.32);
+        }
+        .wall-frame-teak-mat {
+            padding: clamp(12px, 2.2vw, 22px);
+            background: linear-gradient(145deg, #FAF8F2, #EFECE3);
+            border: clamp(8px, 1.4vw, 14px) solid #6B4427;
+            box-shadow:
+                0 26px 46px -12px rgba(0, 0, 0, 0.46),
+                0 8px 18px -4px rgba(0, 0, 0, 0.26),
+                inset 0 2px 5px rgba(0, 0, 0, 0.18),
+                inset 0 0 0 1px rgba(180, 135, 95, 0.4);
+        }
+        .wall-frame-gold-mat {
+            padding: clamp(12px, 2.2vw, 22px);
+            background: linear-gradient(145deg, #FBF9F4, #F0ECE1);
+            border: clamp(8px, 1.4vw, 14px) solid #B49252;
+            box-shadow:
+                0 26px 46px -12px rgba(0, 0, 0, 0.46),
+                0 8px 18px -4px rgba(0, 0, 0, 0.26),
+                inset 0 2px 6px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(235, 208, 150, 0.65);
+        }
+        .wall-frame-oak-slim {
+            padding: 3px;
+            background: #2C2620;
+            border: clamp(5px, 0.9vw, 8px) solid #C49E72;
+            box-shadow:
+                0 24px 42px -10px rgba(0, 0, 0, 0.44),
+                0 6px 14px -3px rgba(0, 0, 0, 0.24),
+                inset 0 0 0 1px rgba(255, 240, 218, 0.35);
         }
     </style>
 </head>
@@ -574,12 +660,129 @@
                 <h3 id="lightbox-title" class="font-serif text-2xl md:text-3xl text-[#FAF9F6] mb-1.5"></h3>
                 <p id="lightbox-placard" class="text-xs uppercase tracking-[0.18em] text-[#FAF9F6]/65 mb-2"></p>
                 <p id="lightbox-desc" class="text-sm md:text-base text-[#FAF9F6]/75 font-light leading-relaxed"></p>
-                <div id="lightbox-price-row" class="mt-4 flex flex-wrap items-center justify-center gap-4">
+                <div id="lightbox-price-row" class="mt-4 flex flex-wrap items-center justify-center gap-3">
                     <span id="lightbox-price" class="text-sm font-medium text-[#FAF9F6] tracking-wide"></span>
+                    <button id="lightbox-wall-btn" type="button" class="inline-flex items-center gap-1.5 px-5 py-2 rounded-full border border-[#D4B483]/60 text-[#FAF9F6] text-[11px] uppercase tracking-[0.2em] font-medium hover:bg-[#D4B483]/20 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-[#D4B483]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="14" rx="2" />
+                            <path d="M7 20h10M9 11l2.5-2.5L15 12l2-2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span>Preview on Wall</span>
+                    </button>
                     <button id="lightbox-inquiry-btn" type="button" class="px-5 py-2 rounded-full bg-[#D4B483] text-[#12110F] text-[11px] uppercase tracking-[0.22em] font-medium hover:bg-[#FAF9F6] transition-colors">
                         Price Inquiry
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 5B. INTERACTIVE WALL & FRAME PREVIEW STUDIO MODAL ==================== -->
+    <div id="wall-preview-modal" class="fixed inset-0 z-50 hidden bg-[#12110F]/95 backdrop-blur-md flex flex-col justify-between p-3 sm:p-5 md:p-7 overflow-y-auto" onclick="closeWallPreview(event)">
+        <!-- Top Header Bar -->
+        <div class="max-w-6xl w-full mx-auto flex items-center justify-between gap-4 pb-3 text-[#FAF9F6]" onclick="event.stopPropagation()">
+            <div class="min-w-0">
+                <span class="block text-[10px] uppercase tracking-[0.3em] text-[#D4B483]">Curator Room &amp; Frame Visualizer</span>
+                <div class="flex flex-wrap items-baseline gap-2">
+                    <h3 id="wall-preview-title" class="font-serif text-lg sm:text-2xl text-[#FAF9F6] truncate">Artwork Title</h3>
+                    <span id="wall-preview-meta" class="text-xs text-[#FAF9F6]/60 truncate">Artist • Dimensions</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5 flex-shrink-0">
+                <button type="button" id="wall-spotlight-btn" onclick="toggleWallSpotlight()" class="px-3.5 py-2 rounded-full border border-[#D4B483]/50 bg-[#D4B483]/15 text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#D4B483] hover:text-[#12110F] transition-colors">
+                    Spotlight: On
+                </button>
+                <button type="button" id="wall-furniture-btn" onclick="toggleWallFurniture()" class="hidden sm:inline-flex px-3.5 py-2 rounded-full border border-[#FAF9F6]/25 bg-[#1E1C19]/80 text-[#FAF9F6]/85 text-[10px] uppercase tracking-[0.2em] font-medium hover:border-[#D4B483] transition-colors">
+                    Room Scale: On
+                </button>
+                <button type="button" onclick="closeWallPreview(event)" class="w-10 h-10 rounded-full border border-[#FAF9F6]/25 bg-[#1E1C19]/80 text-[#FAF9F6] hover:bg-[#D4B483] hover:text-[#12110F] text-2xl leading-none flex items-center justify-center transition-colors" aria-label="Close Wall Preview">&times;</button>
+            </div>
+        </div>
+
+        <!-- Center Architectural Gallery Wall Stage -->
+        <div id="wall-canvas-stage" class="wall-canvas-stage max-w-6xl w-full mx-auto flex-1 min-h-[340px] sm:min-h-[430px] rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col items-center justify-between px-4 pt-8 sm:pt-12 pb-0 border border-[#D4B483]/25" onclick="event.stopPropagation()">
+            <!-- Gallery Spotlight Cone -->
+            <div id="wall-spotlight-cone" class="wall-spotlight-cone"></div>
+
+            <!-- Hanging Artwork + Selected Frame -->
+            <div class="relative z-10 flex-1 w-full flex flex-col items-center justify-center my-auto py-3">
+                <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
+                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="max-h-[34vh] sm:max-h-[40vh] max-w-[66vw] sm:max-w-[44vw] w-auto h-auto object-contain block select-none">
+                </div>
+                <!-- Subtle Dimension Scale Badge -->
+                <div id="wall-scale-pill" class="mt-4 px-3.5 py-1 rounded-full bg-black/45 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.22em] border border-white/15">
+                    Scale: 100% • Standard Gallery Eye-Level
+                </div>
+            </div>
+
+            <!-- Minimalist Gallery Credenza / Bench Silhouette for Real-World Scale Reference -->
+            <div id="wall-furniture-silhouette" class="relative z-10 w-full max-w-2xl mx-auto pt-2 flex flex-col items-center pointer-events-none select-none transition-opacity duration-300">
+                <div class="w-full flex items-end justify-between px-6 sm:px-12">
+                    <!-- Minimalist Ceramic Vessel -->
+                    <div class="flex flex-col items-center opacity-80">
+                        <div class="w-5 h-7 rounded-t-full rounded-b-lg bg-gradient-to-b from-[#D6CEC0] to-[#9E9281] shadow-md"></div>
+                    </div>
+                    <!-- Minimalist Art Book Stack -->
+                    <div class="hidden sm:flex flex-col items-center opacity-80">
+                        <div class="w-16 h-1.5 bg-[#EAE4D7] rounded-xs shadow-sm"></div>
+                        <div class="w-20 h-2 bg-[#2C2824] rounded-xs shadow-md"></div>
+                    </div>
+                </div>
+                <!-- Gallery Bench / Credenza Top & Legs -->
+                <div class="w-[86%] sm:w-[78%] h-3.5 rounded-t-sm bg-gradient-to-r from-[#3D3126] via-[#544334] to-[#3D3126] shadow-lg border-t border-white/15"></div>
+                <div class="w-[74%] sm:w-[66%] h-6 flex justify-between px-4">
+                    <div class="w-2 h-full bg-[#2B221A]"></div>
+                    <div class="w-2 h-full bg-[#2B221A]"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Interactive Controls: Wall Colors, Frame Styles, Size Slider & Inquiry -->
+        <div class="max-w-6xl w-full mx-auto pt-3.5 text-[#FAF9F6]" onclick="event.stopPropagation()">
+            <div class="bg-[#1B1916]/95 border border-[#D4B483]/25 rounded-2xl p-3.5 sm:p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
+                
+                <!-- 1. Wall Paint Color Swatches -->
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
+                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#D4B483] mr-1">Wall Color:</span>
+                    <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#E6DEC8', 'Gallery Linen Cream', this)" title="Gallery Linen Cream" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#E6DEC8;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#CDD3C6', 'Heritage Sage', this)" title="Heritage Sage" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#CDD3C6;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#C69C84', 'Terracotta Clay', this)" title="Terracotta Clay" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C69C84;"></button>
+                    <button type="button" onclick="setWallPreviewColor('#232528', 'Midnight Gallery Slate', this)" title="Midnight Gallery Slate" class="wall-swatch-btn w-7 h-7 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#232528;"></button>
+                    <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/70 ml-1 hidden sm:inline">Museum Warm White</span>
+                </div>
+
+                <!-- 2. Frame & Matting Selector -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
+                    <span class="text-[10px] uppercase tracking-[0.22em] text-[#D4B483] mr-1">Frame:</span>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-none', 'No Frame (Gallery Wrap)', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                        No Frame
+                    </button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-black-mat', 'Matte Black + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-[#D4B483] text-[#12110F] font-medium transition-colors">
+                        Black + Mat
+                    </button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-teak-mat', 'Warm Teak + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                        Teak + Mat
+                    </button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-gold-mat', 'Antique Gold + Ivory Mat', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                        Gold + Mat
+                    </button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-oak-slim', 'Natural Oak Slim', this)" class="wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
+                        Oak Slim
+                    </button>
+                </div>
+
+                <!-- 3. Size Scale Slider + Direct Inquiry Action -->
+                <div class="flex flex-wrap items-center justify-center gap-3">
+                    <div class="flex items-center gap-2">
+                        <label for="wall-scale-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Size:</label>
+                        <input id="wall-scale-slider" type="range" min="65" max="125" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-24 accent-[#D4B483] cursor-pointer">
+                    </div>
+                    <button id="wall-inquiry-btn" type="button" class="px-4 py-2 rounded-full bg-[#D4B483] text-[#12110F] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#FAF9F6] transition-colors">
+                        Inquire With Frame
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -642,7 +845,7 @@
                     <!-- Admin Status Banner -->
                     <div id="admin-publish-feedback" class="hidden p-4 rounded-2xl text-xs font-medium"></div>
 
-                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Visitor Activity | Edit Log -->
+                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Ambient Audio | Visitor Activity | Edit Log -->
                     <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-3">
                         <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
                             Artworks
@@ -736,7 +939,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Image URL or Local Filename</label>
-                                        <input id="art-url-input" type="text" placeholder="e.g., https://pub-....r2.dev/... or my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        <input id="art-url-input" type="text" placeholder="e.g., https://media.theartistsloftmm.art/... or my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
@@ -1399,6 +1602,58 @@
             }
         ];
 
+        // Graceful Preview Fallback Sample Artworks (used ONLY if /api/gallery backend is unavailable)
+        const PREVIEW_FALLBACK_ARTWORKS = [
+            {
+                id: 'preview-lotus-study-1',
+                artistId: 'mt-oung',
+                title: 'Sacred Lotus Study I',
+                category: 'Floral & Still Life',
+                medium: 'Oil on Canvas',
+                size: '36 × 48 in (91.4 × 121.9 cm)',
+                year: '2024',
+                provenance: 'Artist Studio, Yangon',
+                status: 'Available',
+                price: 'Price Upon Request',
+                image: '05582-mtoung3.jpg',
+                aspect: '3/4',
+                description: 'A contemplative study of lotus blossoms emerging in soft morning light, reflecting spiritual serenity and classical Myanmar brushwork.',
+                order: 1
+            },
+            {
+                id: 'preview-lotus-study-2',
+                artistId: 'mt-oung',
+                title: 'Tranquil Pond Reflections II',
+                category: 'Floral & Still Life',
+                medium: 'Oil on Canvas',
+                size: '30 × 40 in (76.2 × 101.6 cm)',
+                year: '2024',
+                provenance: 'Artist Studio, Yangon',
+                status: 'Available',
+                price: 'Price Upon Request',
+                image: '8899c-mtoung4.jpg',
+                aspect: '3/4',
+                description: 'Layered earth tones and luminous highlights evoke quiet stillness across water and petals.',
+                order: 2
+            },
+            {
+                id: 'preview-golden-heritage',
+                artistId: 'mt-oung',
+                title: 'Golden Dawn Over Old Yangon',
+                category: 'Landscapes',
+                medium: 'Oil on Canvas',
+                size: '36 × 36 in (91.4 × 91.4 cm)',
+                year: '2023',
+                provenance: 'Private Collection',
+                status: 'Sold',
+                price: '',
+                image: createArtPlaceholderDataURL('Golden Dawn Over Old Yangon', 'Landscapes', '3/4'),
+                aspect: '3/4',
+                description: 'Warm golden light illuminating heritage architecture and morning mist in Yangon.',
+                order: 3
+            }
+        ];
+
         // Default Gallery About Content
         const DEFAULT_GALLERY_ABOUT = {
             heading: "About The Artist's Loft",
@@ -1637,7 +1892,14 @@
             } catch (err) {
                 console.warn('Gallery API sync notice:', err);
                 isLoadingArtworks = false;
-                updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
+                if (artworks.length === 0) {
+                    artworks = PREVIEW_FALLBACK_ARTWORKS.map(item => ({ ...item }));
+                }
+                updateCloudStatus(false, `Preview Mode (${err.message || 'D1 API offline'})`);
+                renderGalleryAboutSection();
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+                renderCategoryFilterBar();
                 renderArtworksGrid();
             }
         }
@@ -1769,6 +2031,7 @@
                 <div class="w-36 h-44 sm:w-44 sm:h-52 md:w-48 md:h-60 rounded-2xl overflow-hidden bg-[#E7E0D2] dark:bg-[#24211D] flex-shrink-0 shadow-md border border-[#9C8265]/25 dark:border-[#D4B483]/25">
                     <img src="${safeImg}"
                          alt="${safeName}"
+                         decoding="async"
                          data-artist-name="${safeName}"
                          onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')"
                          class="w-full h-full object-cover block">
@@ -1893,6 +2156,8 @@
                         <div class="relative aspect-[4/5] w-full overflow-hidden bg-[#E7E0D2] dark:bg-[#23201C] flex items-center justify-center p-4 sm:p-5">
                             <img src="${safeImg}"
                                  alt="${safeTitle}"
+                                 loading="lazy"
+                                 decoding="async"
                                  data-title="${safeTitle}"
                                  data-category="${safeCat}"
                                  data-aspect="${safeAspect}"
@@ -1911,24 +2176,179 @@
                                 <p class="text-xs text-[#26231F]/60 dark:text-[#EDE7DA]/60 mb-3">${placardMeta}</p>
                                 ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2 mb-4">${safeDesc}</p>` : ''}
                             </div>
-                            ${!isSold ? `
-                                <div class="pt-3 border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 flex items-center justify-between gap-2">
-                                    <span class="text-[11px] uppercase tracking-[0.18em] text-[#26231F]/60 dark:text-[#EDE7DA]/60">${escapeHTML(art.price || 'Available')}</span>
-                                    <button type="button" onclick="event.stopPropagation(); inquireAboutArtwork('${safeTitle.replace(/'/g, "\\'")}', '${escapeHTML(artistName).replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full border border-[#9C8265]/50 dark:border-[#D4B483]/40 text-[10px] uppercase tracking-[0.2em] font-medium text-[#26231F] dark:text-[#EDE7DA] hover:bg-[#26231F] hover:text-[#FAF9F6] dark:hover:bg-[#D4B483] dark:hover:text-[#12110F] transition-colors">
+                            <div class="pt-3 border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 flex flex-wrap items-center justify-between gap-2">
+                                <button type="button" onclick="event.stopPropagation(); openWallPreviewById('${safeId}')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#9C8265]/45 dark:border-[#D4B483]/35 text-[10px] uppercase tracking-[0.18em] font-medium text-[#26231F]/85 dark:text-[#EDE7DA]/85 hover:border-[#26231F] dark:hover:border-[#D4B483] transition-colors">
+                                    <svg class="w-3 h-3 text-[#9C8265] dark:text-[#D4B483]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <rect x="3" y="4" width="18" height="14" rx="2" />
+                                        <path d="M7 20h10" stroke-linecap="round" />
+                                    </svg>
+                                    <span>Preview on Wall</span>
+                                </button>
+                                ${!isSold ? `
+                                    <button type="button" onclick="event.stopPropagation(); inquireAboutArtwork('${safeTitle.replace(/'/g, "\\'")}', '${escapeHTML(artistName).replace(/'/g, "\\'")}')" class="px-4 py-1.5 rounded-full bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-[#9C8265] dark:hover:bg-[#E5C99B] transition-colors">
                                         Price Inquiry
                                     </button>
-                                </div>
-                            ` : `
-                                <div class="pt-3 border-t border-[#9C8265]/15 dark:border-[#D4B483]/15">
-                                    <span class="text-[11px] uppercase tracking-[0.18em] text-red-600/80 dark:text-red-300/80">In Private Collection</span>
-                                </div>
-                            `}
+                                ` : `
+                                    <span class="text-[10px] uppercase tracking-[0.18em] text-red-600/80 dark:text-red-300/80">In Private Collection</span>
+                                `}
+                            </div>
                         </div>
                     </article>
                 `;
             }).join('');
 
             requestAnimationFrame(() => initGalleryCardAnimations());
+        }
+
+        // ==================== INTERACTIVE WALL & FRAME PREVIEW STUDIO LOGIC ====================
+        let currentWallArtworkId = null;
+        let currentWallColorName = 'Museum Warm White';
+        let currentWallFrameName = 'Matte Black + Ivory Mat';
+        let currentWallScalePct = 100;
+        let isWallSpotlightOn = true;
+        let isWallFurnitureOn = true;
+
+        function openWallPreviewById(id) {
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
+
+            playSoftGalleryChime('open');
+            trackVisitorEvent('wall_preview', art.title || id);
+            currentWallArtworkId = art.id;
+
+            const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
+            const artistName = artist ? artist.name : 'MT. Oung';
+            const isSold = (art.status || 'Available').toLowerCase() === 'sold' || (art.status || '').toLowerCase() === 'collected';
+
+            const modal = document.getElementById('wall-preview-modal');
+            const imgEl = document.getElementById('wall-preview-img');
+            const titleEl = document.getElementById('wall-preview-title');
+            const metaEl = document.getElementById('wall-preview-meta');
+            const inquiryBtn = document.getElementById('wall-inquiry-btn');
+
+            if (titleEl) titleEl.textContent = art.title || 'Untitled';
+            if (metaEl) {
+                const details = [artistName, art.medium, art.size].filter(Boolean).join(' • ');
+                metaEl.textContent = details;
+            }
+            if (imgEl) {
+                imgEl.src = art.image;
+                imgEl.alt = art.title || 'Wall Preview Artwork';
+                imgEl.onerror = () => applyArtFallback(imgEl, art.title, art.category, art.aspect || '3/4');
+            }
+
+            // Reset scale slider cleanly
+            const slider = document.getElementById('wall-scale-slider');
+            if (slider) slider.value = '100';
+            setWallPreviewScale(100);
+
+            if (inquiryBtn) {
+                inquiryBtn.classList.toggle('hidden', isSold);
+                inquiryBtn.onclick = () => {
+                    closeWallPreview();
+                    inquireAboutArtworkWithFrame(art.title, artistName, currentWallFrameName);
+                };
+            }
+
+            modal.classList.remove('hidden', 'is-open');
+            void modal.offsetWidth;
+            requestAnimationFrame(() => {
+                modal.classList.add('is-open');
+            });
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeWallPreview(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('wall-preview-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            playSoftGalleryChime('close');
+            modal.classList.remove('is-open');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                const lightboxOpen = !document.getElementById('lightbox-modal').classList.contains('hidden');
+                if (!lightboxOpen) {
+                    document.body.style.overflow = '';
+                }
+            }, 380);
+        }
+
+        function setWallPreviewColor(hexColor, colorLabel, btnEl) {
+            playSoftGalleryChime('select');
+            currentWallColorName = colorLabel;
+            const stage = document.getElementById('wall-canvas-stage');
+            const labelEl = document.getElementById('wall-color-name');
+            if (stage) stage.style.backgroundColor = hexColor;
+            if (labelEl) labelEl.textContent = colorLabel;
+
+            document.querySelectorAll('.wall-swatch-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
+            });
+            if (btnEl) {
+                btnEl.classList.add('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
+            }
+        }
+
+        function setWallPreviewFrame(frameClass, frameLabel, btnEl) {
+            playSoftGalleryChime('select');
+            currentWallFrameName = frameLabel;
+            const unit = document.getElementById('wall-hanging-unit');
+            if (unit) {
+                unit.className = `wall-hanging-unit ${frameClass} rounded-[2px] flex items-center justify-center`;
+            }
+
+            document.querySelectorAll('.wall-frame-btn').forEach(btn => {
+                btn.className = 'wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors';
+            });
+            if (btnEl) {
+                btnEl.className = 'wall-frame-btn px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
+            }
+        }
+
+        function setWallPreviewScale(pctValue) {
+            currentWallScalePct = Math.max(65, Math.min(125, Number(pctValue) || 100));
+            const ratio = currentWallScalePct / 100;
+            const unit = document.getElementById('wall-hanging-unit');
+            const pill = document.getElementById('wall-scale-pill');
+            const art = artworks.find(a => a.id === currentWallArtworkId);
+            const dimNote = art && art.size ? ` • Original: ${art.size}` : '';
+
+            if (unit) {
+                unit.style.transform = `scale(${ratio.toFixed(2)})`;
+            }
+            if (pill) {
+                pill.textContent = `Scale: ${currentWallScalePct}%${dimNote}`;
+            }
+        }
+
+        function toggleWallSpotlight() {
+            playSoftGalleryChime('select');
+            isWallSpotlightOn = !isWallSpotlightOn;
+            const cone = document.getElementById('wall-spotlight-cone');
+            const btn = document.getElementById('wall-spotlight-btn');
+            if (cone) cone.classList.toggle('is-off', !isWallSpotlightOn);
+            if (btn) btn.textContent = `Spotlight: ${isWallSpotlightOn ? 'On' : 'Off'}`;
+        }
+
+        function toggleWallFurniture() {
+            playSoftGalleryChime('select');
+            isWallFurnitureOn = !isWallFurnitureOn;
+            const bench = document.getElementById('wall-furniture-silhouette');
+            const btn = document.getElementById('wall-furniture-btn');
+            if (bench) bench.style.opacity = isWallFurnitureOn ? '1' : '0';
+            if (btn) btn.textContent = `Room Scale: ${isWallFurnitureOn ? 'On' : 'Off'}`;
+        }
+
+        function inquireAboutArtworkWithFrame(artTitle, artistName, frameLabel) {
+            playSoftGalleryChime('select');
+            trackVisitorEvent('inquire_artwork', `${artTitle} (${artistName}) [${frameLabel}]`);
+            closeLightbox();
+            showSection('contact');
+            const msgBox = document.getElementById('contact-message');
+            if (msgBox) {
+                msgBox.value = `Hello, I would like to inquire about "${artTitle}" by ${artistName} (previewed with ${frameLabel}).`;
+                msgBox.focus();
+            }
         }
 
         // ==================== LIGHTBOX STATE & HELPERS ====================
@@ -1965,6 +2385,7 @@
             const statusTextEl = document.getElementById('lightbox-status-text');
             const counterEl = document.getElementById('lightbox-counter');
             const inquiryBtn = document.getElementById('lightbox-inquiry-btn');
+            const wallBtn = document.getElementById('lightbox-wall-btn');
 
             const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
             const artistName = artist ? artist.name : 'MT. Oung';
@@ -1993,6 +2414,12 @@
             if (counterEl && list && list.length > 0) {
                 const idx = list.findIndex(item => item.id === art.id);
                 counterEl.textContent = `${idx + 1} / ${list.length}`;
+            }
+            if (wallBtn) {
+                wallBtn.onclick = (e) => {
+                    if (e) e.stopPropagation();
+                    openWallPreviewById(art.id);
+                };
             }
             if (inquiryBtn) {
                 inquiryBtn.classList.toggle('hidden', isSold);
@@ -2109,6 +2536,12 @@
         }
 
         document.addEventListener('keydown', (e) => {
+            const wallOpen = !document.getElementById('wall-preview-modal').classList.contains('hidden');
+            if (wallOpen && e.key === 'Escape') {
+                e.preventDefault();
+                closeWallPreview();
+                return;
+            }
             const lightboxOpen = !document.getElementById('lightbox-modal').classList.contains('hidden');
             if (lightboxOpen) {
                 if (e.key === 'ArrowRight') { e.preventDefault(); navigateLightbox(1); return; }
@@ -3678,6 +4111,14 @@
         window.scrollToArtistWorks = scrollToArtistWorks;
         window.filterByCategory = filterByCategory;
         window.inquireAboutArtwork = inquireAboutArtwork;
+        window.inquireAboutArtworkWithFrame = inquireAboutArtworkWithFrame;
+        window.openWallPreviewById = openWallPreviewById;
+        window.closeWallPreview = closeWallPreview;
+        window.setWallPreviewColor = setWallPreviewColor;
+        window.setWallPreviewFrame = setWallPreviewFrame;
+        window.setWallPreviewScale = setWallPreviewScale;
+        window.toggleWallSpotlight = toggleWallSpotlight;
+        window.toggleWallFurniture = toggleWallFurniture;
         window.openLightboxById = openLightboxById;
         window.navigateLightbox = navigateLightbox;
         window.closeLightbox = closeLightbox;
