@@ -382,35 +382,40 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
+            --spotlight-hotspot: rgba(255, 226, 173, 0.62);
+            --spotlight-halo: rgba(255, 207, 130, 0.24);
+            --spotlight-wash: rgba(255, 216, 160, 0.14);
+            --spotlight-source: rgba(255, 246, 219, 0.76);
+            --spotlight-beam: rgba(255, 223, 164, 0.17);
             background:
                 radial-gradient(
                     ellipse 32% 48% at 50% 42%,
-                    rgba(255, 229, 174, 0.78) 0%,
-                    rgba(255, 222, 157, 0.52) 24%,
-                    rgba(255, 213, 143, 0.28) 48%,
-                    rgba(255, 207, 130, 0.08) 72%,
+                    var(--spotlight-hotspot) 0%,
+                    var(--spotlight-halo) 34%,
+                    var(--spotlight-wash) 66%,
                     transparent 100%
                 ),
-                linear-gradient(180deg, rgba(255, 227, 174, 0.25) 0%, rgba(255, 220, 155, 0.12) 34%, transparent 78%),
-                radial-gradient(ellipse 19% 20% at 50% 7%, rgba(255, 247, 222, 0.8) 0%, rgba(255, 230, 180, 0.26) 58%, transparent 100%);
-            opacity: 0.96;
+                linear-gradient(180deg, var(--spotlight-wash) 0%, rgba(255, 255, 255, 0.025) 38%, transparent 76%),
+                radial-gradient(ellipse 19% 20% at 50% 7%, var(--spotlight-source) 0%, var(--spotlight-halo) 48%, transparent 100%);
+            opacity: 0.88;
             transform-origin: 50% 8%;
-            transition: opacity 0.58s ease, background 0.58s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 14;
             mix-blend-mode: screen;
         }
         .wall-spotlight-cone::before {
             content: '';
             position: absolute;
-            top: 3%;
+            top: 4%;
             left: 50%;
-            width: 58%;
-            height: 82%;
+            width: 64%;
+            height: 76%;
             transform: translateX(-50%);
-            clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
-            background: linear-gradient(180deg, rgba(255, 238, 195, 0.44) 0%, rgba(255, 224, 164, 0.23) 52%, rgba(255, 215, 150, 0.07) 100%);
-            filter: blur(9px);
-            opacity: 0.82;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 50% 0%, var(--spotlight-beam) 0%, rgba(255, 255, 255, 0.035) 44%, transparent 78%);
+            filter: blur(20px);
+            opacity: 0.72;
+            transition: background 0.7s ease, opacity 0.7s ease;
         }
         .wall-spotlight-cone::after {
             content: '';
@@ -420,21 +425,17 @@
             width: 11rem;
             height: 3.5rem;
             transform: translateX(-50%);
-            background: radial-gradient(ellipse, rgba(255, 247, 220, 0.78) 0%, rgba(255, 226, 166, 0.3) 42%, transparent 78%);
-            filter: blur(5px);
-            opacity: 0.9;
+            background: radial-gradient(ellipse, var(--spotlight-source) 0%, var(--spotlight-halo) 42%, transparent 78%);
+            filter: blur(8px);
+            opacity: 0.82;
+            transition: background 0.7s ease, opacity 0.7s ease;
         }
         .wall-spotlight-cone.is-neutral {
-            background:
-                radial-gradient(
-                    ellipse 32% 48% at 50% 42%,
-                    rgba(222, 238, 255, 0.78) 0%,
-                    rgba(213, 232, 255, 0.5) 25%,
-                    rgba(205, 226, 255, 0.26) 50%,
-                    transparent 100%
-                ),
-                linear-gradient(180deg, rgba(225, 240, 255, 0.24) 0%, rgba(216, 234, 255, 0.1) 38%, transparent 78%),
-                radial-gradient(ellipse 19% 20% at 50% 7%, rgba(244, 250, 255, 0.76) 0%, rgba(224, 238, 255, 0.24) 58%, transparent 100%);
+            --spotlight-hotspot: rgba(229, 239, 250, 0.58);
+            --spotlight-halo: rgba(211, 229, 247, 0.23);
+            --spotlight-wash: rgba(221, 235, 249, 0.13);
+            --spotlight-source: rgba(247, 250, 255, 0.76);
+            --spotlight-beam: rgba(218, 233, 250, 0.16);
         }
         .wall-spotlight-cone.is-off {
             opacity: 0;
