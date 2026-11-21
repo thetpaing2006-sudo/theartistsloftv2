@@ -366,43 +366,33 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            /* Two-layer realistic museum light: additive screen throw + ambient room shadow */
             background:
-                /* 1. Soft feathered track light beam centered on artwork */
                 radial-gradient(
                     ellipse 38% 54% at 50% 40%,
-                    rgba(255, 244, 214, 0.42) 0%,
-                    rgba(255, 240, 204, 0.28) 22%,
-                    rgba(255, 236, 194, 0.15) 42%,
-                    rgba(255, 232, 186, 0.06) 60%,
-                    rgba(255, 230, 182, 0.015) 76%,
+                    rgba(255, 244, 214, 0.45) 0%,
+                    rgba(255, 240, 204, 0.28) 24%,
+                    rgba(255, 236, 194, 0.14) 44%,
+                    rgba(255, 232, 186, 0.04) 64%,
                     transparent 100%
                 ),
-                /* 2. Ceiling track bulb glow */
                 radial-gradient(
                     ellipse 18% 36% at 50% 6%,
                     rgba(255, 248, 228, 0.36) 0%,
                     rgba(255, 242, 212, 0.14) 48%,
                     transparent 100%
-                ),
-                /* 3. Gallery room peripheral shadow so the lit artwork pops clearly */
-                radial-gradient(
-                    ellipse 54% 66% at 50% 42%,
-                    rgba(0, 0, 0, 0) 34%,
-                    rgba(12, 10, 8, 0.18) 68%,
-                    rgba(12, 10, 8, 0.44) 100%
                 );
-            transition: opacity 0.5s ease, background 0.5s ease;
+            transition: opacity 0.45s ease, background 0.45s ease;
+            z-index: 14;
+            mix-blend-mode: soft-light;
         }
         .wall-spotlight-cone.is-neutral {
             background:
                 radial-gradient(
                     ellipse 39% 55% at 50% 40%,
-                    rgba(244, 249, 255, 0.44) 0%,
-                    rgba(238, 246, 255, 0.28) 22%,
-                    rgba(234, 243, 255, 0.15) 42%,
-                    rgba(230, 240, 255, 0.06) 60%,
-                    rgba(228, 238, 255, 0.015) 76%,
+                    rgba(244, 249, 255, 0.48) 0%,
+                    rgba(238, 246, 255, 0.28) 24%,
+                    rgba(234, 243, 255, 0.14) 44%,
+                    rgba(230, 240, 255, 0.04) 64%,
                     transparent 100%
                 ),
                 radial-gradient(
@@ -410,24 +400,24 @@
                     rgba(246, 250, 255, 0.36) 0%,
                     rgba(240, 246, 255, 0.14) 48%,
                     transparent 100%
-                ),
-                radial-gradient(
-                    ellipse 54% 66% at 50% 42%,
-                    rgba(0, 0, 0, 0) 34%,
-                    rgba(10, 12, 16, 0.18) 68%,
-                    rgba(10, 12, 16, 0.44) 100%
                 );
         }
-        /* When Spotlight is OFF: dim unlit gallery room atmosphere so ON vs OFF is unmistakable */
         .wall-spotlight-cone.is-off {
-            opacity: 1;
-            background:
-                radial-gradient(
-                    ellipse 85% 85% at 50% 45%,
-                    rgba(12, 11, 10, 0.24) 0%,
-                    rgba(12, 11, 10, 0.38) 65%,
-                    rgba(12, 11, 10, 0.52) 100%
-                );
+            opacity: 0;
+        }
+        .wall-room-dimmer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: rgba(6, 5, 5, 0);
+            transition: background-color 0.25s ease;
+            z-index: 12;
+        }
+        #wall-artwork-stage-layer {
+            z-index: 16;
+        }
+        #wall-furniture-silhouette {
+            z-index: 10;
         }
         .wall-hanging-unit {
             transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
@@ -444,64 +434,6 @@
         }
         .wall-hanging-unit.is-lit-neutral {
             filter: brightness(1.07) contrast(1.04);
-        }
-        .wall-spotlight-cone::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: radial-gradient(
-                ellipse 68% 72% at 50% 44%,
-                transparent 42%,
-                rgba(10, 9, 8, 0.14) 72%,
-                rgba(10, 9, 8, 0.34) 100%
-            );
-        }
-        .wall-spotlight-cone.is-neutral {
-            background:
-                radial-gradient(
-                    ellipse 45% 60% at 50% 41%,
-                    rgba(246, 250, 255, 0.70) 0%,
-                    rgba(242, 248, 255, 0.48) 20%,
-                    rgba(238, 245, 255, 0.28) 38%,
-                    rgba(234, 242, 255, 0.13) 56%,
-                    rgba(232, 240, 255, 0.04) 72%,
-                    transparent 100%
-                ),
-                radial-gradient(
-                    ellipse 22% 45% at 50% 10%,
-                    rgba(248, 251, 255, 0.32) 0%,
-                    rgba(242, 247, 255, 0.12) 45%,
-                    transparent 100%
-                );
-        }
-        .wall-spotlight-cone.is-off {
-            opacity: 0;
-        }
-        .wall-room-dimmer {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: rgba(6, 5, 5, 0);
-            transition: background-color 0.25s ease;
-            z-index: 12;
-        }
-        #wall-spotlight-cone {
-            z-index: 14;
-            mix-blend-mode: screen;
-        }
-        #wall-artwork-stage-layer {
-            z-index: 16;
-        }
-        #wall-furniture-silhouette {
-            z-index: 10;
-        }
-        .wall-hanging-unit {
-            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.34s ease,
-                        filter 0.36s ease,
-                        box-shadow 0.35s ease;
-            will-change: transform, opacity;
         }
         .wall-art-slide-out-left {
             opacity: 0 !important;
@@ -677,58 +609,7 @@
         </div>
     </section>
 
-    <!-- ==================== 2. ARTWORKS SECTION (MULTI-ARTIST SELECTOR + PROFILE + WORKS) ==================== -->
-    <section id="section-artworks" class="page-section relative z-10 hidden flex-grow flex flex-col">
-        
-        <!-- Top Artist Selector Bar -->
-        <div class="w-full max-w-screen-xl mx-auto px-6 pt-12 pb-5 text-center">
-            <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-4 font-medium">Represented Artists</p>
-            <div id="artist-selector-bar" class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-                <!-- Artist selection buttons injected dynamically via JS -->
-            </div>
-
-            <!-- Subtle Classical Motif Pill When Selecting an Artist -->
-            <div class="h-9 mt-3 flex items-center justify-center">
-                <div id="classic-artist-motif" class="classic-artist-motif opacity-0 pointer-events-none inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#FAF7F0]/90 dark:bg-[#1B1916]/90 border border-[#9C8265]/30 dark:border-[#D4B483]/25 shadow-sm" aria-hidden="true">
-                    <svg class="w-7 h-3.5 text-[#9C8265] dark:text-[#D4B483]" viewBox="0 0 44 18" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M2 9 C9 3, 15 15, 22 9 C29 3, 35 15, 42 9" stroke-linecap="round"/>
-                        <circle cx="22" cy="9" r="2" fill="currentColor" stroke="none"/>
-                    </svg>
-                    <span id="classic-artist-motif-label" class="font-serif italic text-xs tracking-wide text-[#26231F]/80 dark:text-[#EDE7DA]/80">MT. Oung</span>
-                    <svg class="w-7 h-3.5 text-[#9C8265] dark:text-[#D4B483] scale-x-[-1]" viewBox="0 0 44 18" fill="none" stroke="currentColor" stroke-width="1.2">
-                        <path d="M2 9 C9 3, 15 15, 22 9 C29 3, 35 15, 42 9" stroke-linecap="round"/>
-                        <circle cx="22" cy="9" r="2" fill="currentColor" stroke="none"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Selected Artist Profile Card -->
-        <div class="w-full max-w-5xl mx-auto px-6 pb-10">
-            <div id="selected-artist-profile" class="artist-switch-stage artist-switch-in bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-7 md:gap-10">
-                <!-- Artist Portrait & Bio injected dynamically via JS -->
-            </div>
-        </div>
-
-        <!-- Dynamic Category Filter Bar for Selected Artist -->
-        <div class="w-full max-w-screen-xl mx-auto px-6 mb-12">
-            <div id="category-filter-bar" class="artist-switch-stage artist-switch-in flex flex-wrap items-center justify-center gap-2.5 md:gap-4 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-6">
-                <!-- Buttons injected dynamically via JS -->
-            </div>
-            <div class="text-center mt-4">
-                <span id="artwork-count-label" class="text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/50 dark:text-[#EDE7DA]/50"></span>
-            </div>
-        </div>
-
-        <!-- Synchronized Row-Aligned Gallery Grid -->
-        <main class="w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-36">
-            <div id="artworks-masonry-grid" class="artist-switch-stage artist-switch-in grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
-                <!-- Artwork Cards injected dynamically via JS -->
-            </div>
-        </main>
-    </section>
-
-    <!-- ==================== 3. ABOUT SECTION (THE ARTIST'S LOFT GALLERY) ==================== -->
+    <!-- ==================== 2. ABOUT SECTION (THE ARTIST'S LOFT GALLERY) ==================== -->
     <section id="section-about" class="page-section relative z-10 hidden flex-grow">
         <div class="max-w-5xl mx-auto px-6 md:px-12 py-16 md:py-24">
             <div class="bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-8 sm:p-12 md:p-16 shadow-sm">
@@ -780,7 +661,50 @@
         </div>
     </section>
 
-    <!-- ==================== 4. CONTACT US SECTION ==================== -->
+    <!-- ==================== 3. ARTWORKS SECTION (MULTI-ARTIST SELECTOR + PROFILE + WORKS) ==================== -->
+    <section id="section-artworks" class="page-section relative z-10 hidden flex-grow">
+        <!-- Subtle Classical Motif Shown Gently When Choosing an Artist -->
+        <div id="classic-artist-motif" class="pointer-events-none fixed inset-x-0 top-24 z-30 flex justify-center opacity-0 transition-opacity duration-300" aria-hidden="true">
+            <div class="px-5 py-2 rounded-full bg-[#FAF7F0]/90 dark:bg-[#1B1916]/90 border border-[#9C8265]/35 dark:border-[#D4B483]/35 shadow-lg backdrop-blur-sm flex items-center gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-[#9C8265] dark:bg-[#D4B483]"></span>
+                <span id="classic-artist-motif-label" class="font-serif italic text-xs tracking-wider text-[#26231F] dark:text-[#EDE7DA]"></span>
+            </div>
+        </div>
+
+        <!-- Multi-Artist Selector Bar -->
+        <div class="w-full max-w-5xl mx-auto px-6 pt-12 pb-6 text-center">
+            <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-4 font-medium">Featured Artists</p>
+            <div id="artist-selector-bar" class="flex flex-wrap items-center justify-center gap-3">
+                <!-- Artist buttons injected dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- Selected Artist Profile Card -->
+        <div class="w-full max-w-5xl mx-auto px-6 pb-10">
+            <div id="selected-artist-profile" class="artist-switch-stage artist-switch-in bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/25 dark:border-[#D4B483]/20 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-7 md:gap-10">
+                <!-- Artist Portrait & Bio injected dynamically via JS -->
+            </div>
+        </div>
+
+        <!-- Dynamic Category Filter Bar for Selected Artist -->
+        <div class="w-full max-w-screen-xl mx-auto px-6 mb-12">
+            <div id="category-filter-bar" class="artist-switch-stage artist-switch-in flex flex-wrap items-center justify-center gap-2.5 md:gap-4 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-6">
+                <!-- Buttons injected dynamically via JS -->
+            </div>
+            <div class="text-center mt-4">
+                <span id="artwork-count-label" class="text-xs uppercase tracking-[0.2em] text-[#2C2C2C]/50 dark:text-[#EDE7DA]/50"></span>
+            </div>
+        </div>
+
+        <!-- Synchronized Row-Aligned Gallery Grid -->
+        <main class="w-full max-w-screen-2xl mx-auto px-6 md:px-12 pb-36">
+            <div id="artworks-masonry-grid" class="artist-switch-stage artist-switch-in grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch">
+                <!-- Artwork Cards injected dynamically via JS -->
+            </div>
+        </main>
+    </section>
+
+    <!-- ==================== 4. CONTACT SECTION ==================== -->
     <section id="section-contact" class="page-section relative z-10 hidden flex-grow flex items-center justify-center">
         <div class="max-w-2xl w-full mx-auto px-6 py-20 md:py-24">
             <div class="text-center mb-12">
@@ -940,7 +864,7 @@
             <div id="wall-furniture-silhouette" class="relative w-full flex flex-col items-center pointer-events-none select-none transition-opacity duration-300 mt-1">
                 <div class="w-full max-w-4xl mx-auto flex flex-col items-center">
                     <!-- Tabletop Props Row -->
-                    <div class="w-[82%] sm:w-[68%] flex items-end justify-between px-4 sm:px-8 -mb-[1px]">
+                    <div class="w-[74%] sm:w-[56%] flex items-end justify-between px-3 sm:px-6 -mb-[1px]">
                         <!-- Left: Artisan Stoneware Vase with Dried Botanical Branches -->
                         <div class="flex flex-col items-center">
                             <svg class="w-11 h-12 sm:w-14 sm:h-16 text-[#4A4137] drop-shadow-sm -mb-1.5" viewBox="0 0 64 72" fill="none">
@@ -969,8 +893,8 @@
                         </div>
                     </div>
 
-                    <!-- Full Mid-Century Walnut Credenza / Sideboard Cabinet (64 in Reference Width) -->
-                    <div id="wall-credenza-ref" class="relative w-[88%] sm:w-[74%] h-12 sm:h-14 rounded-t-[3px] bg-gradient-to-b from-[#6B472E] via-[#533521] to-[#3B2415] shadow-2xl border-t border-[#9A6D4C]/60 flex flex-col justify-between p-1.5 sm:p-2 z-10">
+                    <!-- Full Mid-Century Walnut Credenza / Sideboard Cabinet (60 in Reference Width) -->
+                    <div id="wall-credenza-ref" class="relative w-[62%] sm:w-[52%] h-12 sm:h-14 rounded-t-[3px] bg-gradient-to-b from-[#6B472E] via-[#533521] to-[#3B2415] shadow-2xl border-t border-[#9A6D4C]/60 flex flex-col justify-between p-1.5 sm:p-2 z-10">
                         <div class="grid grid-cols-3 gap-1.5 sm:gap-2 w-full h-full">
                             <div class="rounded-[2px] border border-[#7D5538]/55 bg-gradient-to-br from-[#5E3D26] to-[#442A19] flex items-center justify-end pr-1.5">
                                 <span class="w-0.5 h-3 rounded-full bg-[#D4B483]/80"></span>
@@ -985,7 +909,7 @@
                     </div>
 
                     <!-- Tapered Mid-Century Legs & Under-Cabinet Shadow -->
-                    <div class="w-[82%] sm:w-[68%] h-4 sm:h-5 flex items-stretch justify-between px-4 sm:px-7 relative">
+                    <div class="w-[58%] sm:w-[48%] h-4 sm:h-5 flex items-stretch justify-between px-4 sm:px-7 relative">
                         <div class="w-2 sm:w-2.5 h-full bg-gradient-to-b from-[#3B2415] to-[#26160C] -skew-x-[12deg] shadow-md"></div>
                         <div class="flex-1 mx-4 bg-gradient-to-b from-black/35 to-transparent"></div>
                         <div class="w-2 sm:w-2.5 h-full bg-gradient-to-b from-[#3B2415] to-[#26160C] skew-x-[12deg] shadow-md"></div>
@@ -995,7 +919,7 @@
                 <!-- Full-Width Wall Baseboard Trim & Hardwood Gallery Floor -->
                 <div class="w-full h-2.5 bg-gradient-to-b from-white/25 to-black/20 border-t border-white/15"></div>
                 <div class="w-full h-4 sm:h-5 bg-gradient-to-b from-[#3E3328] via-[#2F261E] to-[#1F1913] flex items-center justify-center border-t border-black/30">
-                    <div class="w-[82%] sm:w-[70%] h-2 rounded-full bg-black/60 blur-[3px]"></div>
+                    <div class="w-[70%] sm:w-[54%] h-2 rounded-full bg-black/60 blur-[3px]"></div>
                 </div>
             </div>
         </div>
@@ -1992,16 +1916,70 @@
         let isLoadingArtworks = true;
         let cloudReady = false;
 
+        const PREVIEW_SAMPLE_ARTWORKS = [
+            {
+                id: 'preview-sample-1',
+                artistId: 'mt-oung',
+                title: 'The Lane',
+                category: 'Landscapes',
+                medium: 'Oil on Canvas',
+                size: '9 × 12 in (22.9 × 30.5 cm)',
+                year: '2024',
+                provenance: 'Artist Studio, Yangon',
+                status: 'Available',
+                price: 'Price on Request',
+                image: createArtPlaceholderDataURL('The Lane', 'Landscapes', '4/3'),
+                aspect: '4/3',
+                description: 'Intimate plein-air study capturing sunlit clouds and a quiet country path.',
+                order: 1
+            },
+            {
+                id: 'preview-sample-2',
+                artistId: 'mt-oung',
+                title: 'Lotus Study',
+                category: 'Sacred Art',
+                medium: 'Oil on Canvas',
+                size: '24 × 18 in (61 × 45.7 cm)',
+                year: '2024',
+                provenance: 'The Artist\'s Loft Archive',
+                status: 'Available',
+                price: 'Price on Request',
+                image: createArtPlaceholderDataURL('Lotus Study', 'Sacred Art', '3/4'),
+                aspect: '3/4',
+                description: 'Luminous lotus blooms rendered with layered brushwork and serene tonal balance.',
+                order: 2
+            },
+            {
+                id: 'preview-sample-3',
+                artistId: 'mt-oung',
+                title: 'Destination',
+                category: 'Landscapes',
+                medium: 'Oil on Canvas',
+                size: '36 × 60 in (91.4 × 152.4 cm)',
+                year: '2025',
+                provenance: 'The Artist\'s Loft Collection',
+                status: 'Available',
+                price: 'Price on Request',
+                image: createArtPlaceholderDataURL('Destination', 'Landscapes', '4/3'),
+                aspect: '4/3',
+                description: 'Monumental landscape composition proportioned against the gallery room scale.',
+                order: 3
+            }
+        ];
+
+        // ==================== ADMIN AUTH, LOGGING & CLOUDFLARE D1 SYNC ====================
         function getSavedAdminToken() {
             try {
-                return (sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '').trim();
-            } catch {
+                return sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
+                    || localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
+                    || '';
+            } catch (e) {
                 return '';
             }
         }
 
         function setSavedAdminToken(token) {
-            const clean = (token || '').trim();
+            const clean = String(token || '').trim();
             try {
                 if (clean) {
                     sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
@@ -2010,205 +1988,219 @@
                     sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
                     localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
                 }
-            } catch {}
+            } catch (e) {}
         }
 
         function getAdminAuthHeaders(extraHeaders = {}) {
             const token = getSavedAdminToken();
-            return {
-                ...extraHeaders,
-                ...(token ? { 'x-admin-token': token, Authorization: `Bearer ${token}` } : {})
-            };
+            const headers = { ...extraHeaders };
+            if (token) {
+                headers['x-admin-token'] = token;
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            return headers;
         }
 
-        function updateCloudStatus(isConnected, label) {
-            cloudReady = isConnected;
+        function updateCloudStatus(connected, message) {
+            cloudReady = Boolean(connected);
             const dot = document.getElementById('cloud-status-dot');
             const text = document.getElementById('cloud-status-text');
-            if (!dot || !text) return;
-            dot.className = `w-2.5 h-2.5 rounded-full inline-block ${isConnected ? 'bg-emerald-500' : 'bg-amber-400'}`;
-            text.textContent = label;
-        }
-
-        function normalizeArtistRow(row) {
-            return {
-                id: row.id,
-                name: row.name || '',
-                subtitle: row.subtitle || 'Represented Artist • Myanmar',
-                image: row.portrait_url || row.image || 'artist.jpg',
-                bio: row.bio || '',
-                order: Number(row.sort_order ?? row.order ?? 999)
-            };
-        }
-
-        function normalizeArtworkRow(row) {
-            return {
-                id: row.id,
-                artistId: row.artist_id || row.artistId || 'mt-oung',
-                title: row.title || 'Untitled',
-                category: row.category || 'Fine Art',
-                medium: row.medium || 'Oil on Canvas',
-                size: row.dimensions || row.size || '',
-                year: row.year || '',
-                provenance: row.provenance || '',
-                status: row.status || 'Available',
-                price: row.price || '',
-                image: row.image_url || row.image || '',
-                aspect: row.aspect || '3/4',
-                description: row.description || '',
-                order: Number(row.sort_order ?? row.order ?? 999)
-            };
-        }
-
-        // Visitor Counter (Footer)
-        async function initVisitorCounter() {
-            const badge = document.getElementById('visitor-counter-badge');
-            const sessionKey = 'tal_visit_counted_v1';
-            try {
-                const alreadyCounted = sessionStorage.getItem(sessionKey) === '1';
-                const res = await fetch(API_ENDPOINTS.visit, {
-                    method: alreadyCounted ? 'GET' : 'POST',
-                    cache: 'no-store'
-                });
-                const data = await res.json();
-                if (res.ok && data.ok) {
-                    if (!alreadyCounted) sessionStorage.setItem(sessionKey, '1');
-                    if (badge) badge.textContent = `Visits: ${Number(data.total_visits || 0).toLocaleString()}`;
-                }
-            } catch (e) {
-                if (badge) badge.textContent = 'Visits: —';
+            if (dot) {
+                dot.className = `w-2.5 h-2.5 rounded-full inline-block ${connected ? 'bg-emerald-500' : 'bg-amber-400'}`;
+            }
+            if (text) {
+                text.textContent = message || (connected ? `Connected (${GALLERY_BUILD_TAG})` : 'Offline / Local Mode');
             }
         }
 
-        // Anonymous IP-Free Visitor Activity Tracking
-        function trackVisitorEvent(eventType, itemName = '') {
+        async function recordEditLog(action, targetType, targetName, details = '') {
+            const entry = {
+                id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                action,
+                targetType,
+                targetName,
+                details,
+                timestamp: new Date().toISOString()
+            };
+            editLogs.unshift(entry);
+            if (editLogs.length > 200) editLogs.length = 200;
+            renderAdminEditLogsList();
+
+            if (!getSavedAdminToken()) return;
             try {
-                fetch(API_ENDPOINTS.activity, {
+                await fetch(API_ENDPOINTS.logs, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    keepalive: true,
-                    body: JSON.stringify({ event_type: eventType, item_name: itemName })
-                }).catch(() => {});
-            } catch {}
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify(entry)
+                });
+            } catch (e) {}
         }
 
-        // Load Persistent Edit Logs from D1 (/api/logs)
         async function loadEditLogsFromCloud() {
+            if (!getSavedAdminToken()) return;
             try {
                 const res = await fetch(API_ENDPOINTS.logs, {
                     headers: getAdminAuthHeaders(),
                     cache: 'no-store'
                 });
+                if (!res.ok) return;
                 const data = await res.json();
-                if (res.ok && data.ok && Array.isArray(data.logs)) {
-                    editLogs = data.logs.map(l => ({
-                        id: l.id,
-                        timestamp: l.timestamp,
-                        action: l.action,
-                        targetType: l.target_type,
-                        targetName: l.target_name,
-                        details: l.details
-                    }));
+                if (data && data.ok && Array.isArray(data.logs)) {
+                    editLogs = data.logs;
                     renderAdminEditLogsList();
                 }
             } catch (e) {}
         }
 
-        async function recordEditLog(action, targetType, targetName, details = '') {
-            const logEntry = {
-                id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
-                timestamp: new Date().toISOString(),
-                action,
-                targetType,
-                targetName,
-                details
-            };
-            editLogs.unshift(logEntry);
-            if (editLogs.length > 200) editLogs.length = 200;
-            renderAdminEditLogsList();
-
+        async function initVisitorCounter() {
+            const badge = document.getElementById('visitor-counter-badge');
             try {
-                await fetch(API_ENDPOINTS.logs, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        id: logEntry.id,
-                        timestamp: logEntry.timestamp,
-                        action: logEntry.action,
-                        target_type: logEntry.targetType,
-                        target_name: logEntry.targetName,
-                        details: logEntry.details
-                    })
-                });
-            } catch (err) {
-                console.warn('Edit log cloud sync notice:', err);
+                const res = await fetch(API_ENDPOINTS.visit, { method: 'POST' });
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data && typeof data.visits === 'number' && badge) {
+                    badge.textContent = `Visits: ${data.visits}`;
+                }
+            } catch (e) {
+                if (badge) badge.textContent = `Visits: —`;
             }
         }
 
-        // Load Gallery Data from Cloudflare D1 via /api/gallery
-        async function loadCloudGallery(showSpinner = false) {
-            if (showSpinner && artworks.length === 0) {
+        function trackVisitorEvent(eventType, itemName = '') {
+            try {
+                const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+                const payload = JSON.stringify({
+                    event_type: eventType,
+                    item_name: itemName,
+                    device: isMobile ? 'Mobile' : 'Desktop'
+                });
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([payload], { type: 'application/json' });
+                    navigator.sendBeacon(API_ENDPOINTS.activity, blob);
+                } else {
+                    fetch(API_ENDPOINTS.activity, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: payload,
+                        keepalive: true
+                    }).catch(() => {});
+                }
+            } catch (e) {}
+        }
+
+        function normalizeCloudArtworkRow(row, idx = 0) {
+            const rawImg = String(row.image_url || row.image || '').trim().replace(
+                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
+                'https://media.theartistsloftmm.art'
+            );
+            const title = row.title || 'Untitled';
+            const category = row.category || 'Fine Art';
+            const size = row.dimensions || row.size || '';
+            const parsedDims = parseArtworkPhysicalDimensions(size, '3/4');
+            const aspect = parsedDims.widthIn > parsedDims.heightIn ? '4/3' : '3/4';
+
+            return {
+                id: String(row.id || `art-${idx + 1}`),
+                artistId: String(row.artist_id || row.artistId || 'mt-oung'),
+                title,
+                category,
+                medium: row.medium || 'Oil on Canvas',
+                size,
+                year: row.year ? String(row.year) : '',
+                provenance: row.provenance || '',
+                status: row.status || 'Available',
+                price: row.price || '',
+                image: rawImg || createArtPlaceholderDataURL(title, category, aspect),
+                aspect,
+                description: row.description || '',
+                order: typeof row.sort_order === 'number' ? row.sort_order : (typeof row.order === 'number' ? row.order : idx)
+            };
+        }
+
+        function normalizeCloudArtistRow(row, idx = 0) {
+            const rawBio = String(row.bio || '');
+            let subtitle = row.subtitle || '';
+            let bio = rawBio;
+            if (!subtitle && rawBio.includes('\n\n')) {
+                const parts = rawBio.split('\n\n');
+                subtitle = parts.shift().trim();
+                bio = parts.join('\n\n').trim();
+            }
+            const rawPortrait = String(row.portrait_url || row.image || 'artist.jpg').trim().replace(
+                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
+                'https://media.theartistsloftmm.art'
+            );
+            return {
+                id: String(row.id || `artist-${idx + 1}`),
+                name: row.name || 'Artist',
+                subtitle,
+                image: rawPortrait || 'artist.jpg',
+                bio,
+                order: typeof row.sort_order === 'number' ? row.sort_order : (typeof row.order === 'number' ? row.order : idx + 1)
+            };
+        }
+
+        async function loadCloudGallery(showLoadingState = true) {
+            if (showLoadingState && artworks.length === 0) {
                 isLoadingArtworks = true;
                 renderArtworksGrid();
             }
 
             try {
                 const res = await fetch(API_ENDPOINTS.gallery, { cache: 'no-store' });
-                const data = await res.json();
-                if (!res.ok || !data.ok) {
-                    throw new Error(data.error || `HTTP ${res.status}`);
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data || data.ok === false) {
+                    throw new Error(data.error || `Gallery API returned ${res.status}`);
                 }
 
                 if (Array.isArray(data.artists) && data.artists.length > 0) {
-                    const loadedArtists = data.artists.map(normalizeArtistRow);
-                    loadedArtists.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-                    artists = loadedArtists;
-                } else {
-                    artists = [...DEFAULT_ARTISTS];
+                    artists = data.artists
+                        .map((a, i) => normalizeCloudArtistRow(a, i))
+                        .sort((a, b) => (a.order || 0) - (b.order || 0));
                 }
 
                 if (!artists.some(a => a.id === activeArtistId)) {
                     activeArtistId = artists[0]?.id || 'mt-oung';
                 }
 
-                const loadedArtworks = Array.isArray(data.artworks)
-                    ? data.artworks.map(normalizeArtworkRow)
-                    : [];
-                loadedArtworks.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-                artworks = loadedArtworks;
-
-                if (data.settings && data.settings.gallery_about) {
-                    const aboutObj = typeof data.settings.gallery_about === 'string'
-                        ? JSON.parse(data.settings.gallery_about)
-                        : data.settings.gallery_about;
-                    galleryAbout = { ...DEFAULT_GALLERY_ABOUT, ...aboutObj };
+                if (Array.isArray(data.artworks)) {
+                    artworks = data.artworks
+                        .map((w, i) => normalizeCloudArtworkRow(w, i))
+                        .sort((a, b) => (a.order || 0) - (b.order || 0));
                 }
 
-                if (data.settings && data.settings.ambient_audio) {
-                    const audioCfg = typeof data.settings.ambient_audio === 'string'
-                        ? JSON.parse(data.settings.ambient_audio)
-                        : data.settings.ambient_audio;
-                    applySavedAudioConfig(audioCfg);
-                }
-
-                if (data.settings && data.settings.backdrop_config) {
-                    const savedBackdrop = typeof data.settings.backdrop_config === 'string'
-                        ? JSON.parse(data.settings.backdrop_config)
-                        : data.settings.backdrop_config;
-                    backdropConfig = { ...DEFAULT_BACKDROP_CONFIG, ...savedBackdrop };
-                    try { localStorage.setItem(BACKDROP_STORAGE_KEY, JSON.stringify(backdropConfig)); } catch (e) {}
-                    applyGlobalBackdropConfig();
+                if (data.settings && typeof data.settings === 'object') {
+                    if (data.settings.gallery_about && typeof data.settings.gallery_about === 'object') {
+                        galleryAbout = {
+                            ...DEFAULT_GALLERY_ABOUT,
+                            ...data.settings.gallery_about
+                        };
+                    }
+                    if (data.settings.backdrop_config && typeof data.settings.backdrop_config === 'object') {
+                        backdropConfig = {
+                            ...DEFAULT_BACKDROP_CONFIG,
+                            ...data.settings.backdrop_config
+                        };
+                        try {
+                            localStorage.setItem(BACKDROP_STORAGE_KEY, JSON.stringify(backdropConfig));
+                        } catch (e) {}
+                        applyGlobalBackdropConfig();
+                    }
+                    if (data.settings.ambient_audio && typeof data.settings.ambient_audio === 'object') {
+                        applySavedAudioConfig(data.settings.ambient_audio);
+                        saveLocalAudioConfig();
+                        if (isSoundEnabled && getEnabledAmbienceTracks().length > 0 && !isAmbienceStarted) {
+                            startAmbientSoundscape();
+                        }
+                    }
                 }
 
                 isLoadingArtworks = false;
-                updateCloudStatus(true, `Connected • ${GALLERY_BUILD_TAG}`);
-
+                updateCloudStatus(true, `Connected (${GALLERY_BUILD_TAG}) • ${artworks.length} Artworks`);
                 renderGalleryAboutSection();
                 renderArtistSelectorBar();
                 renderSelectedArtistProfile();
                 renderCategoryFilterBar();
                 renderArtworksGrid();
-
                 if (isAdminUnlocked) {
                     populateAdminArtistDropdown();
                     populateAdminCategoryDropdown();
@@ -2216,11 +2208,15 @@
                     renderAdminArtistsList();
                     populateGalleryAboutAdminForm();
                     populateBackdropAdminUI();
+                    renderAdminAudioManager();
                 }
             } catch (err) {
-                console.warn('Gallery API sync notice:', err);
                 isLoadingArtworks = false;
                 updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
+                renderGalleryAboutSection();
+                renderArtistSelectorBar();
+                renderSelectedArtistProfile();
+                renderCategoryFilterBar();
                 renderArtworksGrid();
             }
         }
@@ -2607,29 +2603,6 @@
             return { widthIn, heightIn, sizeTier };
         }
 
-        function formatInchesWithCm(widthIn, heightIn) {
-            const w = Number(widthIn);
-            const h = Number(heightIn);
-            if (!w || !h || Number.isNaN(w) || Number.isNaN(h)) return '';
-            const wStr = Number.isInteger(w) ? String(w) : w.toFixed(1);
-            const hStr = Number.isInteger(h) ? String(h) : h.toFixed(1);
-            const wCm = (w * 2.54).toFixed(1);
-            const hCm = (h * 2.54).toFixed(1);
-            return `${wStr} × ${hStr} in (${wCm} × ${hCm} cm)`;
-        }
-
-        function updateAdminCmPreview() {
-            const wVal = parseFloat(document.getElementById('art-width-in-input')?.value || '');
-            const hVal = parseFloat(document.getElementById('art-height-in-input')?.value || '');
-            const label = document.getElementById('art-cm-live-preview');
-            if (!label) return;
-            if (wVal > 0 && hVal > 0) {
-                label.textContent = `Saved Format: ${formatInchesWithCm(wVal, hVal)}`;
-            } else {
-                label.textContent = 'Auto-calculated: — cm (Width × Height in inches)';
-            }
-        }
-
         function resetWallAutoScale() {
             playSoftGalleryChime('select');
             const slider = document.getElementById('wall-scale-slider');
@@ -2903,8 +2876,8 @@
             const pxPerInch = credenzaPx / 64;
 
             const stageH = stageEl?.clientHeight || 480;
-            const maxAllowedHeightPx = Math.max(130, stageH * 0.56);
-            const maxAllowedWidthPx = Math.max(160, stageW * 0.84);
+            const maxAllowedHeightPx = Math.max(110, stageH * 0.54);
+            const maxAllowedWidthPx = Math.max(120, stageW * 0.82);
 
             let targetW = dims.widthIn * pxPerInch * factor;
             let targetH = dims.heightIn * pxPerInch * factor;
@@ -2918,6 +2891,13 @@
                 const clampRatio = maxAllowedWidthPx / targetW;
                 targetW *= clampRatio;
                 targetH *= clampRatio;
+            }
+
+            // Ensure intimate small pieces don't collapse below legible thumbnail size while preserving true scale contrast
+            if (targetW < 42) {
+                const minRatio = 42 / targetW;
+                targetW *= minRatio;
+                targetH *= minRatio;
             }
 
             imgEl.style.width = `${Math.round(targetW)}px`;
@@ -2935,65 +2915,6 @@
             if (pillEl) {
                 const sizeText = art?.size ? ` • Original: ${art.size}` : '';
                 pillEl.textContent = `True Room Scale: ${Math.round(factor * 100)}% (${dims.sizeTier} • vs 64" Credenza)${sizeText}`;
-            }
-        }
-
-        function cycleWallSpotlight() {
-            playSoftGalleryChime('select');
-            const order = ['warm', 'neutral', 'off'];
-            wallSpotlightMode = order[(order.indexOf(wallSpotlightMode) + 1) % order.length];
-
-            const cone = document.getElementById('wall-spotlight-cone');
-            const btn = document.getElementById('wall-spotlight-btn');
-            const unit = document.getElementById('wall-hanging-unit');
-
-            if (cone) {
-                cone.classList.remove('is-neutral', 'is-off');
-                if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
-                if (wallSpotlightMode === 'off') cone.classList.add('is-off');
-            }
-            if (unit) {
-                unit.classList.remove('is-unlit', 'is-lit-warm', 'is-lit-neutral');
-                if (wallSpotlightMode === 'off') unit.classList.add('is-unlit');
-                else if (wallSpotlightMode === 'neutral') unit.classList.add('is-lit-neutral');
-                else unit.classList.add('is-lit-warm');
-            }
-            if (btn) {
-                const labels = {
-                    warm: 'Spotlight: Warm 3000K',
-                    neutral: 'Spotlight: Neutral 4000K',
-                    off: 'Spotlight: Off'
-                };
-                btn.textContent = labels[wallSpotlightMode];
-            }
-        }
-
-        function applyProportionalWallSizing(art, scalePct = 100) {
-            const unit = document.getElementById('wall-hanging-unit');
-            const imgEl = document.getElementById('wall-preview-img');
-            const pillEl = document.getElementById('wall-scale-pill');
-            if (!unit || !imgEl) return;
-
-            const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
-            const factor = Math.max(0.6, Math.min(1.3, (Number(scalePct) || 100) / 100));
-
-            // Credenza width is ~64 in; map artwork physical inches proportionally to viewport stage
-            const baseWidthVw = Math.min(54, Math.max(14, (dims.widthIn / 64) * 44 * factor));
-            const baseHeightVh = Math.min(34, Math.max(14, (dims.heightIn / 48) * 28 * factor));
-
-            imgEl.style.maxWidth = `${baseWidthVw.toFixed(1)}vw`;
-            imgEl.style.maxHeight = `${baseHeightVh.toFixed(1)}vh`;
-
-            // Thinner frame & mat for monumental/large works; thicker mat & frame for intimate works
-            const isLarge = dims.sizeTier === 'Monumental' || dims.sizeTier === 'Large';
-            const isSmall = dims.sizeTier === 'Intimate';
-            unit.style.setProperty('--wall-frame-thick', isLarge ? '6px' : (isSmall ? '14px' : '10px'));
-            unit.style.setProperty('--wall-mat-pad', isLarge ? '8px' : (isSmall ? '20px' : '14px'));
-            unit.style.setProperty('--wall-slim-thick', isLarge ? '5px' : (isSmall ? '9px' : '7px'));
-
-            if (pillEl) {
-                const sizeText = art?.size ? ` • Original: ${art.size}` : '';
-                pillEl.textContent = `Scale: ${Math.round(factor * 100)}% (${dims.sizeTier})${sizeText}`;
             }
         }
 
@@ -3345,11 +3266,25 @@
                 ]);
                 showAdminDashboard();
             } catch (err) {
-                errorEl.textContent = 'Connection error: ' + (err.message || 'Check Cloudflare Pages deployment.');
-                errorEl.classList.remove('hidden');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Unlock Console';
+                console.warn('Gallery API sync notice:', err);
+                const isPreviewHost = window.location.protocol === 'blob:' ||
+                    window.location.protocol === 'about:' ||
+                    /usercontent|scf\.usercontent|claudeusercontent|webcontainer|stackblitz|localhost|127\.0\.0\.1/i.test(window.location.hostname || '');
+
+                if (isPreviewHost && artworks.length === 0) {
+                    artworks = PREVIEW_SAMPLE_ARTWORKS.map(item => ({ ...item }));
+                    isLoadingArtworks = false;
+                    updateCloudStatus(false, 'Preview Mode • Sample Artworks Active');
+                    renderArtistSelectorBar();
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    return;
+                }
+
+                isLoadingArtworks = false;
+                updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
+                renderArtworksGrid();
             }
         }
 
