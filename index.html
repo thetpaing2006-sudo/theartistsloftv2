@@ -366,28 +366,84 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            mix-blend-mode: soft-light;
+            /* Two-layer realistic museum light: additive screen throw + ambient room shadow */
             background:
-                /* Ultra-feathered 8-stop museum beam (no harsh ring edge on dark or light walls) */
+                /* 1. Soft feathered track light beam centered on artwork */
                 radial-gradient(
-                    ellipse 44% 58% at 50% 41%,
-                    rgba(255, 245, 220, 0.72) 0%,
-                    rgba(255, 242, 212, 0.50) 20%,
-                    rgba(255, 238, 202, 0.30) 38%,
-                    rgba(255, 234, 194, 0.14) 56%,
-                    rgba(255, 230, 188, 0.05) 72%,
-                    rgba(255, 228, 185, 0.01) 86%,
+                    ellipse 38% 54% at 50% 40%,
+                    rgba(255, 244, 214, 0.42) 0%,
+                    rgba(255, 240, 204, 0.28) 22%,
+                    rgba(255, 236, 194, 0.15) 42%,
+                    rgba(255, 232, 186, 0.06) 60%,
+                    rgba(255, 230, 182, 0.015) 76%,
                     transparent 100%
                 ),
-                /* Delicate vertical ceiling track wash */
+                /* 2. Ceiling track bulb glow */
                 radial-gradient(
-                    ellipse 22% 45% at 50% 10%,
-                    rgba(255, 248, 230, 0.35) 0%,
-                    rgba(255, 244, 220, 0.14) 45%,
-                    rgba(255, 240, 210, 0.03) 75%,
+                    ellipse 18% 36% at 50% 6%,
+                    rgba(255, 248, 228, 0.36) 0%,
+                    rgba(255, 242, 212, 0.14) 48%,
                     transparent 100%
+                ),
+                /* 3. Gallery room peripheral shadow so the lit artwork pops clearly */
+                radial-gradient(
+                    ellipse 54% 66% at 50% 42%,
+                    rgba(0, 0, 0, 0) 34%,
+                    rgba(12, 10, 8, 0.18) 68%,
+                    rgba(12, 10, 8, 0.44) 100%
                 );
-            transition: opacity 0.55s ease, background 0.55s ease;
+            transition: opacity 0.5s ease, background 0.5s ease;
+        }
+        .wall-spotlight-cone.is-neutral {
+            background:
+                radial-gradient(
+                    ellipse 39% 55% at 50% 40%,
+                    rgba(244, 249, 255, 0.44) 0%,
+                    rgba(238, 246, 255, 0.28) 22%,
+                    rgba(234, 243, 255, 0.15) 42%,
+                    rgba(230, 240, 255, 0.06) 60%,
+                    rgba(228, 238, 255, 0.015) 76%,
+                    transparent 100%
+                ),
+                radial-gradient(
+                    ellipse 18% 36% at 50% 6%,
+                    rgba(246, 250, 255, 0.36) 0%,
+                    rgba(240, 246, 255, 0.14) 48%,
+                    transparent 100%
+                ),
+                radial-gradient(
+                    ellipse 54% 66% at 50% 42%,
+                    rgba(0, 0, 0, 0) 34%,
+                    rgba(10, 12, 16, 0.18) 68%,
+                    rgba(10, 12, 16, 0.44) 100%
+                );
+        }
+        /* When Spotlight is OFF: dim unlit gallery room atmosphere so ON vs OFF is unmistakable */
+        .wall-spotlight-cone.is-off {
+            opacity: 1;
+            background:
+                radial-gradient(
+                    ellipse 85% 85% at 50% 45%,
+                    rgba(12, 11, 10, 0.24) 0%,
+                    rgba(12, 11, 10, 0.38) 65%,
+                    rgba(12, 11, 10, 0.52) 100%
+                );
+        }
+        .wall-hanging-unit {
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.34s ease,
+                        filter 0.45s ease,
+                        box-shadow 0.45s ease;
+            will-change: transform, opacity, filter;
+        }
+        .wall-hanging-unit.is-unlit {
+            filter: brightness(0.84) contrast(0.96);
+        }
+        .wall-hanging-unit.is-lit-warm {
+            filter: brightness(1.06) contrast(1.03) sepia(0.06);
+        }
+        .wall-hanging-unit.is-lit-neutral {
+            filter: brightness(1.07) contrast(1.04);
         }
         .wall-spotlight-cone::after {
             content: '';
@@ -450,9 +506,9 @@
                 3px 4px 0px rgba(45, 40, 35, 0.45);
         }
         .wall-frame-black-mat {
-            padding: clamp(10px, 1.8vw, 18px);
+            padding: var(--wall-mat-pad, clamp(10px, 1.8vw, 18px));
             background: linear-gradient(145deg, #FAF8F2, #EFECE3);
-            border: clamp(7px, 1.2vw, 12px) solid #191817;
+            border: var(--wall-frame-thick, clamp(7px, 1.2vw, 12px)) solid #191817;
             box-shadow:
                 0 24px 42px -12px rgba(0, 0, 0, 0.5),
                 0 10px 20px -4px rgba(0, 0, 0, 0.3),
@@ -460,9 +516,9 @@
                 inset 0 0 0 1px rgba(156, 130, 101, 0.32);
         }
         .wall-frame-teak-mat {
-            padding: clamp(10px, 1.8vw, 18px);
+            padding: var(--wall-mat-pad, clamp(10px, 1.8vw, 18px));
             background: linear-gradient(145deg, #FAF8F2, #EFECE3);
-            border: clamp(7px, 1.2vw, 12px) solid #6B4427;
+            border: var(--wall-frame-thick, clamp(7px, 1.2vw, 12px)) solid #6B4427;
             box-shadow:
                 0 24px 42px -12px rgba(0, 0, 0, 0.48),
                 0 10px 20px -4px rgba(0, 0, 0, 0.28),
@@ -470,9 +526,9 @@
                 inset 0 0 0 1px rgba(180, 135, 95, 0.4);
         }
         .wall-frame-gold-mat {
-            padding: clamp(10px, 1.8vw, 18px);
+            padding: var(--wall-mat-pad, clamp(10px, 1.8vw, 18px));
             background: linear-gradient(145deg, #FBF9F4, #F0ECE1);
-            border: clamp(7px, 1.2vw, 12px) solid #B49252;
+            border: var(--wall-frame-thick, clamp(7px, 1.2vw, 12px)) solid #B49252;
             box-shadow:
                 0 24px 42px -12px rgba(0, 0, 0, 0.48),
                 0 10px 20px -4px rgba(0, 0, 0, 0.28),
@@ -482,16 +538,16 @@
         .wall-frame-oak-slim {
             padding: 3px;
             background: #2C2620;
-            border: clamp(5px, 0.8vw, 8px) solid #C49E72;
+            border: var(--wall-slim-thick, clamp(5px, 0.8vw, 8px)) solid #C49E72;
             box-shadow:
                 0 22px 40px -10px rgba(0, 0, 0, 0.46),
                 0 8px 16px -3px rgba(0, 0, 0, 0.26),
                 inset 0 0 0 1px rgba(255, 240, 218, 0.35);
         }
         .wall-frame-white-gallery {
-            padding: clamp(10px, 1.8vw, 18px);
+            padding: var(--wall-mat-pad, clamp(10px, 1.8vw, 18px));
             background: linear-gradient(145deg, #FFFFFF, #F5F2EB);
-            border: clamp(7px, 1.2vw, 12px) solid #F7F5F0;
+            border: var(--wall-frame-thick, clamp(7px, 1.2vw, 12px)) solid #F7F5F0;
             box-shadow:
                 0 24px 42px -12px rgba(0, 0, 0, 0.42),
                 0 8px 16px -3px rgba(0, 0, 0, 0.22),
@@ -501,16 +557,16 @@
         .wall-frame-walnut-floater {
             padding: 5px;
             background: #141210;
-            border: clamp(6px, 1vw, 9px) solid #432B1A;
+            border: var(--wall-slim-thick, clamp(6px, 1vw, 9px)) solid #432B1A;
             box-shadow:
                 0 24px 42px -10px rgba(0, 0, 0, 0.5),
                 0 8px 16px -3px rgba(0, 0, 0, 0.3),
                 inset 0 0 0 1px rgba(155, 110, 75, 0.35);
         }
         .wall-frame-champagne-bevel {
-            padding: clamp(9px, 1.6vw, 16px);
+            padding: var(--wall-mat-pad, clamp(9px, 1.6vw, 16px));
             background: linear-gradient(145deg, #FAF8F3, #EEE9DC);
-            border: clamp(7px, 1.2vw, 11px) solid #C7B28E;
+            border: var(--wall-frame-thick, clamp(7px, 1.2vw, 11px)) solid #C7B28E;
             box-shadow:
                 0 24px 42px -12px rgba(0, 0, 0, 0.46),
                 0 10px 20px -4px rgba(0, 0, 0, 0.28),
@@ -852,7 +908,7 @@
             <!-- Hanging Artwork + Selected Frame -->
             <div class="relative z-10 flex-1 w-full flex flex-col items-center justify-center my-auto py-1">
                 <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
-                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="max-h-[25vh] sm:max-h-[30vh] max-w-[58vw] sm:max-w-[38vw] w-auto h-auto object-contain block select-none">
+                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none transition-all duration-300" style="max-height: 28vh; max-width: 42vw;">
                 </div>
                 <!-- Subtle Dimension Scale Badge -->
                 <div id="wall-scale-pill" class="mt-2.5 px-3 py-0.5 rounded-full bg-black/55 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] border border-white/15">
@@ -956,38 +1012,24 @@
                     <div class="flex items-center gap-2">
                         <label for="wall-scale-slider" class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483]">Size:</label>
                         <input id="wall-scale-slider" type="range" min="60" max="130" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-24 sm:w-28 accent-[#D4B483] cursor-pointer">
+                        <button type="button" onclick="resetWallAutoScale()" title="Reset to True Physical Room Scale" class="px-2 py-0.5 rounded border border-white/20 text-[9px] uppercase tracking-wider text-[#FAF9F6]/75 hover:border-[#D4B483] hover:text-[#D4B483] transition-colors">
+                            True Size
+                        </button>
                     </div>
                 </div>
 
-                <!-- Row 3: 8 Curated Frame Styles -->
-                <div class="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-white/10">
-                    <span class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483] mr-1">Frames (8):</span>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-none', 'No Frame (Gallery Wrap)', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        No Frame
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-black-mat', 'Matte Black + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] bg-[#D4B483] text-[#12110F] font-medium transition-colors">
-                        Black + Mat
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-white-gallery', 'Gallery White + Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        White + Mat
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-teak-mat', 'Burmese Teak + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        Teak + Mat
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-gold-mat', 'Antique Gold + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        Antique Gold
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-champagne-bevel', 'Champagne Silver + Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        Champagne
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-oak-slim', 'Natural Oak Slim', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        Oak Slim
-                    </button>
-                    <button type="button" onclick="setWallPreviewFrame('wall-frame-walnut-floater', 'Dark Walnut Floater', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">
-                        Walnut Floater
-                    </button>
+                <!-- Row 3: 8 Curated Museum & Collector Frame Styles -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2 border-t border-white/10">
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-[#D4B483] mr-0.5">Frame (8):</span>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-none', 'No Frame (Gallery Wrap)', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">No Frame</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-black-mat', 'Matte Black + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] bg-[#D4B483] text-[#12110F] font-medium transition-colors">Black + Mat</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-white-gallery', 'Gallery White + Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">White + Mat</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-teak-mat', 'Burmese Teak + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">Teak + Mat</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-gold-mat', 'Antique Gold + Ivory Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">Antique Gold</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-champagne-bevel', 'Champagne Bevel + Mat', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">Champagne</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-oak-slim', 'Natural Oak Slim', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">Oak Slim</button>
+                    <button type="button" onclick="setWallPreviewFrame('wall-frame-walnut-floater', 'Walnut Floater', this)" class="wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors">Walnut Floater</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -1050,7 +1092,7 @@
                     <!-- Admin Status Banner -->
                     <div id="admin-publish-feedback" class="hidden p-4 rounded-2xl text-xs font-medium"></div>
 
-                    <!-- Admin Sub-Tabs: Artworks | Artists | Gallery About | Ambient Audio | Visitor Activity | Edit Log -->
+                    <!-- Admin Sub-Tabs -->
                     <div class="flex flex-wrap gap-2 border-b border-[#A69076]/20 dark:border-[#D4B483]/20 pb-3">
                         <button type="button" onclick="switchAdminTab('artworks')" id="admin-tab-btn-artworks" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]">
                             Artworks
@@ -1081,9 +1123,7 @@
 
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Artist *</label>
-                                    <select id="art-artist-select" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
-                                        <!-- Artist options populated via JS -->
-                                    </select>
+                                    <select id="art-artist-select" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]"></select>
                                 </div>
 
                                 <div>
@@ -1093,9 +1133,7 @@
 
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Category *</label>
-                                    <select id="art-category-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
-                                        <!-- Options populated by JS -->
-                                    </select>
+                                    <select id="art-category-select" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]"></select>
                                 </div>
 
                                 <div>
@@ -1144,7 +1182,7 @@
                                     </div>
                                     <div>
                                         <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Option B: Image URL or Local Filename</label>
-                                        <input id="art-url-input" type="text" placeholder="e.g., https://media.theartistsloftmm.art/... or my-painting.jpg" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
+                                        <input id="art-url-input" type="text" placeholder="e.g., https://media.theartistsloftmm.art/..." class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
                                     </div>
                                 </div>
 
@@ -1166,9 +1204,7 @@
 
                         <div>
                             <h4 class="font-serif text-xl mb-4">Current Collection (<span id="admin-total-count">0</span>)</h4>
-                            <div id="admin-artworks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Admin artwork cards populated via JS -->
-                            </div>
+                            <div id="admin-artworks-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                         </div>
                     </div>
 
@@ -1219,9 +1255,7 @@
 
                         <div>
                             <h4 class="font-serif text-xl mb-4">Represented Artists (<span id="admin-artists-count">0</span>)</h4>
-                            <div id="admin-artists-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Artist cards populated via JS -->
-                            </div>
+                            <div id="admin-artists-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                         </div>
                     </div>
 
@@ -1252,32 +1286,27 @@
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB: AMBIENT AUDIO (R2 + PLAYLIST + VOLUME) ==================== -->
+                    <!-- ==================== ADMIN TAB 4: AMBIENT AUDIO ==================== -->
                     <div id="admin-panel-audio" class="hidden space-y-6">
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-6">
                             <div class="flex flex-wrap items-center justify-between gap-3">
                                 <div>
                                     <h4 class="font-serif text-xl">Background Ambience Tracks &amp; Volume</h4>
-                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Upload MP3 files directly to Cloudflare R2 (<code>media.theartistsloftmm.art</code>), select tracks to play, or adjust background volume.</p>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Upload MP3 files directly to Cloudflare R2, select tracks to play, or adjust background volume.</p>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" onclick="previewNextRandomAmbience()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
-                                        Random Next
-                                    </button>
-                                </div>
+                                <button type="button" onclick="previewNextRandomAmbience()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
+                                    Random Next
+                                </button>
                             </div>
 
-                            <!-- Volume Slider & Playback Mode -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label for="admin-ambience-volume" class="text-[11px] uppercase tracking-wider text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 font-medium">Background Volume</label>
                                         <span id="admin-ambience-volume-label" class="text-xs font-medium text-[#9C8265] dark:text-[#D4B483]">7%</span>
                                     </div>
-                                    <input id="admin-ambience-volume" type="range" min="0" max="40" step="1" value="7"
-                                           oninput="setAmbienceVolumePercent(this.value)"
-                                           class="w-full accent-[#26231F] dark:accent-[#D4B483] cursor-pointer">
-                                    <p class="text-[11px] opacity-60 mt-1">Recommended: 5% – 15% for a subtle, non-intrusive gallery atmosphere.</p>
+                                    <input id="admin-ambience-volume" type="range" min="0" max="40" step="1" value="7" oninput="setAmbienceVolumePercent(this.value)" class="w-full accent-[#26231F] dark:accent-[#D4B483] cursor-pointer">
+                                    <p class="text-[11px] opacity-60 mt-1">Recommended: 5% – 15% for a subtle gallery atmosphere.</p>
                                 </div>
                                 <div class="flex flex-col justify-between">
                                     <span class="text-[11px] uppercase tracking-wider text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 font-medium mb-2">Rotation Mode</span>
@@ -1289,7 +1318,6 @@
                                 </div>
                             </div>
 
-                            <!-- Add New MP3 (Upload to R2 or Paste URL) -->
                             <form onsubmit="addAmbienceTrackFromAdmin(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Track Title (Optional)</label>
@@ -1311,17 +1339,14 @@
                                 </div>
                             </form>
 
-                            <!-- Playlist List (Select/Play, Enable/Disable, Delete) -->
                             <div>
                                 <h5 class="font-serif text-lg mb-3">Ambience Playlist (<span id="admin-audio-count">0</span>)</h5>
-                                <div id="admin-audio-tracks-list" class="space-y-3">
-                                    <!-- Populated via JS -->
-                                </div>
+                                <div id="admin-audio-tracks-list" class="space-y-3"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB 4: VISITOR ACTIVITY (30D + EMAIL REPORT) ==================== -->
+                    <!-- ==================== ADMIN TAB 5: VISITOR ACTIVITY ==================== -->
                     <div id="admin-panel-visitors" class="hidden space-y-6">
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm space-y-5">
                             <div class="flex flex-wrap items-center justify-between gap-3">
@@ -1339,7 +1364,6 @@
                                 </div>
                             </div>
 
-                            <!-- Top Viewed Artworks & Top Countries -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="p-4 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
                                     <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Top Viewed Artworks</span>
@@ -1355,7 +1379,6 @@
                                 </div>
                             </div>
 
-                            <!-- Recent Anonymous Visitor Log List -->
                             <div>
                                 <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] block mb-2">Recent Events</span>
                                 <div id="admin-visitor-logs-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
@@ -1365,7 +1388,7 @@
                         </div>
                     </div>
 
-                    <!-- ==================== ADMIN TAB 5: EDIT LOG (PERSISTENT D1) ==================== -->
+                    <!-- ==================== ADMIN TAB 6: EDIT LOG ==================== -->
                     <div id="admin-panel-logs" class="hidden space-y-5">
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
@@ -1382,9 +1405,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div id="admin-edit-logs-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                                <!-- Edit logs populated via JS -->
-                            </div>
+                            <div id="admin-edit-logs-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
                         </div>
                     </div>
 
@@ -1432,7 +1453,6 @@
                 playSoftGalleryChime('select');
             }
 
-            // 1. Primary: True View Transitions API Cross-Dissolve Morph (MS PowerPoint Morph style)
             if (typeof document.startViewTransition === 'function' &&
                 !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 isThemeMorphing = true;
@@ -1449,7 +1469,6 @@
                 }
             }
 
-            // 2. Fallback: Zero-Glitch Veil Cross-Dissolve for browsers without View Transitions API
             const veil = document.getElementById('theme-crossfade-veil');
             if (!veil) {
                 applyThemeMode(nextMode);
@@ -1807,58 +1826,6 @@
             }
         ];
 
-        // Graceful Preview Fallback Sample Artworks (used ONLY if /api/gallery backend is unavailable)
-        const PREVIEW_FALLBACK_ARTWORKS = [
-            {
-                id: 'preview-lotus-study-1',
-                artistId: 'mt-oung',
-                title: 'Sacred Lotus Study I',
-                category: 'Floral & Still Life',
-                medium: 'Oil on Canvas',
-                size: '36 × 48 in (91.4 × 121.9 cm)',
-                year: '2024',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: 'Price Upon Request',
-                image: '05582-mtoung3.jpg',
-                aspect: '3/4',
-                description: 'A contemplative study of lotus blossoms emerging in soft morning light, reflecting spiritual serenity and classical Myanmar brushwork.',
-                order: 1
-            },
-            {
-                id: 'preview-lotus-study-2',
-                artistId: 'mt-oung',
-                title: 'Tranquil Pond Reflections II',
-                category: 'Floral & Still Life',
-                medium: 'Oil on Canvas',
-                size: '30 × 40 in (76.2 × 101.6 cm)',
-                year: '2024',
-                provenance: 'Artist Studio, Yangon',
-                status: 'Available',
-                price: 'Price Upon Request',
-                image: '8899c-mtoung4.jpg',
-                aspect: '3/4',
-                description: 'Layered earth tones and luminous highlights evoke quiet stillness across water and petals.',
-                order: 2
-            },
-            {
-                id: 'preview-golden-heritage',
-                artistId: 'mt-oung',
-                title: 'Golden Dawn Over Old Yangon',
-                category: 'Landscapes',
-                medium: 'Oil on Canvas',
-                size: '36 × 36 in (91.4 × 91.4 cm)',
-                year: '2023',
-                provenance: 'Private Collection',
-                status: 'Sold',
-                price: '',
-                image: createArtPlaceholderDataURL('Golden Dawn Over Old Yangon', 'Landscapes', '3/4'),
-                aspect: '3/4',
-                description: 'Warm golden light illuminating heritage architecture and morning mist in Yangon.',
-                order: 3
-            }
-        ];
-
         // Default Gallery About Content
         const DEFAULT_GALLERY_ABOUT = {
             heading: "About The Artist's Loft",
@@ -2097,14 +2064,7 @@
             } catch (err) {
                 console.warn('Gallery API sync notice:', err);
                 isLoadingArtworks = false;
-                if (artworks.length === 0) {
-                    artworks = PREVIEW_FALLBACK_ARTWORKS.map(item => ({ ...item }));
-                }
-                updateCloudStatus(false, `Preview Mode (${err.message || 'D1 API offline'})`);
-                renderGalleryAboutSection();
-                renderArtistSelectorBar();
-                renderSelectedArtistProfile();
-                renderCategoryFilterBar();
+                updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
                 renderArtworksGrid();
             }
         }
@@ -2236,7 +2196,6 @@
                 <div class="w-36 h-44 sm:w-44 sm:h-52 md:w-48 md:h-60 rounded-2xl overflow-hidden bg-[#E7E0D2] dark:bg-[#24211D] flex-shrink-0 shadow-md border border-[#9C8265]/25 dark:border-[#D4B483]/25">
                     <img src="${safeImg}"
                          alt="${safeName}"
-                         decoding="async"
                          data-artist-name="${safeName}"
                          onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')"
                          class="w-full h-full object-cover block">
@@ -2414,6 +2373,116 @@
         let isWallFurnitureOn = true;
         let isWallArtSwitching = false;
 
+        // Parse real artwork physical dimensions (inches or cm) relative to a 64-inch (162 cm) credenza
+        function parseArtworkPhysicalDimensions(sizeStr, fallbackAspect = '3/4') {
+            const raw = String(sizeStr || '').trim();
+            const isLandscapeHint = fallbackAspect === '4/3';
+
+            // Try matching inches first: e.g., "36 x 48 in", "24 × 18 in", "60x48\""
+            const inMatch = raw.match(/(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)\s*(?:in\b|inch|inches|")/i);
+            // Try matching cm: e.g., "H 61cm x W 46cm", "91.4 × 121.9 cm"
+            const cmMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:cm)?\s*[x×*]\s*(\d+(?:\.\d+)?)\s*cm\b/i);
+
+            let dimA = null;
+            let dimB = null;
+            if (inMatch) {
+                dimA = parseFloat(inMatch[1]);
+                dimB = parseFloat(inMatch[2]);
+            } else if (cmMatch) {
+                dimA = parseFloat(cmMatch[1]) / 2.54;
+                dimB = parseFloat(cmMatch[2]) / 2.54;
+            } else {
+                const genericMatch = raw.match(/(\d+(?:\.\d+)?)\s*[x×*]\s*(\d+(?:\.\d+)?)/);
+                if (genericMatch) {
+                    const a = parseFloat(genericMatch[1]);
+                    const b = parseFloat(genericMatch[2]);
+                    // Values > 75 are usually cm
+                    if (Math.max(a, b) > 75) {
+                        dimA = a / 2.54;
+                        dimB = b / 2.54;
+                    } else {
+                        dimA = a;
+                        dimB = b;
+                    }
+                }
+            }
+
+            if (!dimA || !dimB || Number.isNaN(dimA) || Number.isNaN(dimB)) {
+                return { widthIn: 24, heightIn: 30, sizeTier: 'Medium' };
+            }
+
+            // Detect explicit H / W prefixes if present (e.g., "H 61cm x W 46cm")
+            const explicitH = raw.match(/H\s*(\d+(?:\.\d+)?)\s*(cm|in)?/i);
+            const explicitW = raw.match(/W\s*(\d+(?:\.\d+)?)\s*(cm|in)?/i);
+            let widthIn = isLandscapeHint ? Math.max(dimA, dimB) : Math.min(dimA, dimB);
+            let heightIn = isLandscapeHint ? Math.min(dimA, dimB) : Math.max(dimA, dimB);
+
+            if (explicitH && explicitW) {
+                const hVal = parseFloat(explicitH[1]);
+                const wVal = parseFloat(explicitW[1]);
+                const isCm = (explicitH[2] || explicitW[2] || '').toLowerCase() === 'cm' || Math.max(hVal, wVal) > 75;
+                heightIn = isCm ? hVal / 2.54 : hVal;
+                widthIn = isCm ? wVal / 2.54 : wVal;
+            }
+
+            const maxSide = Math.max(widthIn, heightIn);
+            let sizeTier = 'Medium';
+            if (maxSide >= 46) sizeTier = 'Monumental';
+            else if (maxSide >= 34) sizeTier = 'Large';
+            else if (maxSide <= 18) sizeTier = 'Intimate';
+
+            return { widthIn, heightIn, sizeTier };
+        }
+
+        function applyProportionalWallSizing(art, scalePct = 100) {
+            const unit = document.getElementById('wall-hanging-unit');
+            const imgEl = document.getElementById('wall-preview-img');
+            const pill = document.getElementById('wall-scale-pill');
+            if (!unit || !imgEl) return;
+
+            const { widthIn, heightIn, sizeTier } = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
+            const ratio = Math.max(60, Math.min(130, Number(scalePct) || 100)) / 100;
+
+            // Credenza width in stage is ~72% of stage width (~64 inches in real life)
+            // Large 60"+ paintings span almost the full credenza width; small 12"-16" works occupy ~20-26%
+            const credenzaRefInches = 64;
+            const widthFractionOfCredenza = Math.max(0.22, Math.min(0.98, (widthIn / credenzaRefInches) * ratio));
+            const targetMaxWidthVw = (widthFractionOfCredenza * 56).toFixed(1);
+
+            // Height scaling relative to wall clearance above credenza (~48 inches vertical clearance = 33vh)
+            const heightFractionOfWall = Math.max(0.32, Math.min(1.0, (heightIn / 48) * ratio));
+            const targetMaxHeightVh = (heightFractionOfWall * 33).toFixed(1);
+
+            imgEl.style.maxWidth = `${targetMaxWidthVw}vw`;
+            imgEl.style.maxHeight = `${targetMaxHeightVh}vh`;
+
+            // Inverse Frame & Matting Thickness:
+            // Large monumental works get sleek, thin museum frames; small intimate works get wider matting & thicker gallery frames
+            const maxDim = Math.max(widthIn, heightIn) * ratio;
+            const sizeNorm = Math.max(0, Math.min(1, (maxDim - 14) / 44)); // 0 = small (~14in), 1 = large (~58in)
+
+            const frameThickPx = Math.round(14 - (sizeNorm * 9));   // 14px for small -> 5px for large
+            const matPadPx = Math.round(22 - (sizeNorm * 16));      // 22px wide mat for small -> 6px narrow mat for large
+            const slimThickPx = Math.round(10 - (sizeNorm * 6));    // 10px for small -> 4px for large
+
+            unit.style.setProperty('--wall-frame-thick', `${frameThickPx}px`);
+            unit.style.setProperty('--wall-mat-pad', `${matPadPx}px`);
+            unit.style.setProperty('--wall-slim-thick', `${slimThickPx}px`);
+            unit.style.transform = 'none';
+
+            if (pill) {
+                const dimText = art && art.size ? `${art.size}` : `${Math.round(widthIn)} × ${Math.round(heightIn)} in`;
+                pill.textContent = `${sizeTier} Scale (${Math.round(ratio * 100)}%) • ${dimText}`;
+            }
+        }
+
+        function resetWallAutoScale() {
+            playSoftGalleryChime('select');
+            const slider = document.getElementById('wall-scale-slider');
+            if (slider) slider.value = '100';
+            setWallPreviewScale(100);
+        }
+
         function getWallPreviewArtworksList() {
             const visible = getVisibleLightboxArtworks();
             return visible.length > 0 ? visible : artworks;
@@ -2472,7 +2541,7 @@
                     inquireAboutArtworkWithFrame(art.title, artistName, currentWallFrameName);
                 };
             }
-            setWallPreviewScale(currentWallScalePct);
+            applyProportionalWallSizing(art, currentWallScalePct);
             renderWallArtworkThumbs();
         }
 
@@ -2574,7 +2643,10 @@
             currentWallFrameName = frameLabel;
             const unit = document.getElementById('wall-hanging-unit');
             if (unit) {
-                unit.className = `wall-hanging-unit ${frameClass} rounded-[2px] flex items-center justify-center`;
+                const litClass = wallSpotlightMode === 'off'
+                    ? 'is-unlit'
+                    : (wallSpotlightMode === 'neutral' ? 'is-lit-neutral' : 'is-lit-warm');
+                unit.className = `wall-hanging-unit ${frameClass} ${litClass} rounded-[2px] flex items-center justify-center`;
             }
 
             document.querySelectorAll('.wall-frame-btn').forEach(btn => {
@@ -2585,35 +2657,11 @@
             }
         }
 
-        function setWallPreviewFrame(frameClass, frameLabel, btnEl) {
-            playSoftGalleryChime('select');
-            currentWallFrameName = frameLabel;
-            const unit = document.getElementById('wall-hanging-unit');
-            if (unit) {
-                unit.className = `wall-hanging-unit ${frameClass} rounded-[2px] flex items-center justify-center`;
-            }
-
-            document.querySelectorAll('.wall-frame-btn').forEach(btn => {
-                btn.className = 'wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] border border-[#FAF9F6]/25 text-[#FAF9F6]/80 hover:border-[#D4B483] transition-colors';
-            });
-            if (btnEl) {
-                btnEl.className = 'wall-frame-btn px-2.5 py-1.5 rounded-full text-[10px] uppercase tracking-[0.15em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
-            }
-        }
-
         function setWallPreviewScale(pctValue) {
             currentWallScalePct = Math.max(60, Math.min(130, Number(pctValue) || 100));
-            const ratio = currentWallScalePct / 100;
-            const unit = document.getElementById('wall-hanging-unit');
-            const pill = document.getElementById('wall-scale-pill');
             const art = artworks.find(a => a.id === currentWallArtworkId);
-            const dimNote = art && art.size ? ` • Original: ${art.size}` : '';
-
-            if (unit) {
-                unit.style.transform = `scale(${ratio.toFixed(2)})`;
-            }
-            if (pill) {
-                pill.textContent = `Scale: ${currentWallScalePct}%${dimNote}`;
+            if (art) {
+                applyProportionalWallSizing(art, currentWallScalePct);
             }
         }
 
@@ -2624,11 +2672,18 @@
 
             const cone = document.getElementById('wall-spotlight-cone');
             const btn = document.getElementById('wall-spotlight-btn');
+            const unit = document.getElementById('wall-hanging-unit');
 
             if (cone) {
                 cone.classList.remove('is-neutral', 'is-off');
                 if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
                 if (wallSpotlightMode === 'off') cone.classList.add('is-off');
+            }
+            if (unit) {
+                unit.classList.remove('is-unlit', 'is-lit-warm', 'is-lit-neutral');
+                if (wallSpotlightMode === 'off') unit.classList.add('is-unlit');
+                else if (wallSpotlightMode === 'neutral') unit.classList.add('is-lit-neutral');
+                else unit.classList.add('is-lit-warm');
             }
             if (btn) {
                 const labels = {
