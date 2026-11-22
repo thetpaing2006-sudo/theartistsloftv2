@@ -6751,22 +6751,13 @@
  initVisitorCounter();
  trackVisitorEvent('page_view', 'home');
  loadCloudGallery(true);
+  if (hasSalonResetParam) {
+    const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
+      el => /private\s*salon/i.test(el.textContent || "")
+    );
+    if (salonTrigger) salonTrigger.click();
+  }
  </script>
- <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("salon-reset")) {
-      if (typeof switchTab === "function") {
-        switchTab("vip-salon");
-      } else {
-        const vipNavBtn = document.querySelector('[data-tab="vip-salon"], [onclick*="vip-salon"], [onclick*="vip"]');
-        if (vipNavBtn) vipNavBtn.click();
-      }
-      if (typeof setVipAuthMode === "function") {
-        setVipAuthMode("confirm-reset");
-      }
-    }
-  });
-</script>
+ 
 </body>
 </html>
