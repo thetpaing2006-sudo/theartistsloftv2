@@ -65,12 +65,27 @@ export async function onRequestPost({ request, env }) {
     const response = await fetch("https://api.resend.com/broadcasts", {
       method: "POST",
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ segment_id: env.RESEND_SEGMENT_ID, from: env.RESEND_FROM || "The Artist's Loft <concierge@theartistsloftmyanmar.com>", subject, html, text, send: true })
+      body: JSON.stringify({
+        segment_id: env.RESEND_SEGMENT_ID,
+        from: env.RESEND_FROM || "The Artist's Loft <concierge@theartistsloftmyanmar.com>",
+        subject,
+        html,
+        text
+      })
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      console.error("Resend broadcast failed", response.status, result.message || result.name || "unknown error");
+    if (!response.ok || !result.id) {
+      console.error("Resend broadcast creation failed", response.status, result.message || result.name || "unknown error");
       return jsonResponse({ ok: false, error: result.message || `Resend rejected the broadcast (${response.status}).` }, 502);
+    }
+    const sendRes = await fetch(`https://api.resend.com/broadcasts/${encodeURIComponent(result.id)}/send`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" }
+    });
+    const sendResult = await sendRes.json().catch(() => ({}));
+    if (!sendRes.ok) {
+      console.error("Resend broadcast send failed", sendRes.status, sendResult.message || sendResult.name || "unknown error");
+      return jsonResponse({ ok: false, error: sendResult.message || `Resend created the broadcast but failed to send (${sendRes.status}).` }, 502);
     }
     await env.DB.prepare("INSERT INTO salon_campaign_logs (id, broadcast_id, subject, recipient_count, sent_at) VALUES (?1, ?2, ?3, ?4, ?5)")
       .bind(randomHex(16), String(result.id || ""), subject, optedInCount, new Date().toISOString()).run();
