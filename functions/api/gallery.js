@@ -14,9 +14,13 @@ export async function onRequestGet({ env }) {
     const settings = {};
     for (const row of (settingsRes.results || [])) {
       try {
-        settings[row.key] = JSON.parse(row.value);
+        const value = JSON.parse(row.value);
+        // This setting historically included passcode hashes, member records, and private artwork pricing.
+        settings[row.key] = row.key === "vip_salon_data"
+          ? { vipArtworks: [], updatedAt: value?.updatedAt || null }
+          : value;
       } catch {
-        settings[row.key] = row.value;
+        settings[row.key] = row.key === "vip_salon_data" ? { vipArtworks: [] } : row.value;
       }
     }
 
