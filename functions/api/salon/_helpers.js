@@ -38,7 +38,7 @@ export async function passwordHash(passcode) {
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: 100000 }, key, 256);
   const saltHex = Array.from(salt, b => b.toString(16).padStart(2, "0")).join("");
   const hashHex = Array.from(new Uint8Array(bits), b => b.toString(16).padStart(2, "0")).join("");
-  return `pbkdf2-sha256$150000$${saltHex}$${hashHex}`;
+  return `pbkdf2-sha256$100000$${saltHex}$${hashHex}`;
 }
 
 export async function verifyPassword(stored, passcode, email) {
