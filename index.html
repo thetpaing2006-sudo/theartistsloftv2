@@ -6736,7 +6736,7 @@
  window.formatMyanmarTime = formatMyanmarTime;
 
  // Initial Render & Cloudflare D1 Startup
-  loadLocalSalonState();
+    loadLocalSalonState();
   loadSalonSession();
   const hasSalonResetParam =
     new URLSearchParams(window.location.search).has("salon-reset") ||
@@ -6748,8 +6748,11 @@
   renderCategoryFilterBar();
   renderArtworksGrid();
   renderSalonView();
-  if (!hasSalonResetParam && typeof setVipAuthMode === "function") {
-    setVipAuthMode("login");
+  if (!hasSalonResetParam) {
+    const loginTabBtn = Array.from(document.querySelectorAll("button")).find(
+      el => /^\s*member\s+login\s*$/i.test(el.textContent || "")
+    );
+    if (loginTabBtn) loginTabBtn.click();
   }
   updateSoundButtonUI();
   bindFirstInteractionAudioUnlock();
