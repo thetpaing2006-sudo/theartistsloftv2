@@ -1,26 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <title>The Artist's Loft — Curated Myanmar Fine Art</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        tailwind = {
-            config: {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
-                            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
-                        }
-                    }
-                }
-            }
-        };
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Primary SEO Meta Tags -->
 <meta name="description" content="The Artist's Loft is a curated Myanmar fine art gallery showcasing original paintings, portraits, landscapes, and contemporary works by Myanmar artists including MT. Oung.">
 <meta name="robots" content="index, follow">
@@ -47,9 +27,43 @@
   "@type": "ArtGallery",
   "name": "The Artist's Loft",
   "url": "https://theartistsloftmyanmar.com/",
-  "description": "Curated fine art gallery sharing original artworks by artists from Myanmar."
+  "description": "Curated fine art gallery sharing original artworks by artists from Myanmar.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Yangon",
+    "addressCountry": "MM"
+  }
 }
 </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Artist's Loft — Curated Myanmar Fine Art</title>
+
+    <!-- Dynamic Browser Tab Favicon -->
+    <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="Logo.jpg">
+    <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/jpeg" href="Logo.jpg">
+    <link id="dynamic-apple-icon" rel="apple-touch-icon" href="Logo.jpg">
+
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
 
     <style>
         /* Crisp High-DPI Artwork Rendering */
@@ -163,28 +177,41 @@
             transform: scaleY(0.35);
         }
 
-        /* Smooth Continuous Scroll-Driven Reveal & Zoom with Smooth Physics Transitions */
+        /* Restrained gallery presence on scroll; pointer movement creates the clear focal point. */
         .reveal-item {
-            opacity: 0.06;
-            transform: translate3d(0, 34px, 0) scale(0.84);
-            filter: blur(2.2px);
-            transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-                        opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 0.42s ease,
-                        box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-color 0.45s ease;
-            will-change: opacity, transform, filter;
+            opacity: 0.48;
+            transform: translate3d(0, 10px, 0) scale(1);
+            filter: blur(0.7px) saturate(0.82);
+            transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.34s ease,
+                        filter 0.34s ease,
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.55s ease;
+            will-change: transform, opacity, filter;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-item, .tilt-card, .tilt-card::after, .tilt-glare,
+            #wall-artwork-stage-layer, #wall-furniture-silhouette, .wall-hanging-unit, #wall-preview-img {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
         }
 
         /* Apple-Style Interactive 3D Tilt Card, Specular Glare & Light Sheen */
         .tilt-card {
             transform-style: preserve-3d;
             position: relative;
+            transform-origin: center;
+            transition: transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.55s ease;
         }
-        .tilt-card:hover {
-            box-shadow: 0 32px 64px -18px rgba(38, 35, 31, 0.28), 0 12px 28px -10px rgba(156, 130, 101, 0.34);
-            border-color: rgba(212, 180, 131, 0.8);
+        .tilt-card.is-pointer-lit, .tilt-card:focus-within {
+            box-shadow: 0 28px 54px -20px rgba(38, 35, 31, 0.3), 0 10px 24px -10px rgba(156, 130, 101, 0.32);
+            border-color: rgba(212, 180, 131, 0.85);
         }
+        .tilt-card:active { box-shadow: 0 12px 26px -14px rgba(38, 35, 31, 0.34); }
+        .tilt-card:focus-visible { outline: 2px solid #D4B483; outline-offset: 4px; }
         .tilt-glare {
             position: absolute;
             inset: 0;
@@ -206,9 +233,13 @@
             z-index: 21;
             border-radius: inherit;
         }
-        .tilt-card:hover::after {
+        .tilt-card.is-pointer-lit::after {
             transform: translateX(130%);
         }
+        .tilt-card.is-pointer-lit .artwork-card-image { transform: scale(1.04); }
+        .tilt-card.is-pointer-lit .artwork-card-overlay { opacity: 1; }
+        .tilt-card.is-pointer-lit .artwork-card-title { color: #9C8265; }
+        .dark .tilt-card.is-pointer-lit .artwork-card-title { color: #D4B483; }
 
         /* Smooth Section Fade */
         .page-section {
@@ -222,22 +253,25 @@
         /* Pronounced Gallery Lightbox Lift & Expand Transition (1.0s) */
         #lightbox-modal {
             opacity: 0;
-            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 0.82s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #lightbox-modal.is-open {
             opacity: 1;
         }
         #lightbox-img {
             opacity: 0;
-            transform: translateY(72px) scale(0.75);
-            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1),
-                        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+            transform: translateY(34px) scale(0.88);
+            filter: blur(10px);
+            transition: transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+                        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        filter 1.05s cubic-bezier(0.16, 1, 0.3, 1),
                         box-shadow 1s ease;
             will-change: transform, opacity;
         }
         #lightbox-modal.is-open #lightbox-img {
             opacity: 1;
             transform: translateY(0) scale(1);
+            filter: blur(0);
         }
         #lightbox-caption {
             opacity: 0;
@@ -338,7 +372,7 @@
         }
         .wall-canvas-stage {
             position: relative;
-            background-color: #F3EFE6;
+            background-color: #D6CFC4;
             background-image:
                 radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28) 0%, transparent 65%),
                 repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.014) 0px, rgba(0, 0, 0, 0.014) 1px, transparent 1px, transparent 3px),
@@ -352,41 +386,61 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
+            --spotlight-hotspot: rgba(255, 226, 173, 0.62);
+            --spotlight-halo: rgba(255, 207, 130, 0.24);
+            --spotlight-wash: rgba(255, 216, 160, 0.14);
+            --spotlight-source: rgba(255, 246, 219, 0.76);
+            --spotlight-beam: rgba(255, 223, 164, 0.17);
             background:
                 radial-gradient(
-                    ellipse 38% 54% at 50% 40%,
-                    rgba(255, 244, 214, 0.45) 0%,
-                    rgba(255, 240, 204, 0.28) 24%,
-                    rgba(255, 236, 194, 0.14) 44%,
-                    rgba(255, 232, 186, 0.04) 64%,
+                    ellipse 32% 48% at 50% 42%,
+                    var(--spotlight-hotspot) 0%,
+                    var(--spotlight-halo) 34%,
+                    var(--spotlight-wash) 66%,
                     transparent 100%
                 ),
-                radial-gradient(
-                    ellipse 18% 36% at 50% 6%,
-                    rgba(255, 248, 228, 0.36) 0%,
-                    rgba(255, 242, 212, 0.14) 48%,
-                    transparent 100%
-                );
-            transition: opacity 0.45s ease, background 0.45s ease;
+                radial-gradient(ellipse 19% 20% at 50% 7%, var(--spotlight-source) 0%, var(--spotlight-halo) 48%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 46% 60% at 50% 39%, #000 0%, rgba(0, 0, 0, 0.86) 48%, rgba(0, 0, 0, 0.36) 72%, transparent 100%);
+            mask-image: radial-gradient(ellipse 46% 60% at 50% 39%, #000 0%, rgba(0, 0, 0, 0.86) 48%, rgba(0, 0, 0, 0.36) 72%, transparent 100%);
+            opacity: var(--spotlight-strength, 0.85);
+            transform-origin: 50% 8%;
+            transition: opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 14;
-            mix-blend-mode: soft-light;
+            mix-blend-mode: screen;
+        }
+        .wall-spotlight-cone::before {
+            content: '';
+            position: absolute;
+            top: 4%;
+            left: 50%;
+            width: 64%;
+            height: 76%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 50% 0%, var(--spotlight-beam) 0%, rgba(255, 255, 255, 0.035) 44%, transparent 78%);
+            filter: blur(var(--spotlight-softness, 22px));
+            opacity: var(--spotlight-beam-opacity, 0.612);
+            transition: background 0.7s ease, opacity 0.7s ease;
+        }
+        .wall-spotlight-cone::after {
+            content: '';
+            position: absolute;
+            top: 1%;
+            left: 50%;
+            width: 11rem;
+            height: 3.5rem;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, var(--spotlight-source) 0%, var(--spotlight-halo) 42%, transparent 78%);
+            filter: blur(calc(var(--spotlight-softness, 22px) * 0.4));
+            opacity: var(--spotlight-bulb-opacity, 0.697);
+            transition: background 0.7s ease, opacity 0.7s ease;
         }
         .wall-spotlight-cone.is-neutral {
-            background:
-                radial-gradient(
-                    ellipse 39% 55% at 50% 40%,
-                    rgba(244, 249, 255, 0.48) 0%,
-                    rgba(238, 246, 255, 0.28) 24%,
-                    rgba(234, 243, 255, 0.14) 44%,
-                    rgba(230, 240, 255, 0.04) 64%,
-                    transparent 100%
-                ),
-                radial-gradient(
-                    ellipse 18% 36% at 50% 6%,
-                    rgba(246, 250, 255, 0.36) 0%,
-                    rgba(240, 246, 255, 0.14) 48%,
-                    transparent 100%
-                );
+            --spotlight-hotspot: rgba(229, 239, 250, 0.58);
+            --spotlight-halo: rgba(211, 229, 247, 0.23);
+            --spotlight-wash: rgba(221, 235, 249, 0.13);
+            --spotlight-source: rgba(247, 250, 255, 0.76);
+            --spotlight-beam: rgba(218, 233, 250, 0.16);
         }
         .wall-spotlight-cone.is-off {
             opacity: 0;
@@ -403,13 +457,22 @@
             z-index: 16;
             perspective: 1200px;
             transform-origin: 50% 48%;
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
+        }
+        #wall-preview-modal .wall-canvas-stage {
+            opacity: 0.86;
+            transform: scale(0.975) translateY(8px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #wall-preview-modal.is-open .wall-canvas-stage {
+            opacity: 1;
+            transform: scale(1) translateY(0);
         }
         #wall-furniture-silhouette {
             z-index: 10;
             transform-origin: 50% 100%;
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
             will-change: transform, opacity;
         }
         #wall-furniture-silhouette {
@@ -418,11 +481,31 @@
         .wall-hanging-unit {
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+            transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        padding 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.58s cubic-bezier(0.22, 1, 0.36, 1),
                         opacity 0.36s ease,
                         filter 0.45s ease,
                         box-shadow 0.45s ease;
-            will-change: transform, opacity, filter;
+            will-change: width, height, transform, opacity, filter;
+        }
+        #wall-preview-img {
+            transition: width 0.68s cubic-bezier(0.22, 1, 0.36, 1),
+                        height 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: width, height;
+            flex: 0 0 auto;
+            display: block;
+        }
+        #wall-furniture-silhouette {
+            flex-shrink: 0;
+        }
+        @media (max-width: 639px) {
+            .wall-hanging-unit, #wall-preview-img { transition-duration: 0.72s; }
+            .wall-hanging-unit {
+                transition-property: width, height, padding, border-width, transform, opacity, filter, box-shadow;
+            }
         }
         .wall-hanging-unit.is-unlit {
             filter: brightness(0.84) contrast(0.96);
@@ -506,14 +589,15 @@
         }
         .wall-frame-white-gallery {
             padding: var(--wall-mat-pad, clamp(8px, 1.5vw, 16px));
-            background: linear-gradient(145deg, #F6F1E6, #E4DCCB);
-            border: var(--wall-frame-thick, clamp(5px, 1vw, 12px)) solid #BEB29D;
+            /* Warm ivory mat separates clearly from the crisp white outer moulding. */
+            background: linear-gradient(145deg, #EEE9DF, #E3DDD2);
+            border: var(--wall-frame-thick, clamp(5px, 1vw, 12px)) solid #FAFAF8;
             box-shadow:
-                0 24px 42px -12px rgba(0, 0, 0, 0.46),
-                0 8px 16px -3px rgba(0, 0, 0, 0.25),
-                inset 0 2px 6px rgba(38, 35, 31, 0.22),
-                inset 0 0 0 1px rgba(120, 98, 72, 0.38),
-                0 0 0 1px rgba(255, 255, 255, 0.55);
+                0 24px 42px -12px rgba(0, 0, 0, 0.42),
+                0 8px 16px -4px rgba(0, 0, 0, 0.22),
+                inset 0 0 0 1px rgba(106, 91, 72, 0.2),
+                inset 0 2px 5px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(0, 0, 0, 0.12);
         }
         .wall-frame-walnut-floater {
             padding: var(--wall-floater-gap, 5px);
@@ -855,28 +939,24 @@
                 </svg>
             </button>
 
-            <!-- Unified Room Camera Rig (Artwork, Frame, Credenza, Props & Ceiling Track Move Together) -->
-            <div id="wall-room-camera-rig">
-                <!-- Subtle Ceiling Track Fixture Hint -->
-                <div class="relative z-20 flex items-center gap-1.5 opacity-60 pointer-events-none select-none mb-1">
-                    <div class="w-10 sm:w-12 h-1 rounded-full bg-black/60"></div>
-                    <div class="w-2.5 h-2.5 rounded-b-sm bg-black/85"></div>
-                    <div class="w-10 sm:w-12 h-1 rounded-full bg-black/60"></div>
-                </div>
+            <!-- Subtle Ceiling Track Fixture Hint -->
+            <div class="relative z-20 flex items-center gap-1.5 opacity-60 pointer-events-none select-none mb-1">
+                <div class="w-10 sm:w-12 h-1 rounded-full bg-black/60"></div>
+                <div class="w-2.5 h-2.5 rounded-b-sm bg-black/85"></div>
+                <div class="w-10 sm:w-12 h-1 rounded-full bg-black/60"></div>
+            </div>
 
-                <!-- Hanging Artwork + Selected Frame (Unified Assembly) -->
-                <div id="wall-artwork-stage-layer" class="relative flex-1 w-full flex flex-col items-center justify-center my-auto py-1 px-8 sm:px-14">
-                    <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
-                        <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none">
-                    </div>
-                    <!-- Subtle Dimension Scale Badge -->
-                    <div id="wall-scale-pill" class="mt-2 max-w-full truncate px-2.5 sm:px-3 py-0.5 rounded-full bg-black/65 backdrop-blur-sm text-[#FAF9F6] text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] border border-white/15">
-                        Scale: 100% • Standard Gallery Eye-Level
-                    </div>
+            <!-- Hanging Artwork + Selected Frame (Unified Assembly) -->
+            <div id="wall-artwork-stage-layer" class="relative flex-1 w-full flex flex-col items-center justify-center my-auto py-1 px-8 sm:px-14">
+                <div id="wall-hanging-unit" class="wall-hanging-unit wall-frame-black-mat rounded-[2px] flex items-center justify-center">
+                    <img id="wall-preview-img" src="" alt="Wall Preview Artwork" class="w-auto h-auto object-contain block select-none">
                 </div>
+            </div>
 
-                <!-- Complete Realistic Interior Furniture: Props, Full Walnut Credenza, Tapered Legs, Baseboard & Hardwood Floor -->
-                <div id="wall-furniture-silhouette" class="relative w-full flex flex-col items-center pointer-events-none select-none transition-opacity duration-300 mt-1">
+            <!-- Complete Realistic Interior Furniture: Props, Full Walnut Credenza, Tapered Legs, Baseboard & Hardwood Floor -->
+            <div id="wall-furniture-silhouette" class="relative w-full flex flex-col items-center pointer-events-none select-none transition-opacity duration-300 mt-1">
+                <div class="w-full max-w-4xl mx-auto flex flex-col items-center">
+                    <!-- Tabletop Props Row -->
                     <div class="w-[82%] sm:w-[56%] flex items-end justify-between px-2 sm:px-6 -mb-[1px]">
                         <!-- Left: Artisan Stoneware Vase with Dried Botanical Branches -->
                         <div class="flex flex-col items-center">
@@ -927,12 +1007,12 @@
                         <div class="flex-1 mx-3 sm:mx-4 bg-gradient-to-b from-black/35 to-transparent"></div>
                         <div class="w-1.5 sm:w-2.5 h-full bg-gradient-to-b from-[#3B2415] to-[#26160C] skew-x-[12deg] shadow-md"></div>
                     </div>
+                </div>
 
-                    <!-- Full-Width Wall Baseboard Trim & Hardwood Gallery Floor -->
-                    <div class="w-full h-2 bg-gradient-to-b from-white/25 to-black/20 border-t border-white/15"></div>
-                    <div class="w-full h-3 sm:h-5 bg-gradient-to-b from-[#3E3328] via-[#2F261E] to-[#1F1913] flex items-center justify-center border-t border-black/30">
-                        <div class="w-[76%] sm:w-[54%] h-1.5 sm:h-2 rounded-full bg-black/60 blur-[3px]"></div>
-                    </div>
+                <!-- Full-Width Wall Baseboard Trim & Hardwood Gallery Floor -->
+                <div class="w-full h-2 bg-gradient-to-b from-white/25 to-black/20 border-t border-white/15"></div>
+                <div class="w-full h-3 sm:h-5 bg-gradient-to-b from-[#3E3328] via-[#2F261E] to-[#1F1913] flex items-center justify-center border-t border-black/30">
+                    <div class="w-[76%] sm:w-[54%] h-1.5 sm:h-2 rounded-full bg-black/60 blur-[3px]"></div>
                 </div>
             </div>
         </div>
@@ -956,26 +1036,26 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-2.5">
                     <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span class="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#D4B483] mr-0.5">Wall (8):</span>
-                        <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
+                        <button type="button" onclick="setWallPreviewColor('#F3EFE6', 'Museum Warm White', this)" title="Museum Warm White" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#F3EFE6;"></button>
                         <button type="button" onclick="setWallPreviewColor('#E8DFCE', 'Linen Cream', this)" title="Linen Cream" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#E8DFCE;"></button>
-                        <button type="button" onclick="setWallPreviewColor('#D6CFC4', 'Soft Greige', this)" title="Soft Greige" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#D6CFC4;"></button>
+                        <button type="button" onclick="setWallPreviewColor('#D6CFC4', 'Soft Greige', this)" title="Soft Greige" class="wall-swatch-btn ring-2 ring-[#D4B483] ring-offset-2 ring-offset-[#1B1916] w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#D6CFC4;"></button>
                         <button type="button" onclick="setWallPreviewColor('#C7CFC4', 'Heritage Sage', this)" title="Heritage Sage" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C7CFC4;"></button>
                         <button type="button" onclick="setWallPreviewColor('#8A927E', 'Dusty Olive', this)" title="Dusty Olive" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#8A927E;"></button>
                         <button type="button" onclick="setWallPreviewColor('#C88F77', 'Terracotta Clay', this)" title="Terracotta Clay" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#C88F77;"></button>
                         <button type="button" onclick="setWallPreviewColor('#2B3038', 'Midnight Slate', this)" title="Midnight Slate" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#2B3038;"></button>
                         <button type="button" onclick="setWallPreviewColor('#191A1D', 'Deep Charcoal', this)" title="Deep Charcoal" class="wall-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-white/30 transition-transform hover:scale-110" style="background-color:#191A1D;"></button>
-                        <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/75 ml-1 hidden lg:inline">Museum Warm White</span>
+                        <span id="wall-color-name" class="text-[11px] text-[#FAF9F6]/75 ml-1 hidden lg:inline">Soft Greige</span>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 sm:gap-4">
                         <div class="flex items-center gap-1.5">
                             <label for="wall-ambient-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Light:</label>
-                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="100" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
-                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">100%</span>
+                            <input id="wall-ambient-slider" type="range" min="5" max="115" step="5" value="65" oninput="setWallRoomBrightness(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <span id="wall-ambient-label" class="text-[10px] text-[#FAF9F6]/75 w-7">65%</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <label for="wall-scale-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Size:</label>
-                            <input id="wall-scale-slider" type="range" min="50" max="180" step="5" value="100" oninput="setWallPreviewScale(this.value)" class="w-16 sm:w-24 accent-[#D4B483] cursor-pointer">
+                            <input id="wall-scale-slider" type="range" min="60" max="220" step="5" value="100" oninput="setWallPreviewScale(this.value)" aria-label="Room and artwork zoom, 60 to 220 percent" class="w-20 sm:w-28 accent-[#D4B483] cursor-pointer">
                             <button type="button" onclick="resetWallAutoScale()" title="Reset to True Physical Room Scale" class="px-2 py-0.5 rounded border border-white/20 text-[9px] uppercase tracking-wider text-[#FAF9F6]/75 hover:border-[#D4B483] hover:text-[#D4B483] transition-colors">
                                 True Size
                             </button>
@@ -1067,6 +1147,9 @@
                         </button>
                         <button type="button" onclick="switchAdminTab('gallery')" id="admin-tab-btn-gallery" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Gallery About
+                        </button>
+                        <button type="button" onclick="switchAdminTab('experience')" id="admin-tab-btn-experience" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
+                            Experience
                         </button>
                         <button type="button" onclick="switchAdminTab('backdrop')" id="admin-tab-btn-backdrop" class="admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]">
                             Backdrop &amp; Layout
@@ -1241,7 +1324,7 @@
                         <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 shadow-sm">
                             <h4 class="font-serif text-xl mb-2">Edit Gallery About Page</h4>
                             <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60 mb-5">Customize the story and curatorial vision displayed on the About page.</p>
-                            <form id="admin-about-form" onsubmit="saveGalleryAboutFromAdmin(event)" class="space-y-4">
+                            <form onsubmit="saveGalleryAboutFromAdmin(event)" class="space-y-4">
                                 <div>
                                     <label class="block text-[11px] uppercase tracking-wider text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 mb-1.5">Heading</label>
                                     <input id="about-heading-input" type="text" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm outline-none focus:border-[#2C2C2C]">
@@ -1260,6 +1343,36 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- ==================== ADMIN TAB: GALLERY EXPERIENCE ==================== -->
+                    <div id="admin-panel-experience" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-6">
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                                <div><h4 class="font-serif text-xl mb-2">Gallery Viewing Experience</h4>
+                                    <p class="text-xs text-[#2C2C2C]/60 dark:text-[#EDE7DA]/60">Tune Preview on Wall, artwork scroll presence, and the soft spotlight. Saved to gallery settings.</p></div>
+                                <button type="button" onclick="resetGalleryExperienceAdmin()" class="px-4 py-2 rounded-xl border border-[#A69076]/50 text-xs uppercase tracking-wider hover:bg-[#A69076] hover:text-white">Restore Recommended</button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="space-y-2"><label for="experience-wall-color" class="block text-[11px] uppercase tracking-wider">Default Preview Wall</label>
+                                    <div class="flex items-center gap-3"><input id="experience-wall-color" type="color" value="#D6CFC4" aria-label="Choose default wall color" onchange="previewGalleryExperienceSettings()" class="h-11 w-14 cursor-pointer rounded-lg border border-[#A69076]/40 bg-transparent p-1">
+                                        <div class="text-xs"><span id="experience-wall-hex" class="block font-medium">#D6CFC4</span><span id="experience-wall-preset-name" class="opacity-60">Soft Greige</span></div></div></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-room-light" class="text-[11px] uppercase tracking-wider">Room Light Default</label><span id="experience-room-light-label" class="text-xs font-medium">65%</span></div>
+                                    <input id="experience-room-light" type="range" min="30" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"><p class="text-[11px] opacity-60 mt-1">Recommended: 65% for warm, controlled gallery ambience.</p></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-scroll-min" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Minimum</label><span id="experience-scroll-min-label" class="text-xs font-medium">42%</span></div>
+                                    <input id="experience-scroll-min" type="range" min="0" max="65" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-scroll-max" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Maximum</label><span id="experience-scroll-max-label" class="text-xs font-medium">72%</span></div>
+                                    <input id="experience-scroll-max" type="range" min="55" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-spotlight-intensity" class="text-[11px] uppercase tracking-wider">Spotlight Intensity</label><span id="experience-spotlight-intensity-label" class="text-xs font-medium">85%</span></div>
+                                    <input id="experience-spotlight-intensity" type="range" min="25" max="100" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                                <div><div class="flex justify-between mb-2"><label for="experience-spotlight-softness" class="text-[11px] uppercase tracking-wider">Spotlight Feather / Softness</label><span id="experience-spotlight-softness-label" class="text-xs font-medium">22 px</span></div>
+                                    <input id="experience-spotlight-softness" type="range" min="8" max="36" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-[#A69076]/20 pt-4">
+                                <p id="experience-save-status" aria-live="polite" class="text-xs opacity-70">Recommended: Soft Greige · 65% room light · 42–72% scroll opacity.</p>
+                                <button type="button" id="save-experience-btn" onclick="saveGalleryExperienceFromAdmin()" class="px-7 py-3 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs uppercase tracking-[0.18em] font-medium disabled:opacity-50">Save Experience Settings</button>
+                            </div>
                         </div>
                     </div>
 
@@ -1493,33 +1606,17 @@
     <audio id="gallery-bg-audio" preload="none"></audio>
 
     <script>
-        (function ensureTailwindLoaded() {
-            const hasTw = Array.from(document.scripts).some(s => (s.src || '').includes('tailwindcss'));
-            if (!hasTw) {
-                const cfg = document.createElement('script');
-                cfg.textContent = `tailwind = { config: { darkMode: 'class', theme: { extend: { fontFamily: { serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'], sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] } } } } };`;
-                document.head.appendChild(cfg);
-                const twScript = document.createElement('script');
-                twScript.src = 'https://cdn.tailwindcss.com';
-                document.head.appendChild(twScript);
-            }
-        })();
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-        const footerYearEl = document.getElementById('footer-year');
-        if (footerYearEl) footerYearEl.textContent = String(new Date().getFullYear());
-
+        // Theme Mode (Light Warm Parchment / Midnight Gallery Dark)
         function applyThemeMode(mode) {
             const isDark = mode === 'dark';
             document.documentElement.classList.toggle('dark', isDark);
-            try {
-                localStorage.setItem('tal_theme_mode', isDark ? 'dark' : 'light');
-            } catch (e) {}
-
+            try { localStorage.setItem('tal_theme_mode', isDark ? 'dark' : 'light'); } catch (e) {}
             const iconEl = document.getElementById('theme-toggle-icon');
             const labelEl = document.getElementById('theme-toggle-label');
             if (iconEl) iconEl.textContent = isDark ? '☀' : '☾';
             if (labelEl) labelEl.textContent = isDark ? 'Light' : 'Dark';
-
             if (typeof applyGlobalBackdropConfig === 'function') {
                 applyGlobalBackdropConfig();
             }
@@ -2198,6 +2295,10 @@
                 }
 
                 if (data.settings && typeof data.settings === 'object') {
+                    if (data.settings.gallery_experience && typeof data.settings.gallery_experience === 'object') {
+                        galleryExperience = normalizeGalleryExperience(data.settings.gallery_experience);
+                        applyGalleryExperienceSettings();
+                    }
                     if (data.settings.gallery_about && typeof data.settings.gallery_about === 'object') {
                         galleryAbout = {
                             ...DEFAULT_GALLERY_ABOUT,
@@ -2237,6 +2338,7 @@
                     renderAdminArtistsList();
                     populateGalleryAboutAdminForm();
                     populateBackdropAdminUI();
+                    populateExperienceAdminUI();
                     renderAdminAudioManager();
                 }
             } catch (err) {
@@ -2507,8 +2609,8 @@
                                  data-category="${safeCat}"
                                  data-aspect="${safeAspect}"
                                  onerror="handleCardImageError(this)"
-                                 class="w-full h-full object-contain block drop-shadow-sm transition-transform duration-1000 ease-out group-hover:scale-[1.04]">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#26231F]/18 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                 class="artwork-card-image w-full h-full object-contain block drop-shadow-sm transition-transform duration-1000 ease-out">
+                            <div class="artwork-card-overlay absolute inset-0 bg-gradient-to-t from-[#26231F]/18 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none"></div>
                             <div class="absolute top-3.5 right-3.5 px-3 py-1 rounded-full bg-[#26231F]/80 backdrop-blur-sm text-[#FAF9F6] text-[10px] uppercase tracking-[0.2em] flex items-center gap-1.5 z-10">
                                 <span class="w-2 h-2 rounded-full ${dotClass}"></span>
                                 <span>${statusLabel}</span>
@@ -2517,7 +2619,7 @@
                         <div class="p-6 flex-1 flex flex-col justify-between border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 bg-[#FAF7F0]/95 dark:bg-[#1B1916]/95">
                             <div>
                                 <span class="block text-[10px] uppercase tracking-[0.26em] text-[#9C8265] dark:text-[#D4B483] mb-1.5">${safeCat}</span>
-                                <h3 class="font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 group-hover:text-[#9C8265] dark:group-hover:text-[#D4B483] transition-colors">${safeTitle}</h3>
+                                <h3 class="artwork-card-title font-serif text-xl text-[#26231F] dark:text-[#EDE7DA] mb-1 transition-colors">${safeTitle}</h3>
                                 <p class="text-xs text-[#26231F]/60 dark:text-[#EDE7DA]/60 mb-3">${placardMeta}</p>
                                 ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2 mb-4">${safeDesc}</p>` : ''}
                             </div>
@@ -2547,10 +2649,29 @@
 
         // ==================== INTERACTIVE WALL & FRAME PREVIEW STUDIO LOGIC ====================
         let currentWallArtworkId = null;
-        let currentWallColorName = 'Museum Warm White';
+        const WALL_COLOR_PRESETS = [
+            { name: 'Museum Warm White', hex: '#F3EFE6' },
+            { name: 'Linen Cream', hex: '#E8DFCE' },
+            { name: 'Soft Greige', hex: '#D6CFC4' },
+            { name: 'Heritage Sage', hex: '#C7CFC4' },
+            { name: 'Dusty Olive', hex: '#8A927E' },
+            { name: 'Terracotta Clay', hex: '#C88F77' },
+            { name: 'Midnight Slate', hex: '#2B3038' },
+            { name: 'Deep Charcoal', hex: '#191A1D' }
+        ];
+        const DEFAULT_GALLERY_EXPERIENCE = {
+            defaultWallColor: '#D6CFC4',
+            roomBrightness: 65,
+            scrollOpacityMin: 42,
+            scrollOpacityMax: 72,
+            spotlightIntensity: 85,
+            spotlightSoftness: 22
+        };
+        let galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
+        let currentWallColorName = 'Soft Greige';
         let currentWallFrameName = 'Matte Black + Ivory Mat';
         let currentWallScalePct = 100;
-        let currentWallRoomBrightnessPct = 100;
+        let currentWallRoomBrightnessPct = 65;
         let isWallArtSwitching = false;
         let wallSpotlightMode = 'warm';
         let isWallFurnitureOn = true;
@@ -2714,6 +2835,10 @@
             const slider = document.getElementById('wall-scale-slider');
             if (slider) slider.value = '100';
             currentWallScalePct = 100;
+            applyWallPreviewDefaultColor();
+            const lightSlider = document.getElementById('wall-ambient-slider');
+            if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
+            setWallRoomBrightness(galleryExperience.roomBrightness);
 
             populateWallPreviewContent(art);
 
@@ -2807,6 +2932,58 @@
             }
         }
 
+        function applyWallPreviewDefaultColor() {
+            const rawColor = String(galleryExperience.defaultWallColor || DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const preset = WALL_COLOR_PRESETS.find(item => item.name === rawColor || item.hex.toLowerCase() === rawColor.toLowerCase());
+            const hexColor = preset ? preset.hex : (/^#[0-9a-f]{6}$/i.test(rawColor) ? rawColor : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const colorName = preset ? preset.name : 'Custom Wall';
+            currentWallColorName = colorName;
+            const stage = document.getElementById('wall-canvas-stage');
+            const label = document.getElementById('wall-color-name');
+            if (stage) stage.style.backgroundColor = hexColor;
+            if (label) label.textContent = colorName;
+            document.querySelectorAll('.wall-swatch-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]'));
+            const selected = preset && Array.from(document.querySelectorAll('.wall-swatch-btn')).find(btn => btn.title === preset.name);
+            if (selected) selected.classList.add('ring-2', 'ring-[#D4B483]', 'ring-offset-2', 'ring-offset-[#1B1916]');
+        }
+
+        function normalizeGalleryExperience(input = {}) {
+            const rawWallColor = String(input.defaultWallColor ?? DEFAULT_GALLERY_EXPERIENCE.defaultWallColor).trim();
+            const matchedPreset = WALL_COLOR_PRESETS.find(item => item.name === rawWallColor || item.hex.toLowerCase() === rawWallColor.toLowerCase());
+            const wallColor = matchedPreset ? matchedPreset.hex : (/^#[0-9a-f]{6}$/i.test(rawWallColor) ? rawWallColor.toUpperCase() : DEFAULT_GALLERY_EXPERIENCE.defaultWallColor);
+            const minValue = Number(input.scrollOpacityMin);
+            const minOpacity = Math.max(0, Math.min(65, Number.isFinite(minValue) ? minValue : DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMin));
+            let maxOpacity = Math.max(55, Math.min(90, Number(input.scrollOpacityMax) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMax));
+            if (maxOpacity <= minOpacity) maxOpacity = Math.min(90, minOpacity + 10);
+            return {
+                defaultWallColor: wallColor,
+                roomBrightness: Math.max(30, Math.min(90, Number(input.roomBrightness) || DEFAULT_GALLERY_EXPERIENCE.roomBrightness)),
+                scrollOpacityMin: minOpacity,
+                scrollOpacityMax: maxOpacity,
+                spotlightIntensity: Math.max(25, Math.min(100, Number(input.spotlightIntensity) || DEFAULT_GALLERY_EXPERIENCE.spotlightIntensity)),
+                spotlightSoftness: Math.max(8, Math.min(36, Number(input.spotlightSoftness) || DEFAULT_GALLERY_EXPERIENCE.spotlightSoftness))
+            };
+        }
+
+        function applyGalleryExperienceSettings() {
+            galleryExperience = normalizeGalleryExperience(galleryExperience);
+            currentWallRoomBrightnessPct = galleryExperience.roomBrightness;
+            applyWallPreviewDefaultColor();
+            const lightSlider = document.getElementById('wall-ambient-slider');
+            if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
+            const lightLabel = document.getElementById('wall-ambient-label');
+            if (lightLabel) lightLabel.textContent = `${galleryExperience.roomBrightness}%`;
+            const cone = document.getElementById('wall-spotlight-cone');
+            if (cone) {
+                const strength = galleryExperience.spotlightIntensity / 100;
+                cone.style.setProperty('--spotlight-softness', `${galleryExperience.spotlightSoftness}px`);
+                cone.style.setProperty('--spotlight-beam-opacity', (0.72 * strength).toFixed(3));
+                cone.style.setProperty('--spotlight-bulb-opacity', (0.82 * strength).toFixed(3));
+                cone.style.setProperty('--spotlight-strength', strength.toFixed(3));
+            }
+            requestGalleryScrollUpdate();
+        }
+
         function setWallPreviewFrame(frameClass, frameLabel, btnEl) {
             playSoftGalleryChime('select');
             currentWallFrameName = frameLabel;
@@ -2824,10 +3001,12 @@
             if (btnEl) {
                 btnEl.className = 'wall-frame-btn px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] bg-[#D4B483] text-[#12110F] font-medium transition-colors';
             }
+            const currentArt = artworks.find(a => a.id === currentWallArtworkId);
+            if (currentArt) applyProportionalWallSizing(currentArt, currentWallScalePct);
         }
 
         function setWallPreviewScale(pctValue) {
-            currentWallScalePct = Math.max(50, Math.min(180, Number(pctValue) || 100));
+            currentWallScalePct = Math.max(60, Math.min(220, Number(pctValue) || 100));
             const art = artworks.find(a => a.id === currentWallArtworkId);
             if (art) {
                 applyProportionalWallSizing(art, currentWallScalePct);
@@ -2843,7 +3022,7 @@
             if (label) label.textContent = `${pct}%`;
             if (dimmer) {
                 if (pct < 100) {
-                    const darkness = ((100 - pct) / 95) * 0.90;
+                    const darkness = ((100 - pct) / 100) * 0.58;
                     dimmer.style.backgroundColor = `rgba(6, 5, 5, ${darkness.toFixed(3)})`;
                 } else if (pct > 100) {
                     const daylight = ((pct - 100) / 15) * 0.14;
@@ -2904,14 +3083,15 @@
             const pillEl = document.getElementById('wall-scale-pill');
             const stageEl = document.getElementById('wall-canvas-stage');
             const credenzaEl = document.getElementById('wall-credenza-ref');
-            const cameraRig = document.getElementById('wall-room-camera-rig');
+            const stageLayer = document.getElementById('wall-artwork-stage-layer');
+            const furnitureEl = document.getElementById('wall-furniture-silhouette');
             const spotlightEl = document.getElementById('wall-spotlight-cone');
             if (!unit || !imgEl) return;
 
             const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
-            const factor = Math.max(0.5, Math.min(1.8, (Number(scalePct) || 100) / 100));
+            const factor = Math.max(0.6, Math.min(2.2, (Number(scalePct) || 100) / 100));
 
-            // Keep artwork & frame at true 1:1 physical scale (vs 64" credenza), and zoom the unified room camera rig smoothly
+            // Keep artwork & frame at true 1:1 physical scale (vs 64" credenza), and apply user Size zoom across the room environment
             const baseStageW = stageEl?.clientWidth || Math.min(window.innerWidth - 24, 1152);
             const baseCredenzaPx = (credenzaEl && credenzaEl.offsetWidth > 100)
                 ? credenzaEl.offsetWidth
@@ -2950,14 +3130,26 @@
             imgEl.style.maxWidth = 'none';
             imgEl.style.maxHeight = 'none';
 
-            // Move the entire room assembly together as one cohesive camera dolly/zoom
-            if (cameraRig) {
-                cameraRig.style.transform = `scale(${factor.toFixed(3)})`;
+            // Camera dolly: the artwork advances most, while furniture and light beam move at
+            // progressively gentler rates so the whole room remains readable and the spotlight stays present.
+            if (stageLayer) {
+                const artLift = (factor - 1) * -7;
+                stageLayer.style.transform = `translate3d(0, ${artLift.toFixed(1)}px, 0) scale(${factor.toFixed(3)})`;
+            }
+            if (furnitureEl) {
+                const roomScale = 1 + ((factor - 1) * 0.56);
+                const roomLift = (factor - 1) * 4;
+                furnitureEl.style.transform = `translate3d(0, ${roomLift.toFixed(1)}px, 0) scale(${roomScale.toFixed(3)})`;
             }
             if (spotlightEl) {
-                const beamScale = 1 + ((factor - 1) * 0.65);
+                const beamScale = 1 + ((factor - 1) * 0.76);
                 spotlightEl.style.transform = `scale(${beamScale.toFixed(3)})`;
-                spotlightEl.style.transformOrigin = '50% 38%';
+            }
+            if (stageEl) {
+                const textureScale = Math.max(1, factor);
+                const grain = Math.max(3, 3 * textureScale);
+                stageEl.style.backgroundSize = `100% 100%, ${grain}px ${grain}px, ${grain}px ${grain}px`;
+                stageEl.style.backgroundPosition = 'center, center, center';
             }
 
             // Inverse frame & mat thickness: larger artworks use sleek slim frames; smaller works use richer frames/mats
@@ -2975,6 +3167,14 @@
             unit.style.setProperty('--wall-mat-pad', `${matPadPx}px`);
             unit.style.setProperty('--wall-slim-thick', `${slimThickPx}px`);
             unit.style.setProperty('--wall-floater-gap', `${floaterGapPx}px`);
+            const noFrame = unit.classList.contains('wall-frame-none');
+            const floaterFrame = unit.classList.contains('wall-frame-oak-slim') || unit.classList.contains('wall-frame-walnut-floater');
+            const framePadding = noFrame ? 0 : (floaterFrame ? floaterGapPx : matPadPx);
+            const frameBorder = noFrame ? 0 : (floaterFrame ? slimThickPx : frameThickPx);
+            const horizontalFrame = 2 * (framePadding + frameBorder);
+            const verticalFrame = 2 * (framePadding + frameBorder);
+            unit.style.width = `${Math.round(targetW + horizontalFrame)}px`;
+            unit.style.height = `${Math.round(targetH + verticalFrame)}px`;
 
             if (pillEl) {
                 const sizeText = art?.size ? ` • ${art.size}` : '';
@@ -3213,7 +3413,7 @@
         // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
         function switchAdminTab(tabName) {
             playSoftGalleryChime('select');
-            ['artworks', 'artists', 'gallery', 'backdrop', 'audio', 'visitors', 'logs'].forEach(t => {
+            ['artworks', 'artists', 'gallery', 'experience', 'backdrop', 'audio', 'visitors', 'logs'].forEach(t => {
                 const panel = document.getElementById('admin-panel-' + t);
                 const btn = document.getElementById('admin-tab-btn-' + t);
                 const isSelected = t === tabName;
@@ -3226,6 +3426,7 @@
             });
             if (tabName === 'gallery') populateGalleryAboutAdminForm();
             if (tabName === 'backdrop') populateBackdropAdminUI();
+            if (tabName === 'experience') populateExperienceAdminUI();
             if (tabName === 'audio') renderAdminAudioManager();
             if (tabName === 'artists') renderAdminArtistsList();
             if (tabName === 'visitors') loadVisitorActivityFromCloud();
@@ -3330,88 +3531,142 @@
                 ]);
                 showAdminDashboard();
             } catch (err) {
-                errorEl.textContent = err.message || 'Unable to connect to Cloudflare API.';
-                errorEl.classList.remove('hidden');
-            } finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Unlock Console';
+                console.warn('Gallery API sync notice:', err);
+                const isPreviewHost = window.location.protocol === 'blob:' ||
+                    window.location.protocol === 'about:' ||
+                    /usercontent|scf\.usercontent|claudeusercontent|webcontainer|stackblitz|localhost|127\.0\.0\.1/i.test(window.location.hostname || '');
+
+                if (isPreviewHost && artworks.length === 0) {
+                    artworks = PREVIEW_SAMPLE_ARTWORKS.map(item => ({ ...item }));
+                    isLoadingArtworks = false;
+                    updateCloudStatus(false, 'Preview Mode • Sample Artworks Active');
+                    renderArtistSelectorBar();
+                    renderSelectedArtistProfile();
+                    renderCategoryFilterBar();
+                    renderArtworksGrid();
+                    return;
+                }
+
+                isLoadingArtworks = false;
+                updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
+                renderArtworksGrid();
+            }
+        }
+
+        function populateExperienceAdminUI() {
+            const colorInput = document.getElementById('experience-wall-color');
+            if (!colorInput) return;
+            const values = normalizeGalleryExperience(galleryExperience);
+            colorInput.value = values.defaultWallColor;
+            const fields = {
+                'experience-room-light': values.roomBrightness,
+                'experience-scroll-min': values.scrollOpacityMin,
+                'experience-scroll-max': values.scrollOpacityMax,
+                'experience-spotlight-intensity': values.spotlightIntensity,
+                'experience-spotlight-softness': values.spotlightSoftness
+            };
+            Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = String(value); });
+            previewGalleryExperienceSettings();
+        }
+
+        function readGalleryExperienceAdminForm() {
+            return normalizeGalleryExperience({
+                defaultWallColor: document.getElementById('experience-wall-color')?.value,
+                roomBrightness: document.getElementById('experience-room-light')?.value,
+                scrollOpacityMin: document.getElementById('experience-scroll-min')?.value,
+                scrollOpacityMax: document.getElementById('experience-scroll-max')?.value,
+                spotlightIntensity: document.getElementById('experience-spotlight-intensity')?.value,
+                spotlightSoftness: document.getElementById('experience-spotlight-softness')?.value
+            });
+        }
+
+        function previewGalleryExperienceSettings() {
+            const next = readGalleryExperienceAdminForm();
+            const preset = WALL_COLOR_PRESETS.find(p => p.hex.toLowerCase() === next.defaultWallColor.toLowerCase());
+            const chosenColor = next.defaultWallColor;
+            const colorName = preset ? preset.name : 'Custom Wall';
+            const hex = document.getElementById('experience-wall-hex');
+            const presetName = document.getElementById('experience-wall-preset-name');
+            if (hex) hex.textContent = chosenColor;
+            if (presetName) presetName.textContent = colorName;
+            const labels = {
+                'experience-room-light-label': `${next.roomBrightness}%`,
+                'experience-scroll-min-label': `${next.scrollOpacityMin}%`,
+                'experience-scroll-max-label': `${next.scrollOpacityMax}%`,
+                'experience-spotlight-intensity-label': `${next.spotlightIntensity}%`,
+                'experience-spotlight-softness-label': `${next.spotlightSoftness} px`
+            };
+            Object.entries(labels).forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
+            const status = document.getElementById('experience-save-status');
+            if (status) status.textContent = `Preview: ${colorName} ${chosenColor} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
+            // Preview the actual wall and lighting while the modal is open; retain settings as unsaved until Save is pressed.
+            const stage = document.getElementById('wall-canvas-stage');
+            const wallLabel = document.getElementById('wall-color-name');
+            const modal = document.getElementById('wall-preview-modal');
+            if (stage && modal && !modal.classList.contains('hidden')) {
+                stage.style.backgroundColor = chosenColor;
+                if (wallLabel) wallLabel.textContent = colorName;
+                setWallRoomBrightness(next.roomBrightness);
+                const cone = document.getElementById('wall-spotlight-cone');
+                if (cone) {
+                    const strength = next.spotlightIntensity / 100;
+                    cone.style.setProperty('--spotlight-softness', `${next.spotlightSoftness}px`);
+                    cone.style.setProperty('--spotlight-beam-opacity', (0.72 * strength).toFixed(3));
+                    cone.style.setProperty('--spotlight-bulb-opacity', (0.82 * strength).toFixed(3));
+                    cone.style.setProperty('--spotlight-strength', strength.toFixed(3));
                 }
             }
+            requestGalleryScrollUpdate();
+            return next;
         }
 
-        // ==================== ADMIN DASHBOARD, ARTWORKS & ARTISTS CRUD ====================
+        function resetGalleryExperienceAdmin() {
+            galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
+            populateExperienceAdminUI();
+            const status = document.getElementById('experience-save-status');
+            if (status) status.textContent = 'Recommended values restored in the form. Save to persist them.';
+        }
+
+        async function saveGalleryExperienceFromAdmin() {
+            const button = document.getElementById('save-experience-btn');
+            const status = document.getElementById('experience-save-status');
+            if (button) { button.disabled = true; button.textContent = 'Saving…'; }
+            try {
+                const next = readGalleryExperienceAdminForm();
+                const res = await fetch(API_ENDPOINTS.settings, {
+                    method: 'POST',
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ key: 'gallery_experience', value: next })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.ok) throw new Error(data.error || `Settings save failed (${res.status})`);
+                galleryExperience = next;
+                applyGalleryExperienceSettings();
+                if (status) status.textContent = 'Experience settings saved.';
+                await recordEditLog('Updated', 'Gallery Experience', 'Viewing defaults', `Wall: ${next.defaultWallColor}; room light: ${next.roomBrightness}%; scroll opacity ${next.scrollOpacityMin}–${next.scrollOpacityMax}%; spotlight ${next.spotlightIntensity}% / ${next.spotlightSoftness}px`);
+            } catch (err) {
+                if (status) status.textContent = `Could not save: ${err.message || 'Please try again.'}`;
+            } finally {
+                if (button) { button.disabled = false; button.textContent = 'Save Experience Settings'; }
+            }
+        }
+
         function showAdminDashboard() {
-            document.getElementById('admin-login-view')?.classList.add('hidden');
-            document.getElementById('admin-dashboard-view')?.classList.remove('hidden');
+            document.getElementById('admin-login-view').classList.add('hidden');
+            document.getElementById('admin-dashboard-view').classList.remove('hidden');
             populateAdminArtistDropdown();
             populateAdminCategoryDropdown();
-            updateComputedSizePreview();
             renderAdminArtworksList();
             renderAdminArtistsList();
+            renderAdminEditLogsList();
             populateGalleryAboutAdminForm();
             populateBackdropAdminUI();
+            populateExperienceAdminUI();
             renderAdminAudioManager();
-            renderAdminEditLogsList();
-        }
-
-        function populateAdminArtistDropdown(selectedId = null) {
-            const select = document.getElementById('art-artist-select');
-            if (!select) return;
-            const currentVal = selectedId || select.value || activeArtistId || (artists[0]?.id || 'mt-oung');
-            select.innerHTML = artists.map(a =>
-                `<option value="${escapeHTML(a.id)}">${escapeHTML(a.name)}</option>`
-            ).join('');
-            if (Array.from(select.options).some(o => o.value === currentVal)) {
-                select.value = currentVal;
-            }
-        }
-
-        function populateAdminCategoryDropdown(selectedCat = null) {
-            const select = document.getElementById('art-category-select');
-            if (!select) return;
-            const artistId = document.getElementById('art-artist-select')?.value || activeArtistId;
-            const artistWorks = getArtistArtworks(artistId);
-            const existingCats = [...new Set(artistWorks.map(w => w.category).filter(Boolean))];
-            const defaultCats = ['Landscapes', 'Sacred Art', 'Portraits', 'Figurative', 'Fine Art'];
-            const allCats = [...new Set([...existingCats, ...defaultCats])];
-
-            select.innerHTML = allCats.map(c =>
-                `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`
-            ).join('');
-
-            if (selectedCat && allCats.includes(selectedCat)) {
-                select.value = selectedCat;
-            }
-        }
-
-        function formatDimensionsFromInches(heightIn, widthIn) {
-            const hIn = parseFloat(heightIn);
-            const wIn = parseFloat(widthIn);
-            if (!Number.isFinite(hIn) || !Number.isFinite(wIn) || hIn <= 0 || wIn <= 0) {
-                return '';
-            }
-            const cleanIn = (n) => Number.isInteger(n) ? String(n) : String(Math.round(n * 10) / 10);
-            const cleanCm = (n) => String(Math.round(n * 2.54 * 10) / 10);
-            return `${cleanIn(hIn)} × ${cleanIn(wIn)} in (${cleanCm(hIn)} × ${cleanCm(wIn)} cm)`;
-        }
-
-        function updateComputedSizePreview() {
-            const hVal = document.getElementById('art-height-in-input')?.value;
-            const wVal = document.getElementById('art-width-in-input')?.value;
-            const previewEl = document.getElementById('art-computed-size-preview');
-            if (!previewEl) return;
-
-            const formatted = formatDimensionsFromInches(hVal, wVal);
-            if (formatted) {
-                previewEl.textContent = `Saved Format (H × W): ${formatted}`;
-            } else {
-                previewEl.textContent = 'Enter height & width in inches (H × W cm auto-calculated)';
-            }
         }
 
         async function uploadFileToR2(file, folder = 'artworks') {
-            const compressed = await compressImageFile(file, 1400, 0.85);
+            const compressed = await compressImageFile(file, folder === 'artists' ? 768 : 1280, folder === 'artists' ? 0.84 : 0.82);
             const formData = new FormData();
             formData.append('file', compressed.file);
             formData.append('folder', folder);
@@ -3421,108 +3676,204 @@
                 headers: getAdminAuthHeaders(),
                 body: formData
             });
+
             const data = await res.json().catch(() => ({}));
             if (!res.ok || !data.ok || !data.url) {
-                throw new Error(data.error || `Image upload failed (${res.status})`);
+                throw new Error(data.error || `R2 upload failed (${res.status})`);
             }
-            const cleanUrl = String(data.url).trim().replace(
-                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
-                'https://media.theartistsloftmm.art'
-            );
-            return { url: cleanUrl, aspect: compressed.aspect };
+
+            return { url: data.url, key: data.key, aspect: compressed.aspect };
+        }
+
+        function populateAdminArtistDropdown(selectedArtistId = '') {
+            const select = document.getElementById('art-artist-select');
+            if (!select) return;
+            const targetId = selectedArtistId || activeArtistId;
+            select.innerHTML = artists.map(a => {
+                const isSelected = a.id === targetId ? 'selected' : '';
+                return `<option value="${escapeHTML(a.id)}" ${isSelected}>${escapeHTML(a.name)}</option>`;
+            }).join('');
+        }
+
+        function populateAdminCategoryDropdown(selectedCat = '') {
+            const select = document.getElementById('art-category-select');
+            if (!select) return;
+            const defaultCats = ['Sacred Art', 'Floral & Still Life', 'Landscapes', 'Portraits'];
+            const allCats = new Set(defaultCats);
+            artworks.forEach(a => {
+                if (a.category) allCats.add(a.category);
+            });
+
+            select.innerHTML = Array.from(allCats).map(cat => {
+                const isSelected = cat === selectedCat ? 'selected' : '';
+                return `<option value="${escapeHTML(cat)}" ${isSelected}>${escapeHTML(cat)}</option>`;
+            }).join('');
+        }
+
+        function renderAdminArtworksList() {
+            const list = document.getElementById('admin-artworks-list');
+            const totalCount = document.getElementById('admin-total-count');
+            if (totalCount) totalCount.textContent = artworks.length;
+            if (!list) return;
+
+            list.innerHTML = artworks.map(art => {
+                const isSold = (art.status || 'Available').toLowerCase() === 'sold' || (art.status || '').toLowerCase() === 'collected';
+                const dotClass = isSold ? 'bg-red-500' : 'bg-emerald-500';
+                const statusInfo = isSold ? 'Collected' : (escapeHTML(art.price) || 'Available');
+                const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
+                const artistName = artist ? escapeHTML(artist.name) : 'MT. Oung';
+                const metaLine = [art.medium || 'Oil on Canvas', art.size, statusInfo].filter(Boolean).join(' • ');
+
+                return `
+                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <img src="${escapeHTML(art.image)}"
+                                 alt="${escapeHTML(art.title)}"
+                                 data-title="${escapeHTML(art.title)}"
+                                 data-category="${escapeHTML(art.category)}"
+                                 data-aspect="${escapeHTML(art.aspect || '3/4')}"
+                                 onerror="handleCardImageError(this)"
+                                 class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
+                            <div class="min-w-0">
+                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${artistName} • ${escapeHTML(art.category)}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full ${dotClass} flex-shrink-0"></span>
+                                    <h5 class="font-serif text-base truncate">${escapeHTML(art.title)}</h5>
+                                </div>
+                                <span class="text-[11px] opacity-60 block truncate">${escapeHTML(metaLine)}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button type="button" onclick="editArtworkInAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
+                                Edit
+                            </button>
+                            <button type="button" onclick="deleteArtworkFromAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatArtworkDimensionsFromInches(heightInVal, widthInVal) {
+            const h = parseFloat(heightInVal);
+            const w = parseFloat(widthInVal);
+            if (!Number.isFinite(h) || !Number.isFinite(w) || h <= 0 || w <= 0) return '';
+            const hInStr = Number.isInteger(h) ? String(h) : h.toFixed(1).replace(/\.0$/, '');
+            const wInStr = Number.isInteger(w) ? String(w) : w.toFixed(1).replace(/\.0$/, '');
+            const hCmStr = (h * 2.54).toFixed(1).replace(/\.0$/, '');
+            const wCmStr = (w * 2.54).toFixed(1).replace(/\.0$/, '');
+            return `${hInStr} × ${wInStr} in (${hCmStr} × ${wCmStr} cm)`;
+        }
+
+        function updateComputedSizePreview() {
+            const hInput = document.getElementById('art-height-in-input');
+            const wInput = document.getElementById('art-width-in-input');
+            const previewEl = document.getElementById('art-computed-size-preview');
+            if (!hInput || !wInput || !previewEl) return;
+            const formatted = formatArtworkDimensionsFromInches(hInput.value, wInput.value);
+            previewEl.textContent = formatted
+                ? `Saved Format (H × W): ${formatted}`
+                : 'Enter height & width in inches (H × W cm auto-calculated)';
         }
 
         async function saveArtworkFromAdmin(event) {
             event.preventDefault();
-            const saveBtn = document.getElementById('save-artwork-btn');
-            const editId = document.getElementById('edit-artwork-id')?.value.trim() || '';
-            const artistId = document.getElementById('art-artist-select')?.value || 'mt-oung';
-            const title = document.getElementById('art-title-input')?.value.trim() || '';
-            const newCat = document.getElementById('art-new-category-input')?.value.trim() || '';
-            const selectedCat = document.getElementById('art-category-select')?.value || 'Fine Art';
-            const category = newCat || selectedCat;
-            const medium = document.getElementById('art-medium-input')?.value.trim() || 'Oil on Canvas';
-            const heightIn = parseFloat(document.getElementById('art-height-in-input')?.value);
-            const widthIn = parseFloat(document.getElementById('art-width-in-input')?.value);
-            const year = document.getElementById('art-year-input')?.value.trim() || '';
-            const provenance = document.getElementById('art-provenance-input')?.value.trim() || '';
-            const status = document.getElementById('art-status-select')?.value || 'Available';
-            const price = document.getElementById('art-price-input')?.value.trim() || '';
-            const fileInput = document.getElementById('art-file-input');
-            const urlInput = document.getElementById('art-url-input');
-            const description = document.getElementById('art-desc-input')?.value.trim() || '';
-
-            if (!title) {
-                showAdminFeedback('Please enter an artwork title.', true);
-                return;
-            }
-            if (!Number.isFinite(heightIn) || !Number.isFinite(widthIn) || heightIn <= 0 || widthIn <= 0) {
-                showAdminFeedback('Please enter valid Height (in) and Width (in).', true);
-                return;
-            }
-
-            const dimensionsStr = formatDimensionsFromInches(heightIn, widthIn);
-            const existingArt = editId ? artworks.find(a => a.id === editId) : null;
-            let imageUrl = (urlInput?.value.trim() || existingArt?.image || '').replace(
-                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
-                'https://media.theartistsloftmm.art'
-            );
-            let aspect = widthIn > heightIn ? '4/3' : '3/4';
-
-            if (saveBtn) {
-                saveBtn.disabled = true;
-                saveBtn.textContent = fileInput?.files?.[0] ? 'Uploading to R2...' : 'Saving to D1...';
-            }
+            const submitBtn = document.getElementById('save-artwork-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading & Saving...';
 
             try {
-                if (fileInput && fileInput.files && fileInput.files[0]) {
+                const editId = document.getElementById('edit-artwork-id').value;
+                const artistId = document.getElementById('art-artist-select').value || activeArtistId;
+                const artistObj = artists.find(a => a.id === artistId);
+                const artistName = artistObj ? artistObj.name : '';
+                const title = document.getElementById('art-title-input').value.trim();
+                const selectedCat = document.getElementById('art-category-select').value;
+                const newCat = document.getElementById('art-new-category-input').value.trim();
+                const category = newCat !== '' ? newCat : selectedCat;
+                const medium = document.getElementById('art-medium-input').value.trim() || 'Oil on Canvas';
+                const heightInRaw = document.getElementById('art-height-in-input').value;
+                const widthInRaw = document.getElementById('art-width-in-input').value;
+                const size = formatArtworkDimensionsFromInches(heightInRaw, widthInRaw);
+                if (!size) {
+                    throw new Error('Please enter valid Height (in) and Width (in) in inches.');
+                }
+                const year = document.getElementById('art-year-input').value.trim();
+                const provenance = document.getElementById('art-provenance-input').value.trim();
+                const status = document.getElementById('art-status-select').value || 'Available';
+                const price = document.getElementById('art-price-input').value.trim();
+                const description = document.getElementById('art-desc-input').value.trim();
+                const urlInput = document.getElementById('art-url-input').value.trim();
+                const fileInput = document.getElementById('art-file-input');
+
+                let imageSrc = urlInput;
+                let aspect = parseFloat(widthInRaw) > parseFloat(heightInRaw) ? '4/3' : '3/4';
+
+                if (fileInput.files && fileInput.files[0]) {
+                    submitBtn.textContent = 'Uploading to R2...';
                     const uploaded = await uploadFileToR2(fileInput.files[0], 'artworks');
-                    imageUrl = uploaded.url;
-                    aspect = uploaded.aspect || aspect;
+                    imageSrc = uploaded.url;
+                    aspect = uploaded.aspect;
+                } else if (!imageSrc && editId) {
+                    const existing = artworks.find(a => a.id === editId);
+                    if (existing) {
+                        imageSrc = existing.image;
+                        aspect = existing.aspect || aspect;
+                    }
+                } else if (!imageSrc) {
+                    imageSrc = createArtPlaceholderDataURL(title, category, aspect);
                 }
 
-                if (!imageUrl) {
-                    imageUrl = createArtPlaceholderDataURL(title, category, aspect);
-                }
+                const docId = editId || ('art-' + Date.now());
+                const existingArt = artworks.find(a => a.id === docId);
+                const minOrder = artworks.reduce((min, item) => Math.min(min, typeof item.order === 'number' ? item.order : 0), 0);
+                const sortOrder = existingArt ? (typeof existingArt.order === 'number' ? existingArt.order : 0) : (minOrder - 1);
 
-                const payload = {
-                    id: editId || ('art-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6)),
-                    artist_id: artistId,
-                    title,
-                    category,
-                    medium,
-                    dimensions: dimensionsStr,
-                    year,
-                    provenance,
-                    status,
-                    price,
-                    image_url: imageUrl,
-                    description,
-                    sort_order: existingArt ? (existingArt.order ?? 0) : artworks.length
-                };
-
-                const method = editId ? 'PUT' : 'POST';
+                submitBtn.textContent = 'Saving to D1...';
                 const res = await fetch(API_ENDPOINTS.artworks, {
-                    method,
+                    method: 'POST',
                     headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({
+                        id: docId,
+                        title,
+                        artist_id: artistId,
+                        artist_name: artistName,
+                        category,
+                        medium,
+                        dimensions: size,
+                        year,
+                        price,
+                        status,
+                        image_url: imageSrc,
+                        description,
+                        sort_order: sortOrder
+                    })
                 });
+
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || `Artwork save failed (${res.status})`);
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `D1 save failed (${res.status})`);
                 }
 
                 await loadCloudGallery(false);
+                await recordEditLog(
+                    editId ? 'Updated' : 'Added',
+                    'Artwork',
+                    title,
+                    `${category} • ${medium} • ${size} (${status})`
+                );
+
+                showAdminFeedback(`"${title}" (${size}) saved to Cloudflare D1 & R2!`);
                 resetAdminForm();
-                showAdminFeedback(editId ? `Updated "${title}" in Cloudflare D1!` : `Published "${title}" to Cloudflare D1!`);
-                await recordEditLog(editId ? 'Updated' : 'Added', 'Artwork', title, `${dimensionsStr} • ${category}`);
+                populateAdminCategoryDropdown();
             } catch (err) {
-                showAdminFeedback('Save failed: ' + (err.message || 'Check ADMIN_API_TOKEN & D1 binding.'), true);
+                console.error('Error publishing artwork:', err);
+                showAdminFeedback('Save failed: ' + (err.message || 'Check ADMIN_API_TOKEN & Bindings.'), true);
             } finally {
-                if (saveBtn) {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = editId ? 'Update Artwork in D1' : 'Publish to Live Gallery';
-                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publish to Live Gallery';
             }
         }
 
@@ -3530,265 +3881,76 @@
             const art = artworks.find(a => a.id === id);
             if (!art) return;
 
-            switchAdminTab('artworks');
-            const editIdInput = document.getElementById('edit-artwork-id');
-            const headingEl = document.getElementById('admin-form-heading');
-            const cancelBtn = document.getElementById('cancel-edit-btn');
-            const saveBtn = document.getElementById('save-artwork-btn');
-
-            if (editIdInput) editIdInput.value = art.id;
-            if (headingEl) headingEl.textContent = `Edit Artwork: ${art.title}`;
-            if (cancelBtn) cancelBtn.classList.remove('hidden');
-            if (saveBtn) saveBtn.textContent = 'Update Artwork in D1';
-
+            document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
+            document.getElementById('edit-artwork-id').value = art.id;
             populateAdminArtistDropdown(art.artistId || 'mt-oung');
-            populateAdminCategoryDropdown(art.category || 'Fine Art');
+            document.getElementById('art-title-input').value = art.title || '';
+            populateAdminCategoryDropdown(art.category);
+            document.getElementById('art-new-category-input').value = '';
+            document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
 
-            const titleInput = document.getElementById('art-title-input');
-            const newCatInput = document.getElementById('art-new-category-input');
-            const mediumInput = document.getElementById('art-medium-input');
+            const parsedDims = parseArtworkPhysicalDimensions(art.size, art.aspect || '3/4');
             const hInput = document.getElementById('art-height-in-input');
             const wInput = document.getElementById('art-width-in-input');
-            const yearInput = document.getElementById('art-year-input');
-            const provInput = document.getElementById('art-provenance-input');
-            const statusSelect = document.getElementById('art-status-select');
-            const priceInput = document.getElementById('art-price-input');
-            const urlInput = document.getElementById('art-url-input');
-            const descInput = document.getElementById('art-desc-input');
-
-            if (titleInput) titleInput.value = art.title || '';
-            if (newCatInput) newCatInput.value = '';
-            if (mediumInput) mediumInput.value = art.medium || 'Oil on Canvas';
-
-            const parsed = parseArtworkPhysicalDimensions(art.size, art.aspect || '3/4');
-            if (hInput) hInput.value = String(Math.round(parsed.heightIn * 10) / 10);
-            if (wInput) wInput.value = String(Math.round(parsed.widthIn * 10) / 10);
+            if (hInput) hInput.value = art.size ? String(Math.round(parsedDims.heightIn * 10) / 10) : '';
+            if (wInput) wInput.value = art.size ? String(Math.round(parsedDims.widthIn * 10) / 10) : '';
             updateComputedSizePreview();
 
-            if (yearInput) yearInput.value = art.year || '';
-            if (provInput) provInput.value = art.provenance || '';
-            if (statusSelect) statusSelect.value = (art.status || 'Available').toLowerCase() === 'sold' ? 'Sold' : 'Available';
-            if (priceInput) priceInput.value = art.price || '';
-            if (urlInput) urlInput.value = art.image || '';
-            if (descInput) descInput.value = art.description || '';
+            document.getElementById('art-year-input').value = art.year || '';
+            document.getElementById('art-provenance-input').value = art.provenance || '';
+            document.getElementById('art-status-select').value = art.status || 'Available';
+            document.getElementById('art-price-input').value = art.price || '';
+            const currentImg = String(art.image || '');
+            document.getElementById('art-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('art-desc-input').value = art.description || '';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
 
-            document.getElementById('admin-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const formContainer = document.getElementById('admin-form-container');
+            if (formContainer) {
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
         }
 
         function resetAdminForm() {
-            const form = document.getElementById('admin-artwork-form');
-            if (form) form.reset();
-            const editIdInput = document.getElementById('edit-artwork-id');
-            const headingEl = document.getElementById('admin-form-heading');
-            const cancelBtn = document.getElementById('cancel-edit-btn');
-            const saveBtn = document.getElementById('save-artwork-btn');
-            const fileStatus = document.getElementById('art-file-status');
-
-            if (editIdInput) editIdInput.value = '';
-            if (headingEl) headingEl.textContent = 'Add New Artwork';
-            if (cancelBtn) cancelBtn.classList.add('hidden');
-            if (saveBtn) saveBtn.textContent = 'Publish to Live Gallery';
-            if (fileStatus) fileStatus.classList.add('hidden');
-
-            populateAdminArtistDropdown();
-            populateAdminCategoryDropdown();
+            document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
+            document.getElementById('admin-artwork-form').reset();
+            document.getElementById('edit-artwork-id').value = '';
+            document.getElementById('art-medium-input').value = 'Oil on Canvas';
+            document.getElementById('art-status-select').value = 'Available';
             updateComputedSizePreview();
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            document.getElementById('save-artwork-btn').textContent = 'Publish to Live Gallery';
+            const statusEl = document.getElementById('art-file-status');
+            if (statusEl) statusEl.classList.add('hidden');
         }
 
         async function deleteArtworkFromAdmin(id) {
-            const art = artworks.find(a => a.id === id);
-            const title = art?.title || id;
-
+            const target = artworks.find(a => a.id === id);
             try {
                 const res = await fetch(`${API_ENDPOINTS.artworks}?id=${encodeURIComponent(id)}`, {
                     method: 'DELETE',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ id })
+                    headers: getAdminAuthHeaders()
                 });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
+                if (!res.ok || !data.ok) {
                     throw new Error(data.error || `Delete failed (${res.status})`);
                 }
+
                 await loadCloudGallery(false);
-                showAdminFeedback(`Deleted "${title}" from Cloudflare D1.`);
-                await recordEditLog('Deleted', 'Artwork', title, 'Removed from gallery collection');
+                showAdminFeedback(`Deleted "${target?.title || 'Artwork'}" from D1.`);
+                if (target) {
+                    await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
+                }
             } catch (err) {
+                console.error('Delete failed:', err);
                 showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
             }
         }
 
-        function renderAdminArtworksList() {
-            const list = document.getElementById('admin-artworks-list');
-            const countEl = document.getElementById('admin-total-count');
-            if (countEl) countEl.textContent = artworks.length;
-            if (!list) return;
-
-            if (artworks.length === 0) {
-                list.innerHTML = `<p class="col-span-full text-xs opacity-60 py-6 text-center">No artworks in D1 yet. Use the form above to add one.</p>`;
-                return;
-            }
-
-            list.innerHTML = artworks.map(art => {
-                const safeId = escapeHTML(art.id);
-                const safeTitle = escapeHTML(art.title);
-                const safeCat = escapeHTML(art.category || 'Fine Art');
-                const safeSize = escapeHTML(art.size || '');
-                const safeImg = escapeHTML(art.image);
-                const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
-                const artistLabel = escapeHTML(artist?.name || art.artistId || 'MT. Oung');
-
-                return `
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/25 flex items-center gap-3.5">
-                        <img src="${safeImg}" alt="${safeTitle}" data-title="${safeTitle}" onerror="handleCardImageError(this)" class="w-16 h-20 rounded-xl object-cover bg-[#E7E0D2] flex-shrink-0">
-                        <div class="flex-1 min-w-0">
-                            <span class="text-[10px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483] block">${artistLabel} • ${safeCat}</span>
-                            <h5 class="font-serif text-base truncate">${safeTitle}</h5>
-                            ${safeSize ? `<p class="text-[11px] opacity-65 truncate">${safeSize}</p>` : ''}
-                            <div class="mt-2 flex items-center gap-2">
-                                <button type="button" onclick="editArtworkInAdmin('${safeId}')" class="px-3 py-1 rounded-lg border border-[#A69076]/45 text-[11px] hover:bg-[#A69076] hover:text-white transition-colors">Edit</button>
-                                <button type="button" onclick="deleteArtworkFromAdmin('${safeId}')" class="px-3 py-1 rounded-lg border border-red-200 text-red-600 text-[11px] hover:bg-red-50 transition-colors">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function saveArtistFromAdmin(event) {
-            event.preventDefault();
-            const saveBtn = document.getElementById('save-artist-btn');
-            const editId = document.getElementById('edit-artist-id')?.value.trim() || '';
-            const name = document.getElementById('artist-name-input')?.value.trim() || '';
-            const subtitle = document.getElementById('artist-subtitle-input')?.value.trim() || '';
-            const bio = document.getElementById('artist-bio-input')?.value.trim() || '';
-            const fileInput = document.getElementById('artist-file-input');
-            const urlInput = document.getElementById('artist-url-input');
-
-            if (!name || !bio) {
-                showAdminFeedback('Please enter both Artist Name and Biography.', true);
-                return;
-            }
-
-            const existingArtist = editId ? artists.find(a => a.id === editId) : null;
-            let portraitUrl = (urlInput?.value.trim() || existingArtist?.image || 'artist.jpg').replace(
-                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
-                'https://media.theartistsloftmm.art'
-            );
-
-            if (saveBtn) {
-                saveBtn.disabled = true;
-                saveBtn.textContent = 'Saving Artist...';
-            }
-
-            try {
-                if (fileInput && fileInput.files && fileInput.files[0]) {
-                    const uploaded = await uploadFileToR2(fileInput.files[0], 'artists');
-                    portraitUrl = uploaded.url;
-                }
-
-                const slugId = editId || (
-                    name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') ||
-                    ('artist-' + Date.now())
-                );
-                const combinedBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
-
-                const payload = {
-                    id: slugId,
-                    name,
-                    subtitle,
-                    bio: combinedBio,
-                    portrait_url: portraitUrl,
-                    sort_order: existingArtist ? (existingArtist.order ?? artists.length + 1) : artists.length + 1
-                };
-
-                const method = editId ? 'PUT' : 'POST';
-                const res = await fetch(API_ENDPOINTS.artists, {
-                    method,
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || `Artist save failed (${res.status})`);
-                }
-
-                activeArtistId = slugId;
-                await loadCloudGallery(false);
-                resetArtistForm();
-                showAdminFeedback(`Saved artist profile for "${name}"!`);
-                await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle || 'Artist profile');
-            } catch (err) {
-                showAdminFeedback('Artist save failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
-            } finally {
-                if (saveBtn) {
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Save Artist Profile';
-                }
-            }
-        }
-
-        function editArtistInAdmin(id) {
-            const artist = artists.find(a => a.id === id);
-            if (!artist) return;
-            switchAdminTab('artists');
-            const editIdInput = document.getElementById('edit-artist-id');
-            const headingEl = document.getElementById('admin-artist-form-heading');
-            const cancelBtn = document.getElementById('cancel-artist-edit-btn');
-            if (editIdInput) editIdInput.value = artist.id;
-            if (headingEl) headingEl.textContent = `Edit Artist: ${artist.name}`;
-            if (cancelBtn) cancelBtn.classList.remove('hidden');
-
-            const nameIn = document.getElementById('artist-name-input');
-            const subIn = document.getElementById('artist-subtitle-input');
-            const urlIn = document.getElementById('artist-url-input');
-            const bioIn = document.getElementById('artist-bio-input');
-            if (nameIn) nameIn.value = artist.name || '';
-            if (subIn) subIn.value = artist.subtitle || '';
-            if (urlIn) urlIn.value = artist.image || '';
-            if (bioIn) bioIn.value = artist.bio || '';
-            document.getElementById('admin-artist-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function resetArtistForm() {
-            const form = document.getElementById('admin-artist-form');
-            if (form) form.reset();
-            const editIdInput = document.getElementById('edit-artist-id');
-            const headingEl = document.getElementById('admin-artist-form-heading');
-            const cancelBtn = document.getElementById('cancel-artist-edit-btn');
-            const fileStatus = document.getElementById('artist-file-status');
-            if (editIdInput) editIdInput.value = '';
-            if (headingEl) headingEl.textContent = 'Add New Artist Profile';
-            if (cancelBtn) cancelBtn.classList.add('hidden');
-            if (fileStatus) fileStatus.classList.add('hidden');
-        }
-
-        async function deleteArtistFromAdmin(id) {
-            if (artists.length <= 1) {
-                showAdminFeedback('At least one artist profile must remain in the gallery.', true);
-                return;
-            }
-            const artist = artists.find(a => a.id === id);
-            try {
-                const res = await fetch(`${API_ENDPOINTS.artists}?id=${encodeURIComponent(id)}`, {
-                    method: 'DELETE',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ id })
-                });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || `Delete failed (${res.status})`);
-                }
-                if (activeArtistId === id) {
-                    activeArtistId = artists.find(a => a.id !== id)?.id || 'mt-oung';
-                }
-                await loadCloudGallery(false);
-                showAdminFeedback(`Removed artist "${artist?.name || id}".`);
-                await recordEditLog('Deleted', 'Artist', artist?.name || id, 'Removed artist profile');
-            } catch (err) {
-                showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
-            }
-        }
-
+        // ==================== ADMIN: ARTISTS MANAGEMENT ====================
         function renderAdminArtistsList() {
             const list = document.getElementById('admin-artists-list');
             const countEl = document.getElementById('admin-artists-count');
@@ -3800,84 +3962,220 @@
                 const safeName = escapeHTML(artist.name);
                 const safeSub = escapeHTML(artist.subtitle || '');
                 const safeImg = escapeHTML(artist.image || 'artist.jpg');
+                const worksCount = artworks.filter(w => (w.artistId || 'mt-oung') === artist.id).length;
+
                 return `
-                    <div class="p-3.5 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/25 flex items-center gap-3.5">
-                        <img src="${safeImg}" alt="${safeName}" data-artist-name="${safeName}" onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')" class="w-14 h-16 rounded-xl object-cover bg-[#E7E0D2] flex-shrink-0">
-                        <div class="flex-1 min-w-0">
-                            <h5 class="font-serif text-base truncate">${safeName}</h5>
-                            ${safeSub ? `<p class="text-[11px] opacity-65 truncate">${safeSub}</p>` : ''}
-                            <div class="mt-2 flex items-center gap-2">
-                                <button type="button" onclick="editArtistInAdmin('${safeId}')" class="px-3 py-1 rounded-lg border border-[#A69076]/45 text-[11px] hover:bg-[#A69076] hover:text-white transition-colors">Edit</button>
-                                <button type="button" onclick="deleteArtistFromAdmin('${safeId}')" class="px-3 py-1 rounded-lg border border-red-200 text-red-600 text-[11px] hover:bg-red-50 transition-colors">Delete</button>
+                    <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <img src="${safeImg}"
+                                 alt="${safeName}"
+                                 data-artist-name="${safeName}"
+                                 onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')"
+                                 class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
+                            <div class="min-w-0">
+                                <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${worksCount} ${worksCount === 1 ? 'Work' : 'Works'}</span>
+                                <h5 class="font-serif text-base truncate">${safeName}</h5>
+                                <span class="text-[11px] opacity-60 block truncate">${safeSub}</span>
                             </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <button type="button" onclick="editArtistInAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
+                                Edit
+                            </button>
+                            ${artists.length > 1 ? `
+                                <button type="button" onclick="deleteArtistFromAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
+                                    Delete
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
+        async function saveArtistFromAdmin(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('save-artist-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving Artist...';
+
+            try {
+                const editId = document.getElementById('edit-artist-id').value;
+                const name = document.getElementById('artist-name-input').value.trim();
+                const subtitle = document.getElementById('artist-subtitle-input').value.trim();
+                const bio = document.getElementById('artist-bio-input').value.trim();
+                const urlInput = document.getElementById('artist-url-input').value.trim();
+                const fileInput = document.getElementById('artist-file-input');
+
+                let imageSrc = urlInput;
+                if (fileInput.files && fileInput.files[0]) {
+                    submitBtn.textContent = 'Uploading Portrait to R2...';
+                    const uploaded = await uploadFileToR2(fileInput.files[0], 'artists');
+                    imageSrc = uploaded.url;
+                } else if (!imageSrc && editId) {
+                    const existing = artists.find(a => a.id === editId);
+                    if (existing) imageSrc = existing.image;
+                } else if (!imageSrc) {
+                    imageSrc = 'artist.jpg';
+                }
+
+                const docId = editId || ('artist-' + Date.now());
+                const existingArtist = artists.find(a => a.id === docId);
+                const sortOrder = existingArtist ? (existingArtist.order || 1) : (artists.length + 1);
+                const fullBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
+
+                submitBtn.textContent = 'Saving to D1...';
+                const res = await fetch(API_ENDPOINTS.artists, {
+                    method: 'POST',
+                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({
+                        id: docId,
+                        name,
+                        bio: fullBio,
+                        portrait_url: imageSrc,
+                        sort_order: sortOrder
+                    })
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `Artist save failed (${res.status})`);
+                }
+
+                await loadCloudGallery(false);
+                showAdminFeedback(`Artist "${name}" saved to Cloudflare D1 & R2!`);
+                await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle || 'Artist profile updated');
+                resetArtistForm();
+            } catch (err) {
+                console.error('Error saving artist:', err);
+                showAdminFeedback('Artist save failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Artist Profile';
+            }
+        }
+
+        function editArtistInAdmin(id) {
+            const artist = artists.find(a => a.id === id);
+            if (!artist) return;
+
+            document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
+            document.getElementById('edit-artist-id').value = artist.id;
+            document.getElementById('artist-name-input').value = artist.name || '';
+            document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
+            const currentImg = String(artist.image || '');
+            document.getElementById('artist-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
+            document.getElementById('artist-bio-input').value = artist.bio || '';
+            document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
+            document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
+
+            const artistFormContainer = document.getElementById('admin-artist-form-container');
+            if (artistFormContainer) {
+                setTimeout(() => {
+                    artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 60);
+            }
+        }
+
+        function resetArtistForm() {
+            document.getElementById('admin-artist-form-heading').textContent = 'Add New Artist Profile';
+            document.getElementById('admin-artist-form').reset();
+            document.getElementById('edit-artist-id').value = '';
+            document.getElementById('cancel-artist-edit-btn').classList.add('hidden');
+            document.getElementById('save-artist-btn').textContent = 'Save Artist Profile';
+            const statusEl = document.getElementById('artist-file-status');
+            if (statusEl) statusEl.classList.add('hidden');
+        }
+
+        async function deleteArtistFromAdmin(id) {
+            if (artists.length <= 1) return;
+            const target = artists.find(a => a.id === id);
+            try {
+                const res = await fetch(`${API_ENDPOINTS.artists}?id=${encodeURIComponent(id)}`, {
+                    method: 'DELETE',
+                    headers: getAdminAuthHeaders()
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `Delete failed (${res.status})`);
+                }
+                if (activeArtistId === id) activeArtistId = artists[0].id;
+                await loadCloudGallery(false);
+                showAdminFeedback(`Deleted artist "${target?.name || id}".`);
+                if (target) {
+                    await recordEditLog('Deleted', 'Artist', target.name, 'Removed artist profile');
+                }
+            } catch (err) {
+                showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+            }
+        }
+
+        // ==================== ADMIN: VISITOR ACTIVITY & MONTHLY EMAIL REPORT ====================
         async function loadVisitorActivityFromCloud() {
             const topArtEl = document.getElementById('visitor-top-artworks');
             const topCountryEl = document.getElementById('visitor-top-countries');
-            const logsListEl = document.getElementById('admin-visitor-logs-list');
-
-            if (!getSavedAdminToken()) {
-                if (logsListEl) logsListEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">Unlock Admin Console to view visitor activity.</p>`;
-                return;
-            }
+            const listEl = document.getElementById('admin-visitor-logs-list');
 
             try {
                 const res = await fetch(API_ENDPOINTS.activity, {
                     headers: getAdminAuthHeaders(),
                     cache: 'no-store'
                 });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || `Failed to load visitor activity (${res.status})`);
+                const data = await res.json();
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `HTTP ${res.status}`);
                 }
                 visitorActivityData = {
-                    logs: Array.isArray(data.logs) ? data.logs : [],
-                    topArtworks: Array.isArray(data.topArtworks) ? data.topArtworks : [],
-                    topCountries: Array.isArray(data.topCountries) ? data.topCountries : []
+                    logs: data.logs || [],
+                    topArtworks: data.topArtworks || [],
+                    topCountries: data.topCountries || []
                 };
-
-                if (topArtEl) {
-                    topArtEl.innerHTML = visitorActivityData.topArtworks.length
-                        ? visitorActivityData.topArtworks.slice(0, 6).map(item =>
-                            `<div class="flex justify-between gap-2"><span class="truncate">${escapeHTML(item.name || item.item_name || 'Artwork')}</span><span class="font-medium text-[#9C8265] dark:text-[#D4B483]">${item.count || 0}</span></div>`
-                        ).join('')
-                        : '<p class="opacity-60">No artwork view events yet.</p>';
-                }
-
-                if (topCountryEl) {
-                    topCountryEl.innerHTML = visitorActivityData.topCountries.length
-                        ? visitorActivityData.topCountries.slice(0, 6).map(item =>
-                            `<div class="flex justify-between gap-2"><span class="truncate">${escapeHTML(item.name || item.country || 'Unknown')}</span><span class="font-medium text-[#9C8265] dark:text-[#D4B483]">${item.count || 0}</span></div>`
-                        ).join('')
-                        : '<p class="opacity-60">No region/device summary yet.</p>';
-                }
-
-                if (logsListEl) {
-                    logsListEl.innerHTML = visitorActivityData.logs.length
-                        ? visitorActivityData.logs.slice(0, 50).map(ev => {
-                            const ts = ev.created_at || ev.timestamp || '';
-                            return `
-                                <div class="p-2.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex items-center justify-between gap-2 text-xs">
-                                    <div class="truncate">
-                                        <span class="uppercase text-[10px] tracking-wider text-[#9C8265] dark:text-[#D4B483] mr-2">${escapeHTML(ev.event_type || ev.eventType || 'event')}</span>
-                                        <span>${escapeHTML(ev.item_name || ev.itemName || '')}</span>
-                                        ${ev.device ? `<span class="opacity-55 ml-1.5">(${escapeHTML(ev.device)})</span>` : ''}
-                                    </div>
-                                    <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(ts)}</span>
-                                </div>
-                            `;
-                        }).join('')
-                        : '<p class="text-xs opacity-60 py-4 text-center">No visitor activity recorded yet.</p>';
-                }
             } catch (err) {
-                if (logsListEl) {
-                    logsListEl.innerHTML = `<p class="text-xs text-red-600 py-4 text-center">${escapeHTML(err.message)}</p>`;
+                if (listEl) {
+                    listEl.innerHTML = `<p class="text-xs text-red-600 py-3 text-center">${escapeHTML(err.message || 'Unable to load visitor logs')}</p>`;
                 }
+                return;
+            }
+
+            if (topArtEl) {
+                topArtEl.innerHTML = visitorActivityData.topArtworks.length
+                    ? visitorActivityData.topArtworks.map((a, i) =>
+                        `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
+                            <span class="truncate pr-2">${i + 1}. ${escapeHTML(a.item_name)}</span>
+                            <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${Number(a.views || 0)} views</span>
+                        </div>`
+                    ).join('')
+                    : `<p class="opacity-60">No artwork view events yet.</p>`;
+            }
+
+            const mobileCount = visitorActivityData.logs.filter(l => l.device === 'Mobile').length;
+            const desktopCount = visitorActivityData.logs.filter(l => l.device !== 'Mobile').length;
+
+            if (topCountryEl) {
+                const countryHtml = visitorActivityData.topCountries.length
+                    ? visitorActivityData.topCountries.map(c =>
+                        `<span class="inline-block px-2 py-0.5 rounded bg-[#A69076]/15 mr-1.5 mb-1">${escapeHTML(c.country)}: <strong>${Number(c.count || 0)}</strong></span>`
+                    ).join('')
+                    : `<span class="opacity-60">No country data yet.</span>`;
+                topCountryEl.innerHTML = `
+                    <div class="mb-2">${countryHtml}</div>
+                    <div class="opacity-75">Devices (recent): Mobile <strong>${mobileCount}</strong> • Desktop <strong>${desktopCount}</strong></div>
+                `;
+            }
+
+            if (listEl) {
+                listEl.innerHTML = visitorActivityData.logs.length
+                    ? visitorActivityData.logs.map(row => `
+                        <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                            <div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(row.event_type)}</span>
+                                <span class="font-medium">${escapeHTML(row.item_name || '-')}</span>
+                                <span class="opacity-65 ml-1.5">[${escapeHTML(row.country || 'XX')} • ${escapeHTML(row.device || 'Desktop')}]</span>
+                            </div>
+                            <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(row.timestamp || '')}</span>
+                        </div>
+                    `).join('')
+                    : `<p class="text-xs opacity-60 py-4 text-center">No visitor activity in the last 30 days.</p>`;
             }
         }
 
@@ -3888,19 +4186,24 @@
                 btn.textContent = 'Sending Report...';
             }
             try {
-                const res = await fetch(`${API_ENDPOINTS.activity}?archive=1`, {
+                const res = await fetch(API_ENDPOINTS.activity, {
                     method: 'POST',
                     headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({ archive: true })
+                    body: JSON.stringify({ action: 'archive_now' })
                 });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || 'Unable to archive & email report.');
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `Failed (${res.status})`);
                 }
-                showAdminFeedback('Visitor activity report sent and old logs archived!');
+                if (data.sent) {
+                    showAdminFeedback(`Emailed readable report + CSV (${data.count} events) and purged archived logs from D1!`);
+                    await recordEditLog('Archived & Purged', 'Visitor Logs', 'Monthly Report', `Sent ${data.count} events via Web3Forms`);
+                } else {
+                    showAdminFeedback(data.reason || 'No visitor logs to archive right now.');
+                }
                 await loadVisitorActivityFromCloud();
             } catch (err) {
-                showAdminFeedback('Report archive failed: ' + err.message, true);
+                showAdminFeedback('Report failed: ' + (err.message || 'Check WEB3FORMS_ACCESS_KEY.'), true);
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -3909,7 +4212,7 @@
             }
         }
 
-        // ==================== GALLERY ABOUT, EDIT LOGS & EXPORT ====================
+        // ==================== ADMIN: GALLERY ABOUT, EDIT LOGS & EXPORT ====================
         function populateGalleryAboutAdminForm() {
             const hInput = document.getElementById('about-heading-input');
             const sInput = document.getElementById('about-subtitle-input');
@@ -3921,206 +4224,383 @@
 
         async function saveGalleryAboutFromAdmin(event) {
             event.preventDefault();
-            const heading = document.getElementById('about-heading-input')?.value.trim() || DEFAULT_GALLERY_ABOUT.heading;
-            const subtitle = document.getElementById('about-subtitle-input')?.value.trim() || '';
-            const body = document.getElementById('about-body-input')?.value.trim() || '';
+            const heading = document.getElementById('about-heading-input').value.trim();
+            const subtitle = document.getElementById('about-subtitle-input').value.trim();
+            const body = document.getElementById('about-body-input').value.trim();
 
-            galleryAbout = { heading, subtitle, body };
-            renderGalleryAboutSection();
+            const nextAbout = { heading, subtitle, body, updatedAt: Date.now() };
 
             try {
                 const res = await fetch(API_ENDPOINTS.settings, {
                     method: 'POST',
                     headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        key: 'gallery_about',
-                        value: { ...galleryAbout, updatedAt: Date.now() }
-                    })
+                    body: JSON.stringify({ key: 'gallery_about', value: nextAbout })
                 });
                 const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || `Failed to save About (${res.status})`);
+                if (!res.ok || !data.ok) {
+                    throw new Error(data.error || `Settings save failed (${res.status})`);
                 }
-                showAdminFeedback('Updated Gallery About page in Cloudflare D1!');
-                await recordEditLog('Updated', 'Gallery About', heading, 'Gallery story updated');
+                galleryAbout = nextAbout;
+                renderGalleryAboutSection();
+                showAdminFeedback('Gallery About page saved to Cloudflare D1!');
+                await recordEditLog('Updated', 'Gallery About', heading, 'Updated gallery curatorial statement');
             } catch (err) {
-                showAdminFeedback('About save notice: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+                showAdminFeedback('Update failed: ' + err.message, true);
             }
         }
 
         function renderAdminEditLogsList() {
-            const listEl = document.getElementById('admin-edit-logs-list');
+            const list = document.getElementById('admin-edit-logs-list');
             const countEl = document.getElementById('admin-log-count');
-            if (countEl) countEl.textContent = String(editLogs.length);
-            if (!listEl) return;
+            if (countEl) countEl.textContent = editLogs.length;
+            if (!list) return;
 
-            if (!editLogs.length) {
-                listEl.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity logged yet.</p>`;
+            if (editLogs.length === 0) {
+                list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
                 return;
             }
 
-            listEl.innerHTML = editLogs.map(item => `
-                <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
-                    <div>
-                        <span class="font-medium text-[#9C8265] dark:text-[#D4B483] uppercase text-[10px] tracking-wider mr-2">${escapeHTML(item.action || 'Edited')} ${escapeHTML(item.targetType || '')}</span>
-                        <span class="font-medium">${escapeHTML(item.targetName || '')}</span>
-                        ${item.details ? `<span class="opacity-65 ml-2">— ${escapeHTML(item.details)}</span>` : ''}
+            list.innerHTML = editLogs.map(log => {
+                const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString() : '';
+                const badgeColor = log.action === 'Deleted'
+                    ? 'bg-red-500/15 text-red-600'
+                    : (log.action === 'Added' || log.action === 'Initialized' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/15 text-amber-700 dark:text-amber-300');
+                return `
+                    <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-medium ${badgeColor}">${escapeHTML(log.action)}</span>
+                                <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(log.targetType)}</span>
+                                <span class="font-serif text-sm font-medium">${escapeHTML(log.targetName)}</span>
+                            </div>
+                            ${log.details ? `<p class="text-xs opacity-70">${escapeHTML(log.details)}</p>` : ''}
+                        </div>
+                        <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(dateStr)}</span>
                     </div>
-                    <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(item.timestamp || '')}</span>
-                </div>
-            `).join('');
-        }
-
-        function triggerFileDownload(filename, content, mimeType) {
-            try {
-                const blob = new Blob([content], { type: mimeType });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-            } catch (e) {}
+                `;
+            }).join('');
         }
 
         function downloadEditLogsCSV() {
-            const rows = [['Timestamp', 'Action', 'Type', 'Target', 'Details']];
-            editLogs.forEach(l => {
-                rows.push([l.timestamp || '', l.action || '', l.targetType || '', l.targetName || '', l.details || '']);
-            });
-            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-            triggerFileDownload('artists-loft-edit-log.csv', csv, 'text/csv;charset=utf-8;');
+            const headers = ['Timestamp', 'Action', 'TargetType', 'TargetName', 'Details'];
+            const rows = editLogs.map(l => [
+                l.timestamp || '',
+                l.action || '',
+                l.targetType || '',
+                l.targetName || '',
+                l.details || ''
+            ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function downloadEditLogsJSON() {
-            triggerFileDownload('artists-loft-edit-log.json', JSON.stringify(editLogs, null, 2), 'application/json');
+            const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), editLogs }, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function exportArtworksJSON() {
-            const backup = {
+            const payload = {
                 exportedAt: new Date().toISOString(),
+                galleryAbout,
                 artists,
                 artworks,
-                galleryAbout,
-                backdropConfig
+                editLogs
             };
-            triggerFileDownload('artists-loft-backup.json', JSON.stringify(backup, null, 2), 'application/json');
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `the-artists-loft-backup-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         async function handleContactSubmit(event) {
             event.preventDefault();
             const form = document.getElementById('contact-form');
-            const btn = document.getElementById('contact-submit-btn');
+            const submitBtn = document.getElementById('contact-submit-btn');
             const feedback = document.getElementById('contact-feedback');
-            const botcheck = document.getElementById('contact-botcheck');
-            if (botcheck && botcheck.checked) return;
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            const botcheck = document.getElementById('contact-botcheck').checked;
 
-            const name = document.getElementById('contact-name')?.value.trim() || '';
-            const email = document.getElementById('contact-email')?.value.trim() || '';
-            const message = document.getElementById('contact-message')?.value.trim() || '';
+            if (botcheck) return;
             if (!name || !email || !message) return;
 
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = 'Sending...';
-            }
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            feedback.classList.add('hidden');
 
             try {
                 const res = await fetch(API_ENDPOINTS.contact, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, message })
+                    body: JSON.stringify({ name, email, message, botcheck })
                 });
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok || data.ok === false) {
-                    throw new Error(data.error || 'Unable to send message.');
-                }
-                playSoftGalleryChime('success');
-                if (feedback) {
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    playSoftGalleryChime('success');
+                    trackVisitorEvent('contact_submit', name);
                     feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
+                    feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]';
                     feedback.classList.remove('hidden');
+                    form.reset();
+                } else {
+                    throw new Error(data.message || 'Unable to send message right now.');
                 }
-                if (form) form.reset();
             } catch (err) {
-                playSoftGalleryChime('close');
-                if (feedback) {
-                    feedback.textContent = 'Message could not be sent right now: ' + (err.message || 'Please try again later.');
-                    feedback.classList.remove('hidden');
-                }
+                feedback.textContent = 'Notice: ' + (err.message || 'Please try again later.');
+                feedback.className = 'p-4 rounded-2xl bg-red-50 border border-red-200 text-center text-sm text-red-700';
+                feedback.classList.remove('hidden');
             } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = 'Send Message';
-                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Message';
             }
         }
 
-        // ==================== AMBIENT AUDIO & SCROLL REVEAL HELPERS ====================
-        const AUDIO_STORAGE_KEY = 'tal_ambience_config_v1';
-        let isSoundEnabled = true;
-        let ambienceTracks = [];
-        let currentTrackIndex = -1;
-        let ambienceTargetVolume = 0.07;
-        let isAmbienceRandom = true;
-        let isAmbienceStarted = false;
-        let ambienceFadeTimer = null;
-        let galleryAudioCtx = null;
+        // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
+        let galleryScrollRaf = null;
+        let galleryScrollBound = false;
+        let galleryScrollSettleTimer = null;
+        let isGalleryScrolling = false;
+
+        function getCardRandomSeed(card, idx) {
+            if (card.dataset.randSeeded === 'true') {
+                return {
+                    phase: parseFloat(card.dataset.randPhase),
+                    scaleMin: parseFloat(card.dataset.randScaleMin),
+                    yOffset: parseFloat(card.dataset.randYOffset)
+                };
+            }
+            const seed = (idx * 73 + 19) % 100 / 100;
+            const phase = (seed - 0.5) * 0.24;
+            const scaleMin = 0.81 + (seed * 0.055);
+            const yOffset = 26 + Math.round(seed * 18);
+            card.dataset.randSeeded = 'true';
+            card.dataset.randPhase = phase.toFixed(3);
+            card.dataset.randScaleMin = scaleMin.toFixed(3);
+            card.dataset.randYOffset = String(yOffset);
+            return { phase, scaleMin, yOffset };
+        }
+
+        function updateGalleryScrollPresence() {
+            galleryScrollRaf = null;
+            const artworksSection = document.getElementById('section-artworks');
+            if (!artworksSection || artworksSection.classList.contains('hidden')) return;
+
+            const cards = Array.from(document.querySelectorAll('#artworks-masonry-grid .reveal-item'));
+            if (cards.length === 0) return;
+
+            const vh = window.innerHeight || document.documentElement.clientHeight;
+            const headerHeight = 105;
+            const topFadeStart = headerHeight + 135;
+            const topFadeEnd = headerHeight - 80;
+            const bottomFadeStart = vh + 55;
+            const bottomFadeEnd = vh * 0.68;
+
+            cards.forEach((card, idx) => {
+                if (card.dataset.hovered === 'true' && !isGalleryScrolling) {
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                    return;
+                }
+
+                const rect = card.getBoundingClientRect();
+                const center = (rect.top + rect.bottom) * 0.5;
+                const { phase, scaleMin, yOffset } = getCardRandomSeed(card, idx);
+                const adjustedCenter = center + (phase * 155);
+
+                let progress = 1;
+                if (adjustedCenter < topFadeStart) {
+                    progress = (adjustedCenter - topFadeEnd) / (topFadeStart - topFadeEnd);
+                } else if (adjustedCenter > bottomFadeEnd) {
+                    progress = 1 - ((adjustedCenter - bottomFadeEnd) / (bottomFadeStart - bottomFadeEnd));
+                }
+
+                progress = Math.max(0, Math.min(1, progress));
+                const eased = progress * progress * (3 - 2 * progress);
+
+                const opacity = (galleryExperience.scrollOpacityMin + ((galleryExperience.scrollOpacityMax - galleryExperience.scrollOpacityMin) * eased)) / 100;
+                const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
+                // Scroll alone drives the zoom; return to a neutral scale as soon as scrolling settles.
+                // Keep reduced-motion users at a steady scale while preserving the opacity/fade treatment.
+                const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const scale = isGalleryScrolling && !reduceMotion
+                    ? scaleMin + ((1 - scaleMin) * eased)
+                    : 1;
+                const blurPx = (1 - eased) * 0.7;
+
+                card.style.opacity = opacity.toFixed(3);
+                card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px) saturate(0.82)` : 'saturate(0.88)';
+                card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
+            });
+        }
+
+        function handleGalleryScroll() {
+            isGalleryScrolling = true;
+            if (galleryScrollSettleTimer) clearTimeout(galleryScrollSettleTimer);
+            document.querySelectorAll('#artworks-masonry-grid .reveal-item[data-hovered="true"]').forEach(card => {
+                card.dataset.hovered = 'false';
+                card.classList.remove('is-pointer-lit');
+                const glare = card.querySelector('.tilt-glare');
+                if (glare) glare.style.opacity = '0';
+            });
+            requestGalleryScrollUpdate();
+            galleryScrollSettleTimer = setTimeout(() => {
+                isGalleryScrolling = false;
+                galleryScrollSettleTimer = null;
+                requestGalleryScrollUpdate();
+            }, 180);
+        }
+
+        function requestGalleryScrollUpdate() {
+            if (galleryScrollRaf === null) {
+                galleryScrollRaf = requestAnimationFrame(updateGalleryScrollPresence);
+            }
+        }
+
+        function initGalleryCardAnimations() {
+            if (!galleryScrollBound) {
+                galleryScrollBound = true;
+                window.addEventListener('scroll', handleGalleryScroll, { passive: true });
+                window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
+            }
+
+            document.querySelectorAll('#artworks-masonry-grid .tilt-card').forEach(card => {
+                if (card.dataset.tiltBound === 'true') return;
+                card.dataset.tiltBound = 'true';
+                const glare = card.querySelector('.tilt-glare');
+
+                card.addEventListener('mousemove', (e) => {
+                    if (isGalleryScrolling) return;
+                    card.dataset.hovered = 'true';
+                    card.classList.add('is-pointer-lit');
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -2.8;
+                    const rotateY = ((x - centerX) / centerX) * 2.8;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
+                    if (glare) {
+                        const pctX = (x / rect.width) * 100;
+                        const pctY = (y / rect.height) * 100;
+                        glare.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0) 68%)`;
+                        glare.style.opacity = '1';
+                    }
+                });
+
+                card.addEventListener('focusin', () => {
+                    if (isGalleryScrolling) return;
+                    card.dataset.hovered = 'true';
+                    card.classList.add('is-pointer-lit');
+                    card.style.opacity = '1';
+                    card.style.filter = 'none';
+                });
+
+                card.addEventListener('focusout', () => {
+                    requestAnimationFrame(() => {
+                        if (!card.contains(document.activeElement)) {
+                            card.dataset.hovered = 'false';
+                            card.classList.remove('is-pointer-lit');
+                            requestGalleryScrollUpdate();
+                        }
+                    });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.dataset.hovered = 'false';
+                    card.classList.remove('is-pointer-lit');
+                    if (glare) glare.style.opacity = '0';
+                    requestGalleryScrollUpdate();
+                });
+            });
+
+            updateGalleryScrollPresence();
+        }
+
+        // ==================== R2-BACKED RANDOM MP3 AMBIENCE, VOLUME & GENTLE UI SOUNDS ====================
+        const AMBIENCE_STORAGE_KEY = 'tal_ambient_audio_v1';
+        const DEFAULT_AMBIENCE_TRACKS = [];
+
+        let ambienceTracks = DEFAULT_AMBIENCE_TRACKS.map(t => ({ ...t }));
+        let ambienceTargetVolume = 0.07; // 7% default soft background volume
+        let ambienceRandomMode = true;
+
+        let audioCtx = null;
         let masterGain = null;
+        let isSoundEnabled = true;
         let audioUnlockBound = false;
-        let scrollChimeBound = false;
-        let lastScrollY = 0;
+        let currentTrackIndex = -1;
+        let ambienceFadeTimer = null;
+        let isAmbienceStarted = false;
+
         let lastScrollChimeTime = 0;
+        let lastScrollY = window.scrollY || 0;
+        let scrollChimeBound = false;
         let lastDragWhisperTime = 0;
 
-        function getGalleryAudioElement() {
-            return document.getElementById('gallery-bg-audio');
-        }
-
-        function getEnabledAmbienceTracks() {
-            return ambienceTracks.filter(t => t && t.url && t.enabled !== false);
-        }
-
-        function updateSoundButtonUI() {
-            const btn = document.getElementById('sound-toggle-btn');
-            const label = document.getElementById('sound-toggle-label');
-            if (btn) btn.classList.toggle('sound-paused', !isSoundEnabled);
-            if (label) label.textContent = isSoundEnabled ? 'Sound On' : 'Sound Off';
-        }
-
-        function updateNowPlayingLabel(track) {
-            const el = document.getElementById('admin-now-playing-label');
-            if (!el) return;
-            el.textContent = track && track.title ? `Now Playing: ${track.title}` : 'Now Playing: —';
-        }
-
-        function syncVolumeSliderUI() {
-            const pct = Math.round(ambienceTargetVolume * 100);
-            const slider = document.getElementById('admin-ambience-volume');
-            const label = document.getElementById('admin-ambience-volume-label');
-            const randToggle = document.getElementById('admin-ambience-random-toggle');
-            if (slider) slider.value = String(pct);
-            if (label) label.textContent = `${pct}%`;
-            if (randToggle) randToggle.checked = Boolean(isAmbienceRandom);
+        function loadLocalAudioConfig() {
+            try {
+                const raw = localStorage.getItem(AMBIENCE_STORAGE_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                applySavedAudioConfig(parsed);
+            } catch (e) {}
         }
 
         function saveLocalAudioConfig() {
             try {
-                localStorage.setItem(AUDIO_STORAGE_KEY, JSON.stringify({
+                localStorage.setItem(AMBIENCE_STORAGE_KEY, JSON.stringify({
                     tracks: ambienceTracks,
                     volume: ambienceTargetVolume,
-                    random: isAmbienceRandom
+                    randomMode: ambienceRandomMode
                 }));
             } catch (e) {}
         }
 
-        function loadLocalAudioConfig() {
-            try {
-                const raw = localStorage.getItem(AUDIO_STORAGE_KEY);
-                if (!raw) return;
-                applySavedAudioConfig(JSON.parse(raw));
-            } catch (e) {}
+        async function persistAudioConfigToCloud(logAction = null) {
+            saveLocalAudioConfig();
+            renderAdminAudioManager();
+
+            if (getSavedAdminToken()) {
+                try {
+                    await fetch(API_ENDPOINTS.settings, {
+                        method: 'POST',
+                        headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+                        body: JSON.stringify({
+                            key: 'ambient_audio',
+                            value: {
+                                tracks: ambienceTracks,
+                                volume: ambienceTargetVolume,
+                                randomMode: ambienceRandomMode,
+                                updatedAt: Date.now()
+                            }
+                        })
+                    });
+                } catch (e) {}
+            }
+
+            if (logAction && typeof recordEditLog === 'function') {
+                recordEditLog(logAction.action, 'Ambient Audio', logAction.name, logAction.details || '');
+            }
         }
 
         function applySavedAudioConfig(cfg) {
@@ -4128,23 +4608,104 @@
             if (Array.isArray(cfg.tracks)) {
                 ambienceTracks = cfg.tracks
                     .filter(t => t && t.url)
-                    .map((t, i) => ({
-                        id: String(t.id || `amb-${i + 1}`),
-                        title: String(t.title || `Track ${i + 1}`),
-                        url: String(t.url).replace(
+                    .map((t, idx) => {
+                        const cleanUrl = String(t.url).trim().replace(
                             'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
                             'https://media.theartistsloftmm.art'
-                        ),
-                        enabled: t.enabled !== false
-                    }));
+                        );
+                        return {
+                            id: t.id || ('amb-' + (idx + 1)),
+                            title: t.title || `Ambience ${idx + 1}`,
+                            url: cleanUrl,
+                            enabled: t.enabled !== false
+                        };
+                    });
             }
             if (typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
-                ambienceTargetVolume = Math.max(0, Math.min(0.4, cfg.volume));
+                ambienceTargetVolume = Math.max(0, Math.min(0.6, cfg.volume));
             }
-            if (typeof cfg.random === 'boolean') {
-                isAmbienceRandom = cfg.random;
+            if (typeof cfg.randomMode === 'boolean') {
+                ambienceRandomMode = cfg.randomMode;
             }
             syncVolumeSliderUI();
+            renderAdminAudioManager();
+        }
+
+        function getEnabledAmbienceTracks() {
+            return ambienceTracks.filter(t => t.enabled !== false && t.url);
+        }
+
+        function getGalleryAudioElement() {
+            let el = document.getElementById('gallery-bg-audio');
+            if (!el) {
+                el = document.createElement('audio');
+                el.id = 'gallery-bg-audio';
+                el.preload = 'none';
+                document.body.appendChild(el);
+            }
+            return el;
+        }
+
+        function ensureAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) return Promise.resolve(null);
+                audioCtx = new AudioContextClass();
+
+                masterGain = audioCtx.createGain();
+                masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                masterGain.connect(audioCtx.destination);
+            }
+            if (audioCtx.state === 'suspended') {
+                return audioCtx.resume().then(() => audioCtx).catch(() => audioCtx);
+            }
+            return Promise.resolve(audioCtx);
+        }
+
+        function updateSoundButtonUI() {
+            const btn = document.getElementById('sound-toggle-btn');
+            const label = document.getElementById('sound-toggle-label');
+            if (!btn || !label) return;
+            if (isSoundEnabled) {
+                btn.classList.remove('sound-paused');
+                label.textContent = 'Sound On';
+            } else {
+                btn.classList.add('sound-paused');
+                label.textContent = 'Sound Off';
+            }
+        }
+
+        function syncVolumeSliderUI() {
+            const pct = Math.round(ambienceTargetVolume * 100);
+            const slider = document.getElementById('admin-ambience-volume');
+            const label = document.getElementById('admin-ambience-volume-label');
+            const randomToggle = document.getElementById('admin-ambience-random-toggle');
+            if (slider) slider.value = String(pct);
+            if (label) label.textContent = `${pct}%`;
+            if (randomToggle) randomToggle.checked = Boolean(ambienceRandomMode);
+        }
+
+        function setAmbienceVolumePercent(percentValue) {
+            const pct = Math.max(0, Math.min(60, Number(percentValue) || 0));
+            ambienceTargetVolume = pct / 100;
+            const label = document.getElementById('admin-ambience-volume-label');
+            if (label) label.textContent = `${pct}%`;
+
+            const audioEl = getGalleryAudioElement();
+            if (audioEl && isSoundEnabled && !audioEl.paused) {
+                clearAmbienceFade();
+                audioEl.volume = ambienceTargetVolume;
+            }
+            saveLocalAudioConfig();
+        }
+
+        function toggleAmbienceRandomMode(checked) {
+            ambienceRandomMode = Boolean(checked);
+            persistAudioConfigToCloud({
+                action: 'Updated',
+                name: 'Rotation Mode',
+                details: ambienceRandomMode ? 'Random rotation enabled' : 'Sequential rotation enabled'
+            });
         }
 
         function clearAmbienceFade() {
@@ -4154,169 +4715,150 @@
             }
         }
 
-        function fadeAmbienceTo(targetVol, durationMs = 800, onDone = null) {
-            clearAmbienceFade();
+        function fadeAmbienceTo(targetVol, durationMs = 1000, onComplete = null) {
             const audioEl = getGalleryAudioElement();
             if (!audioEl) {
-                if (typeof onDone === 'function') onDone();
+                if (onComplete) onComplete();
                 return;
             }
-            const startVol = Math.max(0, Math.min(1, audioEl.volume || 0));
-            const endVol = Math.max(0, Math.min(1, targetVol));
-            const steps = Math.max(4, Math.round(durationMs / 40));
+            clearAmbienceFade();
+            const clampedTarget = Math.max(0, Math.min(1, targetVol));
+            const startVol = Number.isFinite(audioEl.volume) ? audioEl.volume : 0;
+            const steps = 18;
+            const stepMs = Math.max(20, Math.round(durationMs / steps));
             let step = 0;
 
             ambienceFadeTimer = setInterval(() => {
                 step++;
-                const ratio = Math.min(1, step / steps);
-                audioEl.volume = Math.max(0, Math.min(1, startVol + (endVol - startVol) * ratio));
-                if (ratio >= 1) {
+                const progress = Math.min(1, step / steps);
+                const eased = progress * progress * (3 - 2 * progress);
+                audioEl.volume = startVol + (clampedTarget - startVol) * eased;
+                if (step >= steps) {
                     clearAmbienceFade();
-                    if (typeof onDone === 'function') onDone();
+                    audioEl.volume = clampedTarget;
+                    if (onComplete) onComplete();
                 }
-            }, 40);
+            }, stepMs);
         }
 
-        async function persistAudioConfigToCloud(logMeta = null) {
-            saveLocalAudioConfig();
-            renderAdminAudioManager();
-            if (!getSavedAdminToken()) return;
-            try {
-                await fetch(API_ENDPOINTS.settings, {
-                    method: 'POST',
-                    headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
-                    body: JSON.stringify({
-                        key: 'ambient_audio',
-                        value: {
-                            tracks: ambienceTracks,
-                            volume: ambienceTargetVolume,
-                            random: isAmbienceRandom,
-                            updatedAt: Date.now()
-                        }
-                    })
-                });
-                if (logMeta) {
-                    await recordEditLog(logMeta.action, 'Ambient Audio', logMeta.name, logMeta.details || '');
-                }
-            } catch (e) {}
-        }
+        function pickNextTrackIndex(enabledList, excludeIndex = -1) {
+            const len = enabledList.length;
+            if (len <= 0) return -1;
+            if (len === 1) return 0;
 
-        function setAmbienceVolumePercent(pctVal) {
-            const pct = Math.max(0, Math.min(40, Number(pctVal) || 0));
-            ambienceTargetVolume = pct / 100;
-            const label = document.getElementById('admin-ambience-volume-label');
-            if (label) label.textContent = `${pct}%`;
-            const audioEl = getGalleryAudioElement();
-            if (audioEl && !audioEl.paused && isSoundEnabled) {
-                audioEl.volume = ambienceTargetVolume;
+            if (ambienceRandomMode) {
+                let nextIdx = Math.floor(Math.random() * len);
+                if (nextIdx === excludeIndex) {
+                    nextIdx = (nextIdx + 1 + Math.floor(Math.random() * (len - 1))) % len;
+                }
+                return nextIdx;
             }
-            saveLocalAudioConfig();
+            return ((excludeIndex + 1) % len + len) % len;
         }
 
-        function toggleAmbienceRandomMode(checked) {
-            isAmbienceRandom = Boolean(checked);
-            saveLocalAudioConfig();
-        }
-
-        async function ensureAudioContext() {
-            try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                if (!AudioCtx) return null;
-                if (!galleryAudioCtx) {
-                    galleryAudioCtx = new AudioCtx();
-                    masterGain = galleryAudioCtx.createGain();
-                    masterGain.gain.value = 0.65;
-                    masterGain.connect(galleryAudioCtx.destination);
-                }
-                if (galleryAudioCtx.state === 'suspended') {
-                    await galleryAudioCtx.resume();
-                }
-                return galleryAudioCtx;
-            } catch (e) {
-                return null;
+        function updateNowPlayingLabel(trackObj) {
+            const el = document.getElementById('admin-now-playing-label');
+            if (!el) return;
+            if (!isSoundEnabled || !trackObj) {
+                el.textContent = isSoundEnabled ? 'Now Playing: Ready' : 'Now Playing: Sound Muted';
+                return;
             }
+            el.textContent = `Now Playing: ${trackObj.title || trackObj.url}`;
         }
 
-        function playAmbienceTrackById(trackId = null, forcePick = false, triedIds = new Set()) {
-            const audioEl = getGalleryAudioElement();
+        function playAmbienceTrackById(trackId, forceSelect = true, attemptedIds = new Set()) {
+            if (!isSoundEnabled) return;
             const enabled = getEnabledAmbienceTracks();
-            if (!audioEl || enabled.length === 0) {
+            if (enabled.length === 0) {
                 updateNowPlayingLabel(null);
                 return;
             }
 
             let chosen = null;
             if (trackId) {
-                chosen = enabled.find(t => t.id === trackId);
+                chosen = enabled.find(t => t.id === trackId) || null;
             }
             if (!chosen) {
-                if (isAmbienceRandom || forcePick) {
-                    const pool = enabled.length > 1 ? enabled.filter(t => t.id !== currentTrackIndex) : enabled;
-                    chosen = pool[Math.floor(Math.random() * pool.length)] || enabled[0];
-                } else {
-                    const idx = enabled.findIndex(t => t.id === currentTrackIndex);
-                    chosen = enabled[(idx + 1) % enabled.length] || enabled[0];
-                }
+                const currentIdx = enabled.findIndex(t => t.id === currentTrackIndex);
+                const nextIdx = pickNextTrackIndex(enabled, currentIdx);
+                chosen = enabled[nextIdx] || enabled[0];
             }
-            if (!chosen || triedIds.has(chosen.id)) return;
-            triedIds.add(chosen.id);
 
             currentTrackIndex = chosen.id;
-            audioEl.loop = enabled.length === 1;
+            const nextAttempted = new Set(attemptedIds);
+            nextAttempted.add(chosen.id);
+
+            const audioEl = getGalleryAudioElement();
             audioEl.onended = () => {
-                if (isSoundEnabled && enabled.length > 1) {
+                if (!isSoundEnabled) return;
+                fadeAmbienceTo(0, 650, () => {
                     playAmbienceTrackById(null, true, new Set());
-                }
+                });
             };
+
             audioEl.onerror = () => {
-                if (triedIds.size < enabled.length) {
-                    playAmbienceTrackById(null, true, triedIds);
+                if (!isSoundEnabled) return;
+                const remaining = enabled.filter(t => !nextAttempted.has(t.id));
+                if (remaining.length > 0) {
+                    const fallback = remaining[Math.floor(Math.random() * remaining.length)];
+                    setTimeout(() => {
+                        playAmbienceTrackById(fallback.id, true, nextAttempted);
+                    }, 350);
                 }
             };
 
-            const startPlayback = () => {
-                audioEl.volume = 0;
-                const playPromise = audioEl.play();
-                if (playPromise && typeof playPromise.then === 'function') {
-                    playPromise.then(() => {
-                        isAmbienceStarted = true;
-                        updateNowPlayingLabel(chosen);
-                        fadeAmbienceTo(ambienceTargetVolume, 700);
-                    }).catch(() => {});
-                } else {
-                    isAmbienceStarted = true;
-                    updateNowPlayingLabel(chosen);
-                    fadeAmbienceTo(ambienceTargetVolume, 700);
-                }
-            };
-
-            if (audioEl.src !== chosen.url) {
-                audioEl.src = chosen.url;
-                audioEl.load();
-            }
-            startPlayback();
+            audioEl.src = chosen.url;
+            audioEl.volume = 0.002;
+            updateNowPlayingLabel(chosen);
             renderAdminAudioManager();
+
+            const playPromise = audioEl.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise.then(() => {
+                    isAmbienceStarted = true;
+                    fadeAmbienceTo(ambienceTargetVolume, 1200);
+                }).catch(() => {
+                    // Autoplay before user gesture may be blocked until first interaction
+                });
+            } else {
+                isAmbienceStarted = true;
+                fadeAmbienceTo(ambienceTargetVolume, 1200);
+            }
+        }
+
+        function previewNextRandomAmbience() {
+            if (!isSoundEnabled) {
+                isSoundEnabled = true;
+                updateSoundButtonUI();
+            }
+            playAmbienceTrackById(null, true, new Set());
         }
 
         function startAmbientSoundscape() {
             if (!isSoundEnabled) return;
-            const enabled = getEnabledAmbienceTracks();
-            if (enabled.length === 0) return;
             const audioEl = getGalleryAudioElement();
-            if (audioEl && !audioEl.paused && currentTrackIndex) {
-                audioEl.volume = ambienceTargetVolume;
+            if (isAmbienceStarted && audioEl.src && audioEl.paused && audioEl.currentTime > 0 && audioEl.currentTime < audioEl.duration) {
+                audioEl.play().then(() => {
+                    fadeAmbienceTo(ambienceTargetVolume, 900);
+                }).catch(() => {
+                    playAmbienceTrackById(null, true, new Set());
+                });
                 return;
             }
-            playAmbienceTrackById(currentTrackIndex || null, isAmbienceRandom, new Set());
+            playAmbienceTrackById(null, true, new Set());
         }
 
         function stopAmbientSoundscape() {
             clearAmbienceFade();
             const audioEl = getGalleryAudioElement();
-            if (!audioEl) return;
-            fadeAmbienceTo(0, 350, () => {
-                try { audioEl.pause(); } catch (e) {}
-            });
+            if (audioEl && !audioEl.paused) {
+                fadeAmbienceTo(0, 400, () => {
+                    audioEl.pause();
+                });
+            } else if (audioEl) {
+                audioEl.pause();
+            }
+            updateNowPlayingLabel(null);
         }
 
         async function toggleGallerySound(event) {
@@ -4332,161 +4874,153 @@
             }
         }
 
-        function previewNextRandomAmbience() {
-            const enabled = getEnabledAmbienceTracks();
-            if (!enabled.length) {
-                showAdminFeedback('Add at least one enabled audio track first.', true);
-                return;
-            }
-            isSoundEnabled = true;
-            updateSoundButtonUI();
-            ensureAudioContext().then(() => {
-                playAmbienceTrackById(null, true, new Set());
-            });
-        }
-
-        function selectAndPlayAmbienceTrack(trackId) {
-            const track = ambienceTracks.find(t => t.id === trackId);
-            if (!track) return;
-            track.enabled = true;
-            isSoundEnabled = true;
-            updateSoundButtonUI();
-            ensureAudioContext().then(() => {
-                playAmbienceTrackById(track.id, false, new Set());
-                persistAudioConfigToCloud({ action: 'Played', name: track.title, details: track.url });
-            });
-        }
-
-        async function toggleAmbienceTrackEnabled(trackId) {
-            const track = ambienceTracks.find(t => t.id === trackId);
-            if (!track) return;
-            track.enabled = track.enabled === false ? true : false;
-            if (!track.enabled && currentTrackIndex === track.id) {
-                const audioEl = getGalleryAudioElement();
-                if (audioEl) {
-                    try { audioEl.pause(); } catch (e) {}
-                }
-                currentTrackIndex = -1;
-                updateNowPlayingLabel(null);
-            }
-            await persistAudioConfigToCloud({
-                action: track.enabled ? 'Enabled' : 'Disabled',
-                name: track.title,
-                details: track.url
-            });
-        }
-
-        async function deleteAmbienceTrack(trackId) {
-            const idx = ambienceTracks.findIndex(t => t.id === trackId);
-            if (idx === -1) return;
-            const removed = ambienceTracks[idx];
-            ambienceTracks.splice(idx, 1);
-            if (currentTrackIndex === trackId) {
-                const audioEl = getGalleryAudioElement();
-                if (audioEl) {
-                    try { audioEl.pause(); } catch (e) {}
-                }
-                currentTrackIndex = -1;
-                updateNowPlayingLabel(null);
-            }
-            await persistAudioConfigToCloud({
-                action: 'Deleted',
-                name: removed.title,
-                details: removed.url
-            });
-        }
-
+        // ==================== ADMIN AMBIENT AUDIO MANAGER ====================
         function renderAdminAudioManager() {
-            const listEl = document.getElementById('admin-audio-tracks-list');
-            const countEl = document.getElementById('admin-audio-count');
-            if (countEl) countEl.textContent = String(ambienceTracks.length);
             syncVolumeSliderUI();
+            const countEl = document.getElementById('admin-audio-count');
+            const listEl = document.getElementById('admin-audio-tracks-list');
+            if (countEl) countEl.textContent = ambienceTracks.length;
             if (!listEl) return;
 
-            if (!ambienceTracks.length) {
-                listEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No ambient audio tracks added yet.</p>`;
+            if (ambienceTracks.length === 0) {
+                listEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No ambience tracks added yet. Upload an MP3 to R2 above.</p>`;
                 return;
             }
 
-            listEl.innerHTML = ambienceTracks.map(track => {
+            listEl.innerHTML = ambienceTracks.map((track, idx) => {
+                const isPlaying = currentTrackIndex === track.id && isSoundEnabled;
                 const isEnabled = track.enabled !== false;
-                const isPlaying = currentTrackIndex === track.id;
                 const safeId = escapeHTML(track.id);
-                const safeTitle = escapeHTML(track.title || 'Untitled Track');
-                const safeUrl = escapeHTML(track.url || '');
+                const safeTitle = escapeHTML(track.title || `Track ${idx + 1}`);
+                const safeUrl = escapeHTML(track.url);
+
                 return `
-                    <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="p-3.5 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isPlaying ? 'border-[#9C8265] dark:border-[#D4B483]' : 'border-[#A69076]/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full ${isEnabled ? (isPlaying ? 'bg-emerald-500' : 'bg-[#D4B483]') : 'bg-gray-400'}"></span>
-                                <span class="font-medium text-sm truncate">${safeTitle}</span>
+                                <span class="w-2 h-2 rounded-full ${isPlaying ? 'bg-emerald-500' : (isEnabled ? 'bg-[#9C8265]' : 'bg-gray-400')}"></span>
+                                <h6 class="font-serif text-sm font-medium truncate">${safeTitle}</h6>
+                                ${isPlaying ? '<span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-300 font-medium">Playing</span>' : ''}
                             </div>
                             <p class="text-[11px] opacity-60 truncate mt-0.5">${safeUrl}</p>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
-                            <button type="button" onclick="selectAndPlayAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-[11px] uppercase tracking-wider">Play</button>
-                            <button type="button" onclick="toggleAmbienceTrackEnabled('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-[11px] uppercase tracking-wider">${isEnabled ? 'Enabled' : 'Off'}</button>
-                            <button type="button" onclick="deleteAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-[11px] uppercase tracking-wider hover:bg-red-50">Delete</button>
+                            <button type="button" onclick="selectAndPlayAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs hover:bg-[#9C8265] transition-colors">
+                                Play
+                            </button>
+                            <button type="button" onclick="toggleAmbienceTrackEnabled('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
+                                ${isEnabled ? 'Disable' : 'Enable'}
+                            </button>
+                            <button type="button" onclick="deleteAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
+                                Delete
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
+        function selectAndPlayAmbienceTrack(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            if (!target) return;
+            target.enabled = true;
+            if (!isSoundEnabled) {
+                isSoundEnabled = true;
+                updateSoundButtonUI();
+            }
+            saveLocalAudioConfig();
+            playAmbienceTrackById(trackId, true, new Set());
+        }
+
+        function toggleAmbienceTrackEnabled(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            if (!target) return;
+            target.enabled = target.enabled === false ? true : false;
+            if (!target.enabled && currentTrackIndex === trackId) {
+                playAmbienceTrackById(null, true, new Set());
+            }
+            persistAudioConfigToCloud({
+                action: 'Updated',
+                name: target.title || 'Ambience Track',
+                details: target.enabled ? 'Enabled in playlist' : 'Disabled in playlist'
+            });
+        }
+
+        function deleteAmbienceTrack(trackId) {
+            const target = ambienceTracks.find(t => t.id === trackId);
+            ambienceTracks = ambienceTracks.filter(t => t.id !== trackId);
+            if (currentTrackIndex === trackId) {
+                currentTrackIndex = -1;
+                const audioEl = getGalleryAudioElement();
+                audioEl.pause();
+                audioEl.removeAttribute('src');
+                if (isSoundEnabled && getEnabledAmbienceTracks().length > 0) {
+                    playAmbienceTrackById(null, true, new Set());
+                } else {
+                    updateNowPlayingLabel(null);
+                }
+            }
+            persistAudioConfigToCloud({
+                action: 'Deleted',
+                name: target?.title || 'Ambience Track',
+                details: 'Removed from ambience playlist'
+            });
+        }
+
+        async function uploadAudioFileToR2(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'audio');
+
+            const res = await fetch(API_ENDPOINTS.upload, {
+                method: 'POST',
+                headers: getAdminAuthHeaders(),
+                body: formData
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok || !data.url) {
+                throw new Error(data.error || `Audio upload failed (${res.status})`);
+            }
+            return data.url;
+        }
+
         async function addAmbienceTrackFromAdmin(event) {
             event.preventDefault();
+            const btn = document.getElementById('save-audio-track-btn');
             const titleInput = document.getElementById('audio-title-input');
             const urlInput = document.getElementById('audio-url-input');
             const fileInput = document.getElementById('audio-file-input');
             const statusEl = document.getElementById('audio-file-status');
-            const btn = document.getElementById('save-audio-track-btn');
 
-            let finalUrl = (urlInput?.value || '').trim().replace(
-                'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
-                'https://media.theartistsloftmm.art'
-            );
-            let derivedTitle = (titleInput?.value || '').trim();
+            const rawTitle = titleInput.value.trim();
+            let finalUrl = urlInput.value.trim();
+
+            if (!finalUrl && !(fileInput.files && fileInput.files[0])) {
+                showAdminFeedback('Please choose an MP3 file to upload to R2 or enter an audio URL.', true);
+                return;
+            }
 
             if (btn) {
                 btn.disabled = true;
-                btn.textContent = 'Saving Track...';
+                btn.textContent = 'Uploading to R2...';
             }
 
             try {
-                if (fileInput && fileInput.files && fileInput.files[0]) {
-                    const audioFile = fileInput.files[0];
-                    const formData = new FormData();
-                    formData.append('file', audioFile);
-                    formData.append('folder', 'audio');
-                    const res = await fetch(API_ENDPOINTS.upload, {
-                        method: 'POST',
-                        headers: getAdminAuthHeaders(),
-                        body: formData
-                    });
-                    const data = await res.json().catch(() => ({}));
-                    if (!res.ok || !data.ok || !data.url) {
-                        throw new Error(data.error || `Audio upload failed (${res.status})`);
-                    }
-                    finalUrl = String(data.url).trim().replace(
-                        'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
-                        'https://media.theartistsloftmm.art'
-                    );
-                    if (!derivedTitle) {
-                        derivedTitle = audioFile.name.replace(/\.[^/.]+$/, '');
-                    }
+                if (fileInput.files && fileInput.files[0]) {
+                    finalUrl = await uploadAudioFileToR2(fileInput.files[0]);
                 }
+                const derivedTitle = rawTitle
+                    || (fileInput.files && fileInput.files[0] ? fileInput.files[0].name.replace(/\.[^/.]+$/, '') : '')
+                    || `Ambience ${ambienceTracks.length + 1}`;
 
-                if (!finalUrl) {
-                    throw new Error('Please upload an audio file or enter an MP3 URL.');
-                }
-                if (!derivedTitle) {
-                    derivedTitle = `Ambient Track ${ambienceTracks.length + 1}`;
-                }
-
+                const normalizedAudioUrl = String(finalUrl).trim().replace(
+                    'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
+                    'https://media.theartistsloftmm.art'
+                );
                 const newTrack = {
-                    id: 'amb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+                    id: 'amb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5),
                     title: derivedTitle,
-                    url: finalUrl,
+                    url: normalizedAudioUrl,
                     enabled: true
                 };
                 ambienceTracks.push(newTrack);
@@ -4601,66 +5135,6 @@
             lastDragWhisperTime = nowMs;
             const scaledGain = 0.004 + (Math.max(0, Math.min(1, intensity)) * 0.005);
             triggerGentleTone(392.00, 0, 0.18, scaledGain, 415.30);
-        }
-
-        let galleryScrollObserver = null;
-        function initGalleryCardAnimations() {
-            const cards = document.querySelectorAll('#artworks-masonry-grid .reveal-item');
-            if (!cards.length) return;
-
-            if (galleryScrollObserver) {
-                galleryScrollObserver.disconnect();
-            }
-
-            const revealCard = (el) => {
-                el.style.opacity = '1';
-                el.style.transform = 'translate3d(0, 0, 0) scale(1)';
-                el.style.filter = 'blur(0)';
-            };
-
-            if (!('IntersectionObserver' in window)) {
-                cards.forEach(revealCard);
-                return;
-            }
-
-            galleryScrollObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        revealCard(entry.target);
-                        galleryScrollObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
-
-            cards.forEach((card, idx) => {
-                const rect = card.getBoundingClientRect();
-                if (rect.top < window.innerHeight * 0.95) {
-                    setTimeout(() => revealCard(card), Math.min(idx * 45, 240));
-                } else {
-                    galleryScrollObserver.observe(card);
-                }
-
-                if (!card.dataset.tiltBound) {
-                    card.dataset.tiltBound = 'true';
-                    const glare = card.querySelector('.tilt-glare');
-                    card.addEventListener('mousemove', (e) => {
-                        const r = card.getBoundingClientRect();
-                        const px = (e.clientX - r.left) / r.width;
-                        const py = (e.clientY - r.top) / r.height;
-                        const rotY = (px - 0.5) * 7;
-                        const rotX = (0.5 - py) * 7;
-                        card.style.transform = `perspective(1100px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale(1.015)`;
-                        if (glare) {
-                            glare.style.opacity = '1';
-                            glare.style.background = `radial-gradient(circle at ${(px * 100).toFixed(0)}% ${(py * 100).toFixed(0)}%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 65%)`;
-                        }
-                    });
-                    card.addEventListener('mouseleave', () => {
-                        card.style.transform = 'translate3d(0, 0, 0) scale(1)';
-                        if (glare) glare.style.opacity = '0';
-                    });
-                }
-            });
         }
 
         function bindFirstInteractionAudioUnlock() {
