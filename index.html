@@ -3307,8 +3307,10 @@
  const lastMmt = formatMyanmarTime(m.lastActiveAt || m.registeredAt);
  const isSusp = Boolean(m.suspended);
  const hasResetReq = Boolean(m.resetRequestedAt);
+ const issuedCode = escapeHTML(m.lastIssuedPasscode || '');
  return `
- <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isSusp ? 'border-amber-400/50' : 'border-[#A69076]/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+ <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isSusp ? 'border-amber-400/50' : 'border-[#A69076]/20'} flex flex-col gap-2.5 text-xs">
+ <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
  <div class="min-w-0">
  <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
  <span class="w-2 h-2 rounded-full ${isSusp ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
@@ -3323,8 +3325,15 @@
  <div class="flex flex-wrap items-center gap-1.5 flex-shrink-0">
  <button type="button" onclick="resetMemberPasscodeByAdmin('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-[#A69076]/45 text-[11px] hover:bg-[#A69076] hover:text-white transition-colors">Set Passcode</button>
  <button type="button" onclick="toggleSuspendSalonMember('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-amber-300 text-amber-700 dark:text-amber-300 text-[11px] hover:bg-amber-500/15 transition-colors">${isSusp ? 'Activate' : 'Suspend'}</button>
- <button type="button" onclick="revokeSalonMember('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-[11px] hover:bg-red-50 transition-colors">Delete &amp; Revoke</button>
+ <button type="button" onclick="revokeSalonMember('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">Delete &amp; Revoke</button>
  </div>
+ </div>
+ ${issuedCode ? `
+ <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/35 text-emerald-800 dark:text-emerald-200">
+ <span>Temporary Passcode: <strong class="font-mono text-sm tracking-wider select-all">${issuedCode}</strong></span>
+ <button type="button" onclick="copyIssuedMemberPasscode('${issuedCode}', this)" class="px-3 py-1 rounded-md bg-emerald-700 text-white text-[11px] uppercase tracking-wider font-medium hover:bg-emerald-800 transition-colors">Copy Passcode</button>
+ </div>
+ ` : ''}
  </div>
  `;
  }).join('');
@@ -3374,6 +3383,7 @@
  if (idx < 0) return;
  const tempPass = 'TAL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
  salonState.members[idx].passHash = await hashCollectorPasscode(tempPass, clean);
+ salonState.members[idx].lastIssuedPasscode = tempPass;
  delete salonState.members[idx].resetRequestedAt;
  await persistSalonStateToCloud({
  action: 'Reset Passcode',
@@ -3381,6 +3391,21 @@
  details: 'Generated new temporary collector passcode'
  });
  showAdminFeedback(`New Passcode for ${clean}: ${tempPass} — Please copy and send this passcode to the collector.`);
+ }
+
+ function copyIssuedMemberPasscode(code, btnEl) {
+ const tempInput = document.createElement('input');
+ tempInput.value = code;
+ document.body.appendChild(tempInput);
+ tempInput.select();
+ try {
+ document.execCommand('copy');
+ if (btnEl) {
+ btnEl.textContent = 'Copied!';
+ setTimeout(() => { btnEl.textContent = 'Copy Passcode'; }, 2000);
+ }
+ } catch (e) {}
+ document.body.removeChild(tempInput);
  }
 
  async function revokeSalonMember(email) {
@@ -6847,7 +6872,7 @@
  window.inspectVipArtwork = inspectVipArtwork;
  window.toggleSuspendSalonMember = toggleSuspendSalonMember;
  window.resetMemberPasscodeByAdmin = resetMemberPasscodeByAdmin;
- window.saveVipArtworkFromAdmin = saveVipArtworkFromAdmin;
+ window.copyIssuedMemberPasscode = copyIssuedMemberPasscode;
  window.editVipArtworkInAdmin = editVipArtworkInAdmin;
  window.resetVipArtForm = resetVipArtForm;
  window.deleteVipArtworkFromAdmin = deleteVipArtworkFromAdmin;
