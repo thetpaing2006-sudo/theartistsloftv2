@@ -1,0 +1,6 @@
+[[d1_databases]]
+binding = "DB"
+database_name = "theartistsloft-db"
+database_id = "434bef9a-88a7-4ac3-9e9b-5f0350dd10e2"
+preview_database_id = "DB"
+migrations_dir = "migrations"
