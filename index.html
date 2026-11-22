@@ -828,9 +828,14 @@
  <input id="salon-member-email" type="email" required maxlength="160" placeholder="you@domain.com" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
  </div>
 
- <div>
- <label for="salon-member-passcode" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-1.5">Personal Collector Passcode (Min. 6 Characters) *</label>
- <input id="salon-member-passcode" type="password" required minlength="6" maxlength="64" autocomplete="current-password" placeholder="Create or enter your private passcode" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
+ <div id="salon-passcode-field-wrap">
+ <div class="flex items-center justify-between gap-2 mb-1.5">
+ <label id="salon-passcode-label" for="salon-member-passcode" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75">Create Collector Passcode (Min. 6 Characters) *</label>
+ <button type="button" id="salon-forgot-passcode-btn" onclick="switchSalonAuthMode('forgot')" class="hidden text-[11px] text-[#9C8265] dark:text-[#D4B483] hover:underline font-medium">
+ Forgot Passcode?
+ </button>
+ </div>
+ <input id="salon-member-passcode" type="password" required minlength="6" maxlength="64" autocomplete="new-password" placeholder="Create a private passcode (min. 6 characters)" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
  <p id="salon-passcode-hint" class="text-[11px] text-[#26231F]/55 dark:text-[#EDE7DA]/55 mt-1">Required on future visits so only you can access your Collector Salon account.</p>
  </div>
 
@@ -3259,6 +3264,9 @@
  <div class="text-[11px] opacity-55 mt-0.5">Joined: ${escapeHTML(mmtDate)} • Last Seen: ${escapeHTML(mmtLast)}</div>
  </div>
  <div class="flex flex-wrap items-center gap-1.5 self-start sm:self-center">
+ <button type="button" onclick="resetMemberPasscodeByAdmin('${escapeHTML(m.email)}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/45 text-[11px] uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
+ Set Passcode
+ </button>
  <button type="button" onclick="toggleSuspendSalonMember('${escapeHTML(m.email)}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/45 text-[11px] uppercase tracking-wider hover:bg-[#A69076] hover:text-white transition-colors">
  ${isSuspended ? 'Activate' : 'Suspend'}
  </button>
@@ -3277,15 +3285,15 @@
  if (mLogs.length === 0) {
  activityListEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No VIP member activity recorded yet.</p>`;
  } else {
- activityListEl.innerHTML = mLogs.map(log => {
- const mmtTime = formatMyanmarTime(log.timestamp);
+ activityListEl.innerHTML = mLogs.map(entry => {
+ const mmtTime = formatMyanmarTime(entry.timestamp);
  return `
- <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
- <div class="flex flex-wrap items-center gap-1.5">
- <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium">${escapeHTML(log.action)}</span>
- <span class="font-serif font-medium">${escapeHTML(log.memberName)}</span>
- <span class="opacity-65">(${escapeHTML(log.memberEmail)})</span>
- ${log.details ? `<span class="opacity-80">• ${escapeHTML(log.details)}</span>` : ''}
+ <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+ <div>
+ <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(entry.action)}</span>
+ <span class="font-medium">${escapeHTML(entry.memberName)}</span>
+ <span class="opacity-65">(${escapeHTML(entry.memberEmail)})</span>
+ ${entry.details ? `<span class="opacity-75 ml-1">• ${escapeHTML(entry.details)}</span>` : ''}
  </div>
  <span class="text-[11px] opacity-60 flex-shrink-0">${escapeHTML(mmtTime)}</span>
  </div>
@@ -3309,10 +3317,28 @@
  showAdminFeedback(`${nowSuspended ? 'Suspended' : 'Activated'} membership for ${clean}.`);
  }
 
+ async function resetMemberPasscodeByAdmin(email) {
+ const clean = String(email || '').trim().toLowerCase();
+ const idx = salonState.members.findIndex(m => m.email.toLowerCase() === clean);
+ if (idx < 0) return;
+ const tempPass = 'TAL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+ salonState.members[idx].passHash = await hashCollectorPasscode(tempPass, clean);
+ delete salonState.members[idx].resetRequestedAt;
+ await persistSalonStateToCloud({
+ action: 'Reset Passcode',
+ name: `${salonState.members[idx].name} (${clean})`,
+ details: 'Generated new temporary collector passcode'
+ });
+ showAdminFeedback(`New Passcode for ${clean}: ${tempPass} — Please copy and send this passcode to the collector.`);
+ }
+
  async function saveVipArtworkFromAdmin(event) {
  event.preventDefault();
  const btn = document.getElementById('save-vip-art-btn');
- if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Saving...';
+ }
  try {
  const editId = document.getElementById('edit-vip-art-id').value;
  const artistId = document.getElementById('vip-art-artist-select').value || 'mt-oung';
@@ -6724,6 +6750,7 @@
  window.reserveVipArtwork = reserveVipArtwork;
  window.inspectVipArtwork = inspectVipArtwork;
  window.toggleSuspendSalonMember = toggleSuspendSalonMember;
+ window.resetMemberPasscodeByAdmin = resetMemberPasscodeByAdmin;
  window.saveVipArtworkFromAdmin = saveVipArtworkFromAdmin;
  window.editVipArtworkInAdmin = editVipArtworkInAdmin;
  window.resetVipArtForm = resetVipArtForm;
