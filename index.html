@@ -930,8 +930,50 @@
  <!-- ==================== 4. CONTACT SECTION ==================== -->
  <section id="section-contact" class="page-section relative z-10 hidden flex-grow flex items-center justify-center">
  <div class="max-w-2xl w-full mx-auto px-6 py-20 md:py-24">
+ <!-- Direct Artwork & Viewing Inquiry Form -->
+ <div class="bg-[#FAF7F0]/90 dark:bg-[#1B1916]/90 backdrop-blur-md border border-[#9C8265]/30 dark:border-[#D4B483]/25 p-8 md:p-12 rounded-3xl shadow-sm mb-12">
+ <div class="text-center mb-8">
+ <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-2.5 font-medium">Gallery Concierge</p>
+ <h2 class="text-3xl sm:text-4xl font-serif font-medium text-[#26231F] dark:text-[#EDE7DA] mb-3">Private Viewing &amp; Price Inquiry</h2>
+ <div class="w-12 h-[1px] bg-[#9C8265] dark:bg-[#D4B483] mx-auto mb-4"></div>
+ <p class="text-xs sm:text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed max-w-lg mx-auto">
+ Inquire about available artworks, pricing, provenance, or schedule a private viewing in Yangon.
+ </p>
+ </div>
+
+ <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-5">
+ <input type="checkbox" name="botcheck" id="contact-botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off" />
+
+ <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+ <div>
+ <label for="contact-name" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-1.5">Your Name *</label>
+ <input id="contact-name" type="text" required placeholder="Full Name" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
+ </div>
+ <div>
+ <label for="contact-email" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-1.5">Email Address *</label>
+ <input id="contact-email" type="email" required placeholder="you@domain.com" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
+ </div>
+ </div>
+
+ <div>
+ <label for="contact-message" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-1.5">Artwork &amp; Inquiry Description *</label>
+ <textarea id="contact-message" rows="4" required placeholder="Specify the artwork title or your inquiry..." class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA] resize-y"></textarea>
+ </div>
+
+ <div class="text-center pt-1">
+ <button id="contact-submit-btn" type="submit" class="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#9C8265] dark:hover:bg-[#E5C99B] transition-colors uppercase tracking-[0.22em] text-xs font-medium shadow-sm disabled:opacity-50">
+ Send Message
+ </button>
+ </div>
+
+ <div id="contact-feedback" class="hidden p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]">
+ Thank you! Your message has been sent to our gallery team. We will respond shortly.
+ </div>
+ </form>
+ </div>
+
  <!-- Collector's Circle -> Direct Entry to VIP Private Salon -->
- <div id="collectors-circle-box" class="mb-14 bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/30 dark:border-[#D4B483]/25 p-8 md:p-11 rounded-3xl shadow-sm text-center">
+ <div id="collectors-circle-box" class="bg-[#FAF7F0]/85 dark:bg-[#1B1916]/85 backdrop-blur-sm border border-[#9C8265]/30 dark:border-[#D4B483]/25 p-8 md:p-11 rounded-3xl shadow-sm text-center">
  <p class="text-[11px] uppercase tracking-[0.35em] text-[#9C8265] dark:text-[#D4B483] mb-2.5 font-medium">Members-Only Viewing Room</p>
  <h3 class="text-2xl sm:text-3xl font-serif font-medium text-[#26231F] dark:text-[#EDE7DA] mb-3">The Collector's Private Salon</h3>
  <div class="w-10 h-[1px] bg-[#9C8265] dark:bg-[#D4B483] mx-auto mb-4"></div>
@@ -942,11 +984,6 @@
  Enter Private Salon &rarr;
  </button>
  </div>
-
- <div id="contact-feedback" class="hidden p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]">
- Thank you! Your message has been sent to our gallery team. We will respond shortly.
- </div>
- </form>
  </div>
  </section>
 
@@ -2735,8 +2772,6 @@
  }
  }
  if (data.settings.vip_salon_data && typeof data.settings.vip_salon_data === 'object') {
- const vData = data.settings.vip_salon_data;
- // Private member and artwork records are loaded only from authenticated Salon endpoints.
  renderSalonView();
  }
  }
@@ -2791,8 +2826,6 @@
  const SALON_SESSION_KEY = 'tal_vip_salon_member_v1';
  const SALON_LOCAL_DB_KEY = 'tal_vip_salon_local_store_v1';
 
- const DEFAULT_VIP_ARTWORKS = [];
-
  let salonState = {
  members: [],
  memberLogs: [],
@@ -2845,7 +2878,6 @@
 
  function loadLocalSalonState() {
    try {
-     // Remove all prior browser-held salon accounts, password hashes, sessions, and private art cache.
      localStorage.removeItem(SALON_SESSION_KEY);
      localStorage.removeItem(SALON_LOCAL_DB_KEY);
    } catch (e) {}
@@ -3068,7 +3100,6 @@
      const data = await response.json().catch(() => ({}));
      if (!response.ok || !data.ok) throw new Error(data.error || 'The confirmation email could not be sent.');
      if (status) status.textContent = data.message || 'Check your email to confirm.';
-     
    } catch (error) { if (status) status.textContent = error.message || 'Please try again.'; }
    finally { if (button) { button.disabled = false; button.textContent = 'Manage newsletter'; } }
  }
@@ -3172,6 +3203,7 @@
  }
  if (msgBox) {
  msgBox.value = `[VIP Private Salon Reservation] Hello, I am a registered Private Salon member and would like to reserve "${title}" by ${artistName} (${price}).`;
+ msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
  msgBox.focus();
  }
  }
@@ -4310,6 +4342,7 @@
  const msgBox = document.getElementById('contact-message');
  if (msgBox) {
  msgBox.value = `Hello, I would like to inquire about "${artTitle}" by ${artistName} (previewed with ${frameLabel}).`;
+ msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
  msgBox.focus();
  }
  }
@@ -4333,6 +4366,7 @@
  const msgBox = document.getElementById('contact-message');
  if (msgBox) {
  msgBox.value = `Hello, I would like to inquire about "${artTitle}" by ${artistName}.`;
+ msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
  msgBox.focus();
  }
  }
@@ -4548,6 +4582,19 @@
  }
  }
 
+ function showAdminFeedback(message, isError = false) {
+ const box = document.getElementById('admin-publish-feedback');
+ if (!box) return;
+ box.textContent = message;
+ box.className = isError
+ ? 'p-4 rounded-2xl text-xs font-medium bg-red-500/15 border border-red-400/40 text-red-700 dark:text-red-300'
+ : 'p-4 rounded-2xl text-xs font-medium bg-emerald-500/15 border border-emerald-500/35 text-emerald-800 dark:text-emerald-200';
+ box.classList.remove('hidden');
+ setTimeout(() => {
+ box.classList.add('hidden');
+ }, 5500);
+ }
+
  function updateAdminGateUI() {
  const titleEl = document.getElementById('admin-gate-title');
  const subEl = document.getElementById('admin-gate-subtitle');
@@ -4645,24 +4692,8 @@
  showAdminDashboard();
  } catch (err) {
  console.warn('Gallery API sync notice:', err);
- const isPreviewHost = window.location.protocol === 'blob:' ||
- window.location.protocol === 'about:' ||
- /usercontent|scf\.usercontent|claudeusercontent|webcontainer|stackblitz|localhost|127\.0\.0\.1/i.test(window.location.hostname || '');
-
- if (isPreviewHost && artworks.length === 0) {
- artworks = PREVIEW_SAMPLE_ARTWORKS.map(item => ({ ...item }));
- isLoadingArtworks = false;
- updateCloudStatus(false, 'Preview Mode • Sample Artworks Active');
- renderArtistSelectorBar();
- renderSelectedArtistProfile();
- renderCategoryFilterBar();
- renderArtworksGrid();
- return;
- }
-
- isLoadingArtworks = false;
- updateCloudStatus(false, `D1 Sync Notice: ${err.message || 'Check /api/gallery & D1 binding'}`);
- renderArtworksGrid();
+ errorEl.textContent = err.message || 'Unable to connect to Admin API.';
+ errorEl.classList.remove('hidden');
  } finally {
  if (submitBtn) {
  submitBtn.disabled = false;
@@ -4717,7 +4748,6 @@
  Object.entries(labels).forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
  const status = document.getElementById('experience-save-status');
  if (status) status.textContent = `Preview: ${colorName} ${chosenColor} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
- // Preview the actual wall and lighting while the modal is open; retain settings as unsaved until Save is pressed.
  const stage = document.getElementById('wall-canvas-stage');
  const wallLabel = document.getElementById('wall-color-name');
  const modal = document.getElementById('wall-preview-modal');
@@ -5568,57 +5598,6 @@
  }
  }
 
- async function handleNewsletterSubmit(event) {
- event.preventDefault();
- const form = document.getElementById('newsletter-form');
- const submitBtn = document.getElementById('newsletter-submit-btn');
- const feedback = document.getElementById('newsletter-feedback');
- const nameInput = document.getElementById('newsletter-name');
- const emailInput = document.getElementById('newsletter-email');
- const botcheck = document.getElementById('newsletter-botcheck')?.checked;
-
- if (botcheck) return;
- const email = emailInput.value.trim();
- const subscriberName = nameInput.value.trim() || 'Art Collector';
- if (!email) return;
-
- submitBtn.disabled = true;
- submitBtn.textContent = 'Joining...';
- feedback.classList.add('hidden');
-
- try {
- const res = await fetch(API_ENDPOINTS.contact, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({
- name: subscriberName,
- email,
- message: `[Collector's Circle Subscription] Please add ${subscriberName} (${email}) to The Artist's Loft private collector list for early artwork previews and studio notes.`,
- botcheck: false
- })
- });
- const data = await res.json().catch(() => ({}));
-
- if (res.ok && (data.success || data.ok)) {
- playSoftGalleryChime('success');
- trackVisitorEvent('newsletter_subscribe', email);
- feedback.textContent = "Welcome to The Collector's Circle! You will receive private previews and studio notes from Yangon.";
- feedback.className = 'p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-xs text-emerald-800 dark:text-emerald-200';
- feedback.classList.remove('hidden');
- form.reset();
- } else {
- throw new Error(data.message || 'Unable to subscribe right now.');
- }
- } catch (err) {
- feedback.textContent = 'Notice: ' + (err.message || 'Please try again later.');
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- } finally {
- submitBtn.disabled = false;
- submitBtn.textContent = 'Request Private Access';
- }
- }
-
  // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
  let galleryScrollRaf = null;
  let galleryScrollBound = false;
@@ -5786,7 +5765,7 @@
  const DEFAULT_AMBIENCE_TRACKS = [];
 
  let ambienceTracks = DEFAULT_AMBIENCE_TRACKS.map(t => ({ ...t }));
- let ambienceTargetVolume = 0.07; // 7% default soft background volume
+ let ambienceTargetVolume = 0.07;
  let ambienceRandomMode = true;
 
  let audioCtx = null;
@@ -6062,9 +6041,7 @@
  playPromise.then(() => {
  isAmbienceStarted = true;
  fadeAmbienceTo(ambienceTargetVolume, 1200);
- }).catch(() => {
- // Autoplay before user gesture may be blocked until first interaction
- });
+ }).catch(() => {});
  } else {
  isAmbienceStarted = true;
  fadeAmbienceTo(ambienceTargetVolume, 1200);
@@ -6701,7 +6678,6 @@
  window.downloadEditLogsJSON = downloadEditLogsJSON;
  window.exportArtworksJSON = exportArtworksJSON;
  window.handleContactSubmit = handleContactSubmit;
- window.handleNewsletterSubmit = handleNewsletterSubmit;
  window.switchSalonAuthMode = switchSalonAuthMode;
  window.handleSalonMemberSubmit = handleSalonMemberSubmit;
  window.handleSalonResetConfirm = handleSalonResetConfirm;
@@ -6736,46 +6712,46 @@
  window.formatMyanmarTime = formatMyanmarTime;
 
  // Initial Render & Cloudflare D1 Startup
-    loadLocalSalonState();
-  loadSalonSession();
-  const hasSalonResetParam =
-    new URLSearchParams(window.location.search).has("salon-reset") ||
-    window.location.hash.includes("salon-reset");
-  processSalonEmailLinks();
-  renderGalleryAboutSection();
-  renderArtistSelectorBar();
-  renderSelectedArtistProfile();
-  renderCategoryFilterBar();
-  renderArtworksGrid();
-  renderSalonView();
-  if (!hasSalonResetParam) {
-    const loginTabBtn = Array.from(document.querySelectorAll("button")).find(
-      el => /^\s*member\s+login\s*$/i.test(el.textContent || "")
-    );
-    if (loginTabBtn) loginTabBtn.click();
-  }
-  updateSoundButtonUI();
-  bindFirstInteractionAudioUnlock();
-  startAmbientSoundscape();
-  initVisitorCounter();
-  trackVisitorEvent('page_view', 'home');
-  loadCloudGallery(true);
-  if (hasSalonResetParam) {
-    setTimeout(() => {
-      if (typeof switchTab === "function") {
-        switchTab("vip-salon");
-      } else if (typeof openSalonView === "function") {
-        openSalonView();
-      } else {
-        const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
-          el => /private\s*salon/i.test(el.textContent || "")
-        );
-        if (salonTrigger) salonTrigger.click();
-      }
-      const salonSection = document.getElementById("vip-salon") || document.getElementById("salon-view");
-      if (salonSection) salonSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 50);
-  }
+ loadLocalSalonState();
+ loadSalonSession();
+ const hasSalonResetParam =
+   new URLSearchParams(window.location.search).has("salon-reset") ||
+   window.location.hash.includes("salon-reset");
+ processSalonEmailLinks();
+ renderGalleryAboutSection();
+ renderArtistSelectorBar();
+ renderSelectedArtistProfile();
+ renderCategoryFilterBar();
+ renderArtworksGrid();
+ renderSalonView();
+ if (!hasSalonResetParam) {
+   const loginTabBtn = Array.from(document.querySelectorAll("button")).find(
+     el => /^\s*member\s+login\s*$/i.test(el.textContent || "")
+   );
+   if (loginTabBtn) loginTabBtn.click();
+ }
+ updateSoundButtonUI();
+ bindFirstInteractionAudioUnlock();
+ startAmbientSoundscape();
+ initVisitorCounter();
+ trackVisitorEvent('page_view', 'home');
+ loadCloudGallery(true);
+ if (hasSalonResetParam) {
+   setTimeout(() => {
+     if (typeof switchTab === "function") {
+       switchTab("vip-salon");
+     } else if (typeof openSalonView === "function") {
+       openSalonView();
+     } else {
+       const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
+         el => /private\s*salon/i.test(el.textContent || "")
+       );
+       if (salonTrigger) salonTrigger.click();
+     }
+     const salonSection = document.getElementById("vip-salon") || document.getElementById("salon-view");
+     if (salonSection) salonSection.scrollIntoView({ behavior: "smooth", block: "start" });
+   }, 50);
+ }
  </script>
  
 </body>
