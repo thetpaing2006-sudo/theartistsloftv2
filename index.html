@@ -40,9 +40,9 @@
  <title>The Artist's Loft — Curated Myanmar Fine Art</title>
 
  <!-- Dynamic Browser Tab Favicon -->
- <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="Logo.jpg">
- <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/jpeg" href="Logo.jpg">
- <link id="dynamic-apple-icon" rel="apple-touch-icon" href="Logo.jpg">
+ <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="logo.jpg">
+ <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/jpeg" href="logo.jpg">
+ <link id="dynamic-apple-icon" rel="apple-touch-icon" href="logo.jpg">
 
  <!-- Google Fonts: Playfair Display & Inter -->
  <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@
  <div class="md:w-1/3 flex justify-center items-center">
  <button type="button" onclick="handleSecretBrandTap(event)" class="group flex items-center justify-center focus:outline-none select-none" aria-label="The Artist's Loft">
  <img id="header-brand-logo"
- src="Logo.jpg"
+ src="logo.jpg"
  alt="The Artist's Loft"
  class="h-10 sm:h-12 md:h-14 w-auto max-w-[230px] object-contain transition-transform duration-300 group-hover:scale-105">
  </button>
@@ -790,6 +790,7 @@
  <div class="max-w-6xl mx-auto px-6 md:px-12 py-14 md:py-20">
  
  <!-- LOCKED GATE: Member Registration & Sign-In -->
+ <div id="salon-email-link-feedback" class="hidden mb-5 p-4 rounded-2xl text-sm text-center" aria-live="polite"></div>
  <div id="salon-locked-gate" class="max-w-2xl mx-auto bg-[#FAF7F0]/90 dark:bg-[#1B1916]/90 backdrop-blur-md border border-[#9C8265]/35 dark:border-[#D4B483]/30 rounded-3xl p-8 sm:p-12 shadow-xl">
  <div class="text-center mb-8">
  <div class="w-12 h-12 rounded-full bg-[#9C8265]/15 dark:bg-[#D4B483]/15 text-[#9C8265] dark:text-[#D4B483] flex items-center justify-center mx-auto mb-4">
@@ -806,7 +807,7 @@
  </div>
 
  <!-- Mode Switcher: New Collector Register vs Member Login -->
- <div class="flex justify-center gap-2 mb-7">
+ <div id="salon-mode-switcher" class="flex justify-center gap-2 mb-7">
  <button type="button" id="salon-mode-register-btn" onclick="switchSalonAuthMode('register')" class="px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] transition-colors">
  New Collector Register
  </button>
@@ -836,6 +837,10 @@
  </button>
  </div>
  <input id="salon-member-passcode" type="password" required minlength="6" maxlength="64" autocomplete="new-password" placeholder="Create a private passcode (min. 6 characters)" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
+ <div id="salon-passcode-confirm-wrap" class="hidden mt-3">
+   <label for="salon-member-passcode-confirm" class="block text-[11px] uppercase tracking-[0.2em] text-[#26231F]/75 dark:text-[#EDE7DA]/75 mb-1.5">Verify Passcode *</label>
+   <input id="salon-member-passcode-confirm" type="password" minlength="6" maxlength="64" autocomplete="new-password" placeholder="Enter the same passcode again" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 dark:border-[#D4B483]/30 bg-white/80 dark:bg-[#12110F]/90 text-sm outline-none focus:border-[#26231F] dark:focus:border-[#D4B483] text-[#26231F] dark:text-[#EDE7DA]">
+ </div>
  <p id="salon-passcode-hint" class="text-[11px] text-[#26231F]/55 dark:text-[#EDE7DA]/55 mt-1">Required on future visits so only you can access your Collector Salon account.</p>
  </div>
 
@@ -856,6 +861,10 @@
  </label>
  </div>
 
+ <div id="salon-newsletter-optin-wrap" class="hidden p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#9C8265]/25 text-left">
+   <label class="flex items-start gap-2.5 cursor-pointer select-none"><input id="salon-newsletter-optin" type="checkbox" class="mt-0.5 w-4 h-4 accent-[#26231F] dark:accent-[#D4B483] rounded cursor-pointer"><span class="text-xs text-[#26231F] dark:text-[#EDE7DA]"><strong>Optional:</strong> Send me The Artist's Loft Collector Newsletter. I will receive a separate email and must click its confirmation link before any newsletter is sent.</span></label>
+ </div>
+
  <div id="salon-auth-feedback" class="hidden p-3.5 rounded-2xl text-xs text-center"></div>
 
  <div class="pt-1 text-center">
@@ -863,6 +872,13 @@
  Register &amp; Enter Private Salon
  </button>
  </div>
+ </form>
+ <form id="salon-reset-panel" onsubmit="handleSalonResetConfirm(event)" class="hidden space-y-4 text-left">
+   <h3 class="font-serif text-xl">Choose a new passcode</h3>
+   <p class="text-xs opacity-70">This one-time reset link expires after 30 minutes.</p>
+   <input id="salon-reset-passcode" type="password" minlength="6" maxlength="64" required autocomplete="new-password" placeholder="New passcode (6–64 characters)" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 bg-white/80 dark:bg-[#12110F] text-sm">
+   <input id="salon-reset-passcode-confirm" type="password" minlength="6" maxlength="64" required autocomplete="new-password" placeholder="Confirm new passcode" class="w-full px-4 py-3 rounded-xl border border-[#A69076]/40 bg-white/80 dark:bg-[#12110F] text-sm">
+   <button id="salon-reset-submit" type="submit" class="px-8 py-3 rounded-full bg-[#26231F] dark:bg-[#D4B483] text-white dark:text-[#12110F] text-xs uppercase tracking-wider">Update passcode</button>
  </form>
  </div>
 
@@ -879,11 +895,13 @@
  Welcome, <span id="salon-active-member-name">Collector</span>
  </h2>
  <p id="salon-active-member-email" class="text-xs text-[#26231F]/65 dark:text-[#EDE7DA]/65 mt-0.5"></p>
+ <p id="salon-member-newsletter-feedback" class="text-[11px] text-[#9C8265] dark:text-[#D4B483] mt-1" aria-live="polite"></p>
  </div>
  <div class="flex flex-wrap items-center gap-2.5">
  <span class="px-3.5 py-1.5 rounded-full bg-[#9C8265]/15 dark:bg-[#D4B483]/15 text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] font-medium">
  Confidential Prices Unlocked
  </span>
+ <button id="salon-member-newsletter-optin" type="button" onclick="requestSalonNewsletterConfirmation()" class="px-4 py-2 rounded-full border border-[#9C8265]/45 dark:border-[#D4B483]/35 text-[10px] uppercase tracking-[0.15em] hover:bg-[#26231F] hover:text-white dark:hover:bg-[#D4B483] dark:hover:text-[#12110F] transition-colors">Manage newsletter</button>
  <button type="button" onclick="signOutSalonMember()" class="px-4 py-2 rounded-full border border-[#9C8265]/45 dark:border-[#D4B483]/35 text-[10px] uppercase tracking-[0.2em] hover:bg-[#26231F] hover:text-white dark:hover:bg-[#D4B483] dark:hover:text-[#12110F] transition-colors">
  Sign Out
  </button>
@@ -1667,6 +1685,20 @@
  <div id="admin-vip-art-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#A69076]/15"></div>
  </div>
 
+ <div id="salon-migration-panel" class="p-5 rounded-2xl border border-amber-400/40 bg-amber-500/10 space-y-3">
+   <h4 class="font-serif text-lg">Secure existing Salon member records</h4>
+   <p class="text-xs opacity-75">One-time import from the old public setting into private D1 storage. Existing members remain newsletter opted-out until they explicitly confirm by email.</p>
+   <button type="button" onclick="migrateLegacySalonMembers()" class="px-5 py-2.5 rounded-xl bg-[#26231F] dark:bg-[#D4B483] text-white dark:text-[#12110F] text-xs uppercase tracking-wider">Migrate existing members privately</button>
+ </div>
+ <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-4">
+   <div><h4 class="font-serif text-xl">Collector Newsletter</h4><p class="text-xs opacity-65">Only members who tick the optional box and click the email confirmation link are added to this Resend segment. Confirmed opt-ins recorded: <strong id="salon-optin-count">0</strong>.</p></div>
+   <form id="salon-newsletter-form" onsubmit="sendAdminNewsletter(event)" class="space-y-3">
+     <input id="salon-newsletter-subject" maxlength="160" required placeholder="Email subject" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm">
+     <textarea id="salon-newsletter-message" rows="6" maxlength="20000" minlength="10" required placeholder="Write the newsletter message. Paragraph breaks are preserved; an unsubscribe link is added automatically." class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-[#FAF9F6] dark:bg-[#12110F] text-sm"></textarea>
+     <button id="salon-newsletter-send-btn" type="submit" class="px-6 py-2.5 rounded-xl bg-[#26231F] dark:bg-[#D4B483] text-white dark:text-[#12110F] text-xs uppercase tracking-wider">Send Newsletter</button>
+   </form>
+ </div>
+
  <!-- Registered Collector Members List (With Revoke / Delete Fake Account Action) -->
  <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-4">
  <div class="flex flex-wrap items-center justify-between gap-2">
@@ -2057,7 +2089,7 @@
  const candidates = [
  'brand-logo.jpg',
  'brand-logo.png',
- 'Logo.jpg',
+ 'logo.jpg',
  'logo.jpg',
  'Logo.JPG',
  'ALlogo.jpg',
@@ -2704,13 +2736,7 @@
  }
  if (data.settings.vip_salon_data && typeof data.settings.vip_salon_data === 'object') {
  const vData = data.settings.vip_salon_data;
- if (Array.isArray(vData.members)) salonState.members = vData.members;
- if (Array.isArray(vData.revokedEmails)) salonState.revokedEmails = vData.revokedEmails;
- if (Array.isArray(vData.memberLogs)) salonState.memberLogs = vData.memberLogs;
- if (Array.isArray(vData.vipArtworks) && vData.vipArtworks.length > 0) {
- salonState.vipArtworks = vData.vipArtworks;
- }
- saveLocalSalonState();
+ // Private member and artwork records are loaded only from authenticated Salon endpoints.
  renderSalonView();
  }
  }
@@ -2769,54 +2795,21 @@
 
  let salonState = {
  members: [],
- revokedEmails: [],
  memberLogs: [],
  vipArtworks: []
  };
  let currentSalonMember = null;
  let currentSalonAuthMode = 'register';
 
- async function hashCollectorPasscode(rawPasscode, saltEmail) {
- const cleanPass = String(rawPasscode || '').trim();
- const cleanSalt = String(saltEmail || '').trim().toLowerCase();
- const inputStr = `tal-salon-v1:${cleanSalt}:${cleanPass}`;
- try {
- if (window.crypto && window.crypto.subtle) {
- const enc = new TextEncoder().encode(inputStr);
- const buf = await window.crypto.subtle.digest('SHA-256', enc);
- return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
- }
- } catch (e) {}
- let h = 2166136261;
- for (let i = 0; i < inputStr.length; i++) {
- h ^= inputStr.charCodeAt(i);
- h = Math.imul(h, 16777619);
- }
- return 'fnv-' + (h >>> 0).toString(16);
- }
-
  function recordSalonMemberActivity(actionLabel, details = '') {
- if (!currentSalonMember) return;
- const entry = {
- id: 'mlog-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5),
- memberName: currentSalonMember.name,
- memberEmail: currentSalonMember.email,
- action: actionLabel,
- details,
- device: detectDetailedDeviceInfo().detail,
- timestamp: new Date().toISOString()
- };
- if (!Array.isArray(salonState.memberLogs)) salonState.memberLogs = [];
- salonState.memberLogs.unshift(entry);
- if (salonState.memberLogs.length > 250) salonState.memberLogs.length = 250;
-
- const mIdx = salonState.members.findIndex(m => m.email.toLowerCase() === currentSalonMember.email.toLowerCase());
- if (mIdx >= 0) {
- salonState.members[mIdx].lastActiveAt = entry.timestamp;
- }
- saveLocalSalonState();
- if (isAdminUnlocked) renderAdminSalonManager();
- trackVisitorEvent(`member_${actionLabel.toLowerCase().replace(/\s+/g, '_')}`, details || actionLabel);
+   if (!currentSalonMember) return;
+   fetch('/api/salon/session', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     credentials: 'same-origin',
+     body: JSON.stringify({ action: actionLabel, details, device: detectDetailedDeviceInfo().detail })
+   }).catch(() => {});
+   trackVisitorEvent(`member_${actionLabel.toLowerCase().replace(/\s+/g, '_')}`, details || actionLabel);
  }
 
  const DISPOSABLE_EMAIL_DOMAINS = new Set([
@@ -2851,312 +2844,240 @@
  }
 
  function loadLocalSalonState() {
- try {
- const rawStore = localStorage.getItem(SALON_LOCAL_DB_KEY);
- if (rawStore) {
- const parsed = JSON.parse(rawStore);
- if (Array.isArray(parsed.members)) salonState.members = parsed.members;
- if (Array.isArray(parsed.revokedEmails)) salonState.revokedEmails = parsed.revokedEmails;
- if (Array.isArray(parsed.memberLogs)) salonState.memberLogs = parsed.memberLogs;
- if (Array.isArray(parsed.vipArtworks) && parsed.vipArtworks.length > 0) {
- salonState.vipArtworks = parsed.vipArtworks;
- }
- }
- const savedMember = localStorage.getItem(SALON_SESSION_KEY);
- if (savedMember) {
- const m = JSON.parse(savedMember);
- if (m && m.email) {
- const isRevoked = salonState.revokedEmails.some(e => e.toLowerCase() === m.email.toLowerCase());
- const dbRecord = salonState.members.find(item => item.email.toLowerCase() === m.email.toLowerCase());
- const isSuspended = dbRecord && dbRecord.suspended === true;
- if (!isRevoked && !isSuspended) {
- currentSalonMember = dbRecord || m;
- } else {
- localStorage.removeItem(SALON_SESSION_KEY);
- }
- }
- }
- } catch (e) {}
+   try {
+     // Remove all prior browser-held salon accounts, password hashes, sessions, and private art cache.
+     localStorage.removeItem(SALON_SESSION_KEY);
+     localStorage.removeItem(SALON_LOCAL_DB_KEY);
+   } catch (e) {}
  }
 
  function saveLocalSalonState() {
- try {
- localStorage.setItem(SALON_LOCAL_DB_KEY, JSON.stringify(salonState));
- } catch (e) {}
+   try { localStorage.removeItem(SALON_LOCAL_DB_KEY); } catch (e) {}
  }
 
  async function persistSalonStateToCloud(logAction = null) {
- saveLocalSalonState();
- renderSalonView();
- renderAdminSalonManager();
-
- try {
- await fetch(API_ENDPOINTS.settings, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({
- key: 'vip_salon_data',
- value: {
- members: salonState.members,
- revokedEmails: salonState.revokedEmails,
- memberLogs: (salonState.memberLogs || []).slice(0, 150),
- vipArtworks: salonState.vipArtworks,
- updatedAt: Date.now()
+   saveLocalSalonState();
+   renderSalonView();
+   renderAdminSalonManager();
+   try {
+     const response = await fetch(API_ENDPOINTS.settings, {
+       method: 'POST',
+       headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+       body: JSON.stringify({ key: 'vip_salon_data', value: { vipArtworks: salonState.vipArtworks || [], updatedAt: Date.now() } })
+     });
+     if (!response.ok) throw new Error(`D1 save failed (${response.status})`);
+   } catch (e) { throw e; }
+   if (logAction && typeof recordEditLog === 'function') {
+     recordEditLog(logAction.action, 'VIP Salon', logAction.name, logAction.details || '');
+   }
  }
- })
- });
- } catch (e) {}
 
- if (logAction && typeof recordEditLog === 'function') {
- recordEditLog(logAction.action, 'VIP Salon', logAction.name, logAction.details || '');
+ async function loadVipSalonWorks(admin = false) {
+   try {
+     const response = await fetch('/api/salon/vip-artworks', {
+       headers: admin ? getAdminAuthHeaders() : {}, credentials: 'same-origin', cache: 'no-store'
+     });
+     const data = await response.json().catch(() => ({}));
+     if (response.ok && data.ok) salonState.vipArtworks = Array.isArray(data.vipArtworks) ? data.vipArtworks : [];
+     else if (!admin) salonState.vipArtworks = [];
+   } catch (e) { if (!admin) salonState.vipArtworks = []; }
+   renderSalonView();
+   if (isAdminUnlocked) renderAdminSalonManager();
  }
+
+ async function loadSalonSession() {
+   if (new URLSearchParams(location.search).has('salon-reset')) {
+     currentSalonMember = null;
+     renderSalonView();
+     return;
+   }
+   try {
+     const response = await fetch('/api/salon/session', { credentials: 'same-origin', cache: 'no-store' });
+     const data = await response.json();
+     currentSalonMember = data.ok && data.member ? data.member : null;
+   } catch (e) { currentSalonMember = null; }
+   if (currentSalonMember) await loadVipSalonWorks(false);
+   else salonState.vipArtworks = [];
+   renderSalonView();
  }
 
  function switchSalonAuthMode(mode) {
- playSoftGalleryChime('select');
- currentSalonAuthMode = (mode === 'login' || mode === 'forgot') ? mode : 'register';
- const regBtn = document.getElementById('salon-mode-register-btn');
- const logBtn = document.getElementById('salon-mode-login-btn');
- const nameWrap = document.getElementById('salon-name-field-wrap');
- const nameInput = document.getElementById('salon-member-name');
- const passWrap = document.getElementById('salon-passcode-field-wrap');
- const passLabel = document.getElementById('salon-passcode-label');
- const passInput = document.getElementById('salon-member-passcode');
- const forgotBtn = document.getElementById('salon-forgot-passcode-btn');
- const passHint = document.getElementById('salon-passcode-hint');
- const termsBox = document.getElementById('salon-terms-box');
- const termsCheck = document.getElementById('salon-terms-checkbox');
- const submitBtn = document.getElementById('salon-auth-submit-btn');
- const feedback = document.getElementById('salon-auth-feedback');
+   playSoftGalleryChime('select');
+   currentSalonAuthMode = (mode === 'login' || mode === 'forgot') ? mode : 'register';
+   const regBtn = document.getElementById('salon-mode-register-btn');
+   const logBtn = document.getElementById('salon-mode-login-btn');
+   const nameWrap = document.getElementById('salon-name-field-wrap');
+   const nameInput = document.getElementById('salon-member-name');
+   const passWrap = document.getElementById('salon-passcode-field-wrap');
+   const passInput = document.getElementById('salon-member-passcode');
+   const passConfirmWrap = document.getElementById('salon-passcode-confirm-wrap');
+   const passConfirmInput = document.getElementById('salon-member-passcode-confirm');
+   const forgotBtn = document.getElementById('salon-forgot-passcode-btn');
+   const passHint = document.getElementById('salon-passcode-hint');
+   const termsBox = document.getElementById('salon-terms-box');
+   const termsCheck = document.getElementById('salon-terms-checkbox');
+   const newsletterBox = document.getElementById('salon-newsletter-optin-wrap');
+   const submitBtn = document.getElementById('salon-auth-submit-btn');
+   const feedback = document.getElementById('salon-auth-feedback');
+   if (feedback) feedback.classList.add('hidden');
+   const isReg = currentSalonAuthMode === 'register';
+   const isLogin = currentSalonAuthMode === 'login';
+   const isForgot = currentSalonAuthMode === 'forgot';
+   if (regBtn) regBtn.className = isReg ? 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] transition-colors' : 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium border border-[#9C8265]/40 dark:border-[#D4B483]/35 text-[#26231F]/75 dark:text-[#EDE7DA]/75 hover:border-[#26231F] transition-colors';
+   if (logBtn) logBtn.className = isLogin ? 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] transition-colors' : 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium border border-[#9C8265]/40 dark:border-[#D4B483]/35 text-[#26231F]/75 dark:text-[#EDE7DA]/75 hover:border-[#26231F] transition-colors';
+   if (nameWrap) nameWrap.classList.toggle('hidden', !isReg);
+   if (nameInput) nameInput.required = isReg;
+   if (passWrap) passWrap.classList.toggle('hidden', isForgot);
+   if (passInput) { passInput.required = !isForgot; passInput.value = ''; passInput.autocomplete = isReg ? 'new-password' : 'current-password'; }
+   if (passConfirmWrap) passConfirmWrap.classList.toggle('hidden', !isReg);
+   if (passConfirmInput) { passConfirmInput.required = isReg; passConfirmInput.value = ''; }
+   if (forgotBtn) forgotBtn.classList.toggle('hidden', !isLogin);
+   if (passHint) passHint.textContent = isReg ? 'Required on future visits so only you can access your Collector Salon account.' : 'Enter your registered collector passcode to unlock the Private Salon.';
+   if (termsBox) termsBox.classList.toggle('hidden', !isReg);
+   if (termsCheck) termsCheck.required = isReg;
+   if (newsletterBox) newsletterBox.classList.toggle('hidden', !isReg);
+   if (submitBtn) submitBtn.textContent = isReg ? 'Register & Enter Private Salon' : (isForgot ? 'Email me a reset link' : 'Log In to Private Salon');
+ }
 
- if (feedback) feedback.classList.add('hidden');
- const isReg = currentSalonAuthMode === 'register';
- const isLogin = currentSalonAuthMode === 'login';
- const isForgot = currentSalonAuthMode === 'forgot';
+ function showSalonEmailLinkFeedback(message, kind = 'success') {
+   const box = document.getElementById('salon-email-link-feedback');
+   if (!box) return;
+   box.textContent = message;
+   box.className = kind === 'error'
+     ? 'mb-5 p-4 rounded-2xl bg-red-500/15 border border-red-400/40 text-sm text-center text-red-700 dark:text-red-300'
+     : 'mb-5 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-sm text-center text-emerald-800 dark:text-emerald-200';
+ }
 
- if (regBtn) {
- regBtn.className = isReg
- ? 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] transition-colors'
- : 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium border border-[#9C8265]/40 dark:border-[#D4B483]/35 text-[#26231F]/75 dark:text-[#EDE7DA]/75 hover:border-[#26231F] transition-colors';
- }
- if (logBtn) {
- logBtn.className = !isReg
- ? 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] transition-colors'
- : 'px-5 py-2 rounded-full text-[11px] uppercase tracking-[0.2em] font-medium border border-[#9C8265]/40 dark:border-[#D4B483]/35 text-[#26231F]/75 dark:text-[#EDE7DA]/75 hover:border-[#26231F] transition-colors';
- }
- if (nameWrap) nameWrap.classList.toggle('hidden', isLogin);
- if (nameInput) nameInput.required = !isLogin;
- if (passWrap) passWrap.classList.toggle('hidden', isForgot);
- if (passInput) {
- passInput.required = !isForgot;
- passInput.value = '';
- passInput.autocomplete = isReg ? 'new-password' : 'current-password';
- passInput.placeholder = isReg ? 'Create a private passcode (min. 6 characters)' : 'Enter your collector passcode';
- }
- if (passLabel) {
- passLabel.textContent = isReg ? 'Create Collector Passcode (Min. 6 Characters) *' : 'Collector Passcode *';
- }
- if (forgotBtn) {
- forgotBtn.classList.toggle('hidden', !isLogin);
- }
- if (passHint) {
- passHint.textContent = isReg
- ? 'Required on future visits so only you can access your Collector Salon account.'
- : 'Enter your registered collector passcode to unlock the Private Salon.';
- }
- if (termsBox) termsBox.classList.toggle('hidden', !isReg);
- if (termsCheck) termsCheck.required = isReg;
- if (submitBtn) {
- submitBtn.textContent = isReg
- ? 'Register & Enter Private Salon'
- : (isForgot ? 'Request Passcode Reset' : 'Log In to Private Salon');
- }
+ function showSalonAuthFeedback(message, kind = 'success') {
+   const feedback = document.getElementById('salon-auth-feedback');
+   if (!feedback) return;
+   feedback.textContent = message;
+   feedback.className = kind === 'error'
+     ? 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-center text-red-700 dark:text-red-300'
+     : 'p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-xs text-center text-emerald-800 dark:text-emerald-200';
  }
 
  async function handleSalonMemberSubmit(event) {
- event.preventDefault();
- const botcheck = document.getElementById('salon-botcheck')?.checked;
- if (botcheck) return;
-
- const nameInput = document.getElementById('salon-member-name');
- const emailInput = document.getElementById('salon-member-email');
- const passInput = document.getElementById('salon-member-passcode');
- const termsCheck = document.getElementById('salon-terms-checkbox');
- const submitBtn = document.getElementById('salon-auth-submit-btn');
- const feedback = document.getElementById('salon-auth-feedback');
-
- const email = emailInput.value.trim().toLowerCase();
- const passcode = passInput.value.trim();
- const name = currentSalonAuthMode !== 'login' ? nameInput.value.trim() : null;
-
- feedback.classList.add('hidden');
-
- // Check if revoked/deleted by Curator
- if (salonState.revokedEmails.some(e => e.toLowerCase() === email)) {
- feedback.textContent = 'Access Revoked: This account was removed by the Gallery Curator under our Terms & Conditions.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
+   event.preventDefault();
+   if (document.getElementById('salon-botcheck')?.checked) return;
+   const nameInput = document.getElementById('salon-member-name');
+   const emailInput = document.getElementById('salon-member-email');
+   const passInput = document.getElementById('salon-member-passcode');
+   const passConfirmInput = document.getElementById('salon-member-passcode-confirm');
+   const termsCheck = document.getElementById('salon-terms-checkbox');
+   const submitBtn = document.getElementById('salon-auth-submit-btn');
+   const email = emailInput.value.trim().toLowerCase();
+   const passcode = passInput.value;
+   const name = currentSalonAuthMode === 'register' ? nameInput.value.trim() : null;
+   const feedback = document.getElementById('salon-auth-feedback');
+   if (feedback) feedback.classList.add('hidden');
+   const check = validateGenuineCollectorInput(name, email);
+   if (!check.ok) { showSalonAuthFeedback(check.reason, 'error'); return; }
+   if (currentSalonAuthMode === 'register' && passcode !== passConfirmInput.value) { showSalonAuthFeedback('The passcodes do not match. Please check both fields.', 'error'); passConfirmInput.focus(); return; }
+   if (currentSalonAuthMode === 'register' && !termsCheck.checked) { showSalonAuthFeedback('Please accept the Terms & Conditions to enter the Private Salon.', 'error'); return; }
+   submitBtn.disabled = true;
+   submitBtn.textContent = 'Please wait…';
+   try {
+     const action = currentSalonAuthMode === 'forgot' ? 'request_reset' : currentSalonAuthMode;
+     const payload = action === 'request_reset' ? { action, email } : {
+       action, email, name, passcode,
+       newsletterOptIn: Boolean(document.getElementById('salon-newsletter-optin')?.checked),
+       device: detectDetailedDeviceInfo().detail
+     };
+     const response = await fetch('/api/salon/auth', {
+       method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+       body: JSON.stringify(payload)
+     });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'The request could not be completed.');
+     if (action === 'request_reset') {
+       showSalonAuthFeedback(data.message || 'If an account exists for that email, a secure reset link will arrive shortly.');
+       return;
+     }
+     currentSalonMember = data.member;
+     passInput.value = '';
+     await loadVipSalonWorks(false);
+     renderSalonView();
+     playSoftGalleryChime('success');
+     if (data.newsletterConfirmationSent) showSalonAuthFeedback('Account ready. Please check your email and click the separate confirmation link to activate newsletter updates.');
+     else if (data.newsletterSetupMissing) showSalonAuthFeedback('Account ready. Newsletter confirmation is not configured yet, so you were not subscribed.');
+     else showSalonAuthFeedback(action === 'register' ? 'Your Private Salon account is ready.' : 'Welcome back to the Private Salon.');
+   } catch (error) {
+     showSalonAuthFeedback(error.message || 'The request could not be completed. Please try again.', 'error');
+   } finally {
+     submitBtn.disabled = false;
+     submitBtn.textContent = currentSalonAuthMode === 'register' ? 'Register & Enter Private Salon' : (currentSalonAuthMode === 'forgot' ? 'Email me a reset link' : 'Log In to Private Salon');
+   }
  }
 
- const check = validateGenuineCollectorInput(name, email);
- if (!check.ok) {
- feedback.textContent = check.reason;
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
+ async function handleSalonResetConfirm(event) {
+   event.preventDefault();
+   const token = new URLSearchParams(location.search).get('salon-reset') || '';
+   const passcode = document.getElementById('salon-reset-passcode').value;
+   const confirm = document.getElementById('salon-reset-passcode-confirm').value;
+   if (passcode.length < 6 || passcode.length > 64) { showSalonAuthFeedback('Passcode must be between 6 and 64 characters.', 'error'); return; }
+   if (passcode !== confirm) { showSalonAuthFeedback('The passcodes do not match.', 'error'); return; }
+   const btn = document.getElementById('salon-reset-submit');
+   btn.disabled = true;
+   try {
+     const response = await fetch('/api/salon/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'confirm_reset', token, passcode }) });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'This reset link is invalid or expired.');
+     showSalonAuthFeedback(data.message || 'Passcode updated. You can now sign in.');
+     document.getElementById('salon-reset-panel').classList.add('hidden');
+     document.getElementById('salon-auth-form').classList.remove('hidden');
+     document.getElementById('salon-mode-switcher').classList.remove('hidden');
+     history.replaceState({}, '', location.pathname + location.hash);
+     switchSalonAuthMode('login');
+   } catch (error) { showSalonAuthFeedback(error.message, 'error'); }
+   finally { btn.disabled = false; }
  }
 
- // Handle Forgot Passcode Request (Logged directly to D1/Admin Console without using Web3Forms quota)
- if (currentSalonAuthMode === 'forgot') {
- const existingIdx = salonState.members.findIndex(m => m.email.toLowerCase() === email);
- if (existingIdx < 0) {
- feedback.textContent = 'No registered collector account found with this email address.';
- feedback.className = 'p-3.5 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-800 dark:text-amber-200';
- feedback.classList.remove('hidden');
- return;
- }
- const member = salonState.members[existingIdx];
- if (member.suspended) {
- feedback.textContent = 'Account Suspended: Please contact the Gallery Curator directly.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
- }
- const nowIso = new Date().toISOString();
- member.resetRequestedAt = nowIso;
- salonState.members[existingIdx] = member;
- if (!Array.isArray(salonState.memberLogs)) salonState.memberLogs = [];
- salonState.memberLogs.unshift({
- id: 'mlog-' + Date.now(),
- memberName: member.name,
- memberEmail: member.email,
- action: 'Passcode Reset Requested',
- details: `Submitted via Forgot Passcode (${name})`,
- device: detectDetailedDeviceInfo().detail,
- timestamp: nowIso
- });
- saveLocalSalonState();
- await persistSalonStateToCloud();
- playSoftGalleryChime('success');
- feedback.textContent = 'Passcode reset request recorded! The Gallery Curator will issue your new temporary passcode shortly.';
- feedback.className = 'p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-xs text-emerald-800 dark:text-emerald-200';
- feedback.classList.remove('hidden');
- return;
+ async function processSalonEmailLinks() {
+   const params = new URLSearchParams(location.search);
+   const resetToken = params.get('salon-reset');
+   const newsletterToken = params.get('newsletter-confirm');
+   if (resetToken) {
+     await fetch('/api/salon/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
+     currentSalonMember = null;
+     renderSalonView();
+     document.getElementById('salon-auth-form')?.classList.add('hidden');
+     document.getElementById('salon-mode-switcher')?.classList.add('hidden');
+     document.getElementById('salon-reset-panel')?.classList.remove('hidden');
+   }
+   if (newsletterToken) {
+     try {
+       const response = await fetch(`/api/salon/newsletter?token=${encodeURIComponent(newsletterToken)}`, { cache: 'no-store' });
+       const data = await response.json().catch(() => ({}));
+       if (!response.ok || !data.ok) throw new Error(data.error || 'Confirmation failed.');
+       showSalonEmailLinkFeedback(data.message || 'Your newsletter subscription is confirmed.');
+       await loadSalonSession();
+     } catch (error) { showSalonEmailLinkFeedback(error.message || 'Newsletter confirmation failed.', 'error'); }
+     history.replaceState({}, '', location.pathname + location.hash);
+   }
  }
 
- if (passcode.length < 6) {
- feedback.textContent = 'Please enter a personal passcode of at least 6 characters.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
+ async function requestSalonNewsletterConfirmation() {
+   const button = document.getElementById('salon-member-newsletter-optin');
+   const status = document.getElementById('salon-member-newsletter-feedback');
+   if (button) { button.disabled = true; button.textContent = 'Sending…'; }
+   try {
+     const response = await fetch('/api/salon/newsletter', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'The confirmation email could not be sent.');
+     if (status) status.textContent = data.message || 'Check your email to confirm.';
+     
+   } catch (error) { if (status) status.textContent = error.message || 'Please try again.'; }
+   finally { if (button) { button.disabled = false; button.textContent = 'Manage newsletter'; } }
  }
 
- if (currentSalonAuthMode === 'register' && !termsCheck.checked) {
- feedback.textContent = 'Please accept the Terms & Conditions to enter the Private Salon.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
- }
-
- submitBtn.disabled = true;
- submitBtn.textContent = 'Verifying Passcode...';
-
- try {
- const passHash = await hashCollectorPasscode(passcode, email);
- const existingIdx = salonState.members.findIndex(m => m.email.toLowerCase() === email);
- const existingMember = existingIdx >= 0 ? salonState.members[existingIdx] : null;
-
- if (existingMember && existingMember.suspended) {
- feedback.textContent = 'Account Suspended: Please contact the Gallery Curator to reactivate your membership.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
- }
-
- if (currentSalonAuthMode === 'login') {
- if (!existingMember) {
- feedback.textContent = 'No active collector membership found for this email. Please register first.';
- feedback.className = 'p-3.5 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-800 dark:text-amber-200';
- feedback.classList.remove('hidden');
- return;
- }
- if (existingMember.passHash && existingMember.passHash !== passHash) {
- feedback.textContent = 'Incorrect Collector Passcode. Click "Forgot Passcode?" above if you need a reset.';
- feedback.className = 'p-3.5 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs text-red-700 dark:text-red-300';
- feedback.classList.remove('hidden');
- return;
- }
- if (!existingMember.passHash) {
- existingMember.passHash = passHash;
- }
- existingMember.loginCount = (existingMember.loginCount || 1) + 1;
- existingMember.lastActiveAt = new Date().toISOString();
- salonState.members[existingIdx] = existingMember;
- currentSalonMember = existingMember;
- recordSalonMemberActivity('Signed In', `Visit #${existingMember.loginCount}`);
- saveLocalSalonState();
- await persistSalonStateToCloud();
- } else {
- if (existingMember) {
- if (existingMember.passHash && existingMember.passHash !== passHash) {
- feedback.textContent = 'This email is already registered. Switch to "Member Log-in" and enter your passcode.';
- feedback.className = 'p-3.5 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-800 dark:text-amber-200';
- feedback.classList.remove('hidden');
- return;
- }
- existingMember.passHash = passHash;
- existingMember.loginCount = (existingMember.loginCount || 1) + 1;
- existingMember.lastActiveAt = new Date().toISOString();
- salonState.members[existingIdx] = existingMember;
- currentSalonMember = existingMember;
- recordSalonMemberActivity('Signed In', `Visit #${existingMember.loginCount}`);
- saveLocalSalonState();
- await persistSalonStateToCloud();
- } else {
- const nowIso = new Date().toISOString();
- const memberObj = {
- id: 'mem-' + Date.now(),
- name,
- email,
- passHash,
- loginCount: 1,
- suspended: false,
- registeredAt: nowIso,
- lastActiveAt: nowIso,
- device: detectDetailedDeviceInfo().detail
- };
- salonState.members.unshift(memberObj);
- currentSalonMember = memberObj;
- recordSalonMemberActivity('Registered', `New Collector (${memberObj.device})`);
- saveLocalSalonState();
- // Save directly to Cloudflare D1 / Admin Console (does NOT use Web3Forms 250 limit)
- await persistSalonStateToCloud();
- }
- }
-
- try {
- localStorage.setItem(SALON_SESSION_KEY, JSON.stringify(currentSalonMember));
- } catch (e) {}
-
- playSoftGalleryChime('success');
- passInput.value = '';
- renderSalonView();
- renderAdminSalonManager();
- } finally {
- submitBtn.disabled = false;
- submitBtn.textContent = currentSalonAuthMode === 'register'
- ? 'Register & Enter Private Salon'
- : (currentSalonAuthMode === 'forgot' ? 'Request Passcode Reset' : 'Log In to Private Salon');
- }
- }
-
- function signOutSalonMember() {
- playSoftGalleryChime('close');
- recordSalonMemberActivity('Signed Out', 'Ended Private Salon session');
- currentSalonMember = null;
- try { localStorage.removeItem(SALON_SESSION_KEY); } catch (e) {}
- renderSalonView();
+ async function signOutSalonMember() {
+   playSoftGalleryChime('close');
+   recordSalonMemberActivity('Signed Out', 'Ended Private Salon session');
+   await fetch('/api/salon/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
+   currentSalonMember = null;
+   salonState.vipArtworks = [];
+   renderSalonView();
  }
 
  function renderSalonView() {
@@ -3167,12 +3088,6 @@
  const emailEl = document.getElementById('salon-active-member-email');
  const countEl = document.getElementById('salon-works-count-label');
  const gridEl = document.getElementById('salon-exclusive-grid');
-
- // Verify active member is not revoked
- if (currentSalonMember && salonState.revokedEmails.some(e => e.toLowerCase() === currentSalonMember.email.toLowerCase())) {
- currentSalonMember = null;
- try { localStorage.removeItem(SALON_SESSION_KEY); } catch (e) {}
- }
 
  const isUnlocked = Boolean(currentSalonMember);
  if (lockIcon) lockIcon.textContent = isUnlocked ? '✦' : '🔒';
@@ -3260,213 +3175,133 @@
  }
 
  // ==================== ADMIN: VIP SALON & MEMBER MODERATION ====================
+ async function loadSalonAdminData() {
+   try {
+     const response = await fetch('/api/salon/admin', { headers: getAdminAuthHeaders(), cache: 'no-store' });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'Admin salon data could not be loaded.');
+     salonState.members = data.members || [];
+     salonState.memberLogs = data.memberLogs || [];
+     await loadVipSalonWorks(true);
+     salonState.migrationDone = Boolean(data.migrationDone);
+     salonState.optedInCount = Number(data.stats?.optedIn || 0);
+     renderAdminSalonManager();
+   } catch (error) {
+     const list = document.getElementById('admin-salon-members-list');
+     if (list) list.innerHTML = `<p class="text-xs text-red-600">${escapeHTML(error.message)}</p>`;
+   }
+ }
+
+ async function migrateLegacySalonMembers() {
+   if (!window.confirm('Import existing Salon members into private D1 storage and remove their records from public settings? Existing members will not be newsletter-subscribed without fresh opt-in.')) return;
+   try {
+     const response = await fetch('/api/salon/admin', { method: 'POST', headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'migrate_legacy' }) });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'Migration failed.');
+     showAdminFeedback(`Private migration complete: ${data.imported} members imported, ${data.skipped} skipped.`);
+     await loadSalonAdminData();
+     await loadCloudGallery(false);
+   } catch (error) { showAdminFeedback(error.message || 'Migration failed.', true); }
+ }
+
  function renderAdminSalonManager() {
- const memberCountEl = document.getElementById('admin-salon-member-count');
- const artistSelect = document.getElementById('vip-art-artist-select');
- const artListEl = document.getElementById('admin-vip-art-list');
- const membersListEl = document.getElementById('admin-salon-members-list');
- const activityListEl = document.getElementById('admin-salon-activity-list');
-
- if (memberCountEl) memberCountEl.textContent = salonState.members.length;
- if (artistSelect) {
- artistSelect.innerHTML = artists.map(a => `<option value="${escapeHTML(a.id)}">${escapeHTML(a.name)}</option>`).join('');
- }
-
- if (artListEl) {
- if (!salonState.vipArtworks || salonState.vipArtworks.length === 0) {
- artListEl.innerHTML = `<p class="col-span-full text-xs opacity-60 py-3 text-center">No VIP artworks added yet.</p>`;
- } else {
- artListEl.innerHTML = salonState.vipArtworks.map(w => `
- <div class="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
- <div class="flex items-center gap-3 min-w-0">
- <img src="${escapeHTML(w.image)}" alt="${escapeHTML(w.title)}" onerror="handleCardImageError(this)" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
- <div class="min-w-0">
- <h6 class="font-serif text-sm truncate">${escapeHTML(w.title)}</h6>
- <span class="text-xs text-[#9C8265] dark:text-[#D4B483] font-medium block">${escapeHTML(w.price)}</span>
- </div>
- </div>
- <div class="flex flex-wrap items-center justify-end gap-1.5 flex-shrink-0">
- <button type="button" onclick="moveVipArtworkToPublicArtworks('${escapeHTML(w.id)}')" title="Move this work to the public Artworks gallery" class="px-2.5 py-1 rounded-lg bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-[11px] font-medium hover:bg-[#9C8265] transition-colors">Move to Artworks</button>
- <button type="button" onclick="editVipArtworkInAdmin('${escapeHTML(w.id)}')" class="px-2.5 py-1 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white">Edit</button>
- <button type="button" onclick="deleteVipArtworkFromAdmin('${escapeHTML(w.id)}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50">Delete</button>
- </div>
- </div>
- `).join('');
- }
- }
-
- if (membersListEl) {
- const members = salonState.members || [];
- if (members.length === 0) {
- membersListEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No registered collector members yet.</p>`;
- } else {
- membersListEl.innerHTML = members.map(m => {
- const safeEmail = escapeHTML(m.email || '');
- const safeName = escapeHTML(m.name || 'Collector');
- const regMmt = formatMyanmarTime(m.registeredAt);
- const lastMmt = formatMyanmarTime(m.lastActiveAt || m.registeredAt);
- const isSusp = Boolean(m.suspended);
- const hasResetReq = Boolean(m.resetRequestedAt);
- const issuedCode = escapeHTML(m.lastIssuedPasscode || '');
- return `
- <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isSusp ? 'border-amber-400/50' : 'border-[#A69076]/20'} flex flex-col gap-2.5 text-xs">
- <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
- <div class="min-w-0">
- <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
- <span class="w-2 h-2 rounded-full ${isSusp ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
- <strong class="font-serif text-sm">${safeName}</strong>
- <span class="opacity-70">(${safeEmail})</span>
- <span class="px-2 py-0.5 rounded-full text-[10px] bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483]">Visits: ${Number(m.loginCount || 1)}</span>
- ${isSusp ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 font-medium">Suspended</span>' : ''}
- ${hasResetReq ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-red-500/20 text-red-600 dark:text-red-300 font-medium">Reset Requested</span>' : ''}
- </div>
- <div class="text-[11px] opacity-60">Joined: ${escapeHTML(regMmt)} • Last Active: ${escapeHTML(lastMmt)} • ${escapeHTML(m.device || 'Browser')}</div>
- </div>
- <div class="flex flex-wrap items-center gap-1.5 flex-shrink-0">
- <button type="button" onclick="resetMemberPasscodeByAdmin('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-[#A69076]/45 text-[11px] hover:bg-[#A69076] hover:text-white transition-colors">Set Passcode</button>
- <button type="button" onclick="toggleSuspendSalonMember('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-amber-300 text-amber-700 dark:text-amber-300 text-[11px] hover:bg-amber-500/15 transition-colors">${isSusp ? 'Activate' : 'Suspend'}</button>
- <button type="button" onclick="revokeSalonMember('${safeEmail.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">Delete &amp; Revoke</button>
- </div>
- </div>
- ${issuedCode ? `
- <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/35 text-emerald-800 dark:text-emerald-200">
- <span>Temporary Passcode: <strong class="font-mono text-sm tracking-wider select-all">${issuedCode}</strong></span>
- <button type="button" onclick="copyIssuedMemberPasscode('${issuedCode}', this)" class="px-3 py-1 rounded-md bg-emerald-700 text-white text-[11px] uppercase tracking-wider font-medium hover:bg-emerald-800 transition-colors">Copy Passcode</button>
- </div>
- ` : ''}
- </div>
- `;
- }).join('');
- }
- }
-
- if (activityListEl) {
- const mLogs = salonState.memberLogs || [];
- if (mLogs.length === 0) {
- activityListEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No VIP member activity recorded yet.</p>`;
- } else {
- activityListEl.innerHTML = mLogs.map(entry => {
- const mmtTime = formatMyanmarTime(entry.timestamp);
- return `
- <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
- <div>
- <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(entry.action)}</span>
- <span class="font-medium">${escapeHTML(entry.memberName)}</span>
- <span class="opacity-65">(${escapeHTML(entry.memberEmail)})</span>
- ${entry.details ? `<span class="opacity-75 ml-1">• ${escapeHTML(entry.details)}</span>` : ''}
- </div>
- <span class="text-[11px] opacity-60 flex-shrink-0">${escapeHTML(mmtTime)}</span>
- </div>
- `;
- }).join('');
- }
- }
+   const memberCountEl = document.getElementById('admin-salon-member-count');
+   const artistSelect = document.getElementById('vip-art-artist-select');
+   const artListEl = document.getElementById('admin-vip-art-list');
+   const membersListEl = document.getElementById('admin-salon-members-list');
+   const activityListEl = document.getElementById('admin-salon-activity-list');
+   const migrationPanel = document.getElementById('salon-migration-panel');
+   const migrationDone = Boolean(salonState.migrationDone);
+   if (memberCountEl) memberCountEl.textContent = salonState.members.length;
+   if (migrationPanel) migrationPanel.classList.toggle('hidden', migrationDone);
+   const count = document.getElementById('salon-optin-count');
+   if (count) count.textContent = String(salonState.optedInCount || 0);
+   if (artistSelect) artistSelect.innerHTML = artists.map(a => `<option value="${escapeHTML(a.id)}">${escapeHTML(a.name)}</option>`).join('');
+   if (artListEl) {
+     if (!salonState.vipArtworks?.length) artListEl.innerHTML = `<p class="col-span-full text-xs opacity-60 py-3 text-center">No VIP artworks added yet.</p>`;
+     else artListEl.innerHTML = salonState.vipArtworks.map(w => `
+       <div class="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
+         <div class="flex items-center gap-3 min-w-0"><img src="${escapeHTML(w.image)}" alt="${escapeHTML(w.title)}" onerror="handleCardImageError(this)" class="w-12 h-12 rounded-lg object-cover flex-shrink-0"><div class="min-w-0"><h6 class="font-serif text-sm truncate">${escapeHTML(w.title)}</h6><span class="text-xs text-[#9C8265] dark:text-[#D4B483] font-medium block">${escapeHTML(w.price)}</span></div></div>
+         <div class="flex flex-wrap items-center justify-end gap-1.5 flex-shrink-0"><button type="button" onclick="moveVipArtworkToPublicArtworks('${escapeHTML(w.id)}')" class="px-2.5 py-1 rounded-lg bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-[11px]">Move to Artworks</button><button type="button" onclick="editVipArtworkInAdmin('${escapeHTML(w.id)}')" class="px-2.5 py-1 rounded-lg border border-[#A69076]/40 text-xs">Edit</button><button type="button" onclick="deleteVipArtworkFromAdmin('${escapeHTML(w.id)}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-xs">Delete</button></div>
+       </div>`).join('');
+   }
+   if (membersListEl) {
+     if (!salonState.members.length) membersListEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No private member records available. Run the legacy migration if this is the first setup.</p>`;
+     else membersListEl.innerHTML = salonState.members.map(m => {
+       const email = String(m.email || '');
+       const safeEmail = escapeHTML(email);
+       const suspended = Boolean(Number(m.suspended));
+       const optedIn = Boolean(Number(m.newsletterOptIn));
+       return `<div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border ${suspended ? 'border-amber-400/50' : 'border-[#A69076]/20'} flex flex-col gap-2.5 text-xs"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5"><div class="min-w-0"><div class="flex flex-wrap items-center gap-1.5 mb-0.5"><span class="w-2 h-2 rounded-full ${suspended ? 'bg-amber-500' : 'bg-emerald-500'}"></span><strong class="font-serif text-sm">${escapeHTML(m.name || 'Collector')}</strong><span class="opacity-70">(${safeEmail})</span><span class="px-2 py-0.5 rounded-full text-[10px] bg-[#9C8265]/15">Visits: ${Number(m.loginCount || 0)}</span>${suspended ? '<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700">Suspended</span>' : ''}<span class="px-2 py-0.5 rounded-full text-[10px] ${optedIn ? 'bg-emerald-500/15 text-emerald-700' : 'bg-gray-500/10 opacity-70'}">${optedIn ? 'Newsletter confirmed' : 'No newsletter opt-in'}</span></div><div class="text-[11px] opacity-60">Joined: ${escapeHTML(formatMyanmarTime(m.registeredAt))} • Last active: ${escapeHTML(formatMyanmarTime(m.lastActiveAt || m.registeredAt))}</div></div><div class="flex flex-wrap items-center gap-1.5 flex-shrink-0"><button type="button" onclick="toggleSuspendSalonMember('${safeEmail}')" class="px-2.5 py-1 rounded-lg border border-amber-300 text-amber-700 text-[11px]">${suspended ? 'Activate' : 'Suspend'}</button><button type="button" onclick="revokeSalonMember('${safeEmail}')" class="px-2.5 py-1 rounded-lg border border-red-200 text-red-600 text-[11px]">Revoke</button></div></div></div>`;
+     }).join('');
+   }
+   if (activityListEl) {
+     const logs = salonState.memberLogs || [];
+     activityListEl.innerHTML = logs.length ? logs.map(entry => `<div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs"><div><span class="px-2 py-0.5 rounded-full text-[10px] uppercase bg-[#9C8265]/15 mr-1.5">${escapeHTML(entry.action)}</span><span class="font-medium">${escapeHTML(entry.memberName)}</span> <span class="opacity-65">(${escapeHTML(entry.memberEmail)})</span>${entry.details ? `<span class="opacity-75 ml-1">• ${escapeHTML(entry.details)}</span>` : ''}</div><span class="text-[11px] opacity-60">${escapeHTML(formatMyanmarTime(entry.timestamp))}</span></div>`).join('') : `<p class="text-xs opacity-60 py-4 text-center">No VIP member activity recorded yet.</p>`;
+   }
  }
 
  async function toggleSuspendSalonMember(email) {
- const clean = String(email || '').trim().toLowerCase();
- const idx = salonState.members.findIndex(m => m.email.toLowerCase() === clean);
- if (idx < 0) return;
- salonState.members[idx].suspended = !salonState.members[idx].suspended;
- const nowSuspended = salonState.members[idx].suspended;
- await persistSalonStateToCloud({
- action: nowSuspended ? 'Suspended' : 'Activated',
- name: `${salonState.members[idx].name} (${clean})`,
- details: nowSuspended ? 'Temporarily paused Private Salon access' : 'Restored Private Salon access'
- });
- showAdminFeedback(`${nowSuspended ? 'Suspended' : 'Activated'} membership for ${clean}.`);
+   const response = await fetch('/api/salon/admin', { method: 'POST', headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'toggle_suspend', email }) });
+   const data = await response.json().catch(() => ({}));
+   if (!response.ok || !data.ok) return showAdminFeedback(data.error || 'Membership update failed.', true);
+   showAdminFeedback(`${data.suspended ? 'Suspended' : 'Activated'} membership for ${email}.`);
+   await loadSalonAdminData();
  }
 
  async function resetMemberPasscodeByAdmin(email) {
- const clean = String(email || '').trim().toLowerCase();
- const idx = salonState.members.findIndex(m => m.email.toLowerCase() === clean);
- if (idx < 0) return;
- const tempPass = 'TAL-' + Math.random().toString(36).substring(2, 8).toUpperCase();
- salonState.members[idx].passHash = await hashCollectorPasscode(tempPass, clean);
- salonState.members[idx].lastIssuedPasscode = tempPass;
- delete salonState.members[idx].resetRequestedAt;
- await persistSalonStateToCloud({
- action: 'Reset Passcode',
- name: `${salonState.members[idx].name} (${clean})`,
- details: 'Generated new temporary collector passcode'
- });
- showAdminFeedback(`New Passcode for ${clean}: ${tempPass} — Please copy and send this passcode to the collector.`);
+   const response = await fetch('/api/salon/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'request_reset', email }) });
+   const data = await response.json().catch(() => ({}));
+   showAdminFeedback(data.message || 'If the account is eligible, a reset link will be sent.');
  }
 
- function copyIssuedMemberPasscode(code, btnEl) {
- const tempInput = document.createElement('input');
- tempInput.value = code;
- document.body.appendChild(tempInput);
- tempInput.select();
- try {
- document.execCommand('copy');
- if (btnEl) {
- btnEl.textContent = 'Copied!';
- setTimeout(() => { btnEl.textContent = 'Copy Passcode'; }, 2000);
- }
- } catch (e) {}
- document.body.removeChild(tempInput);
- }
+ function copyIssuedMemberPasscode() { showAdminFeedback('Temporary passcodes are disabled. Members must use the secure one-time email reset link.', true); }
 
  async function revokeSalonMember(email) {
- const clean = String(email || '').trim().toLowerCase();
- if (!clean) return;
- const target = salonState.members.find(m => m.email.toLowerCase() === clean);
- salonState.members = salonState.members.filter(m => m.email.toLowerCase() !== clean);
- if (!salonState.revokedEmails.some(e => e.toLowerCase() === clean)) {
- salonState.revokedEmails.push(clean);
- }
- if (currentSalonMember && currentSalonMember.email.toLowerCase() === clean) {
- currentSalonMember = null;
- try { localStorage.removeItem(SALON_SESSION_KEY); } catch (e) {}
- }
- await persistSalonStateToCloud({
- action: 'Revoked Member',
- name: `${target?.name || 'Collector'} (${clean})`,
- details: 'Removed account and blocked future re-registration'
- });
- showAdminFeedback(`Deleted and revoked access for ${clean}.`);
+   if (!window.confirm(`Revoke Private Salon access for ${email}?`)) return;
+   const response = await fetch('/api/salon/admin', { method: 'POST', headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'revoke', email }) });
+   const data = await response.json().catch(() => ({}));
+   if (!response.ok || !data.ok) return showAdminFeedback(data.error || 'Account revocation failed.', true);
+   if (currentSalonMember?.email?.toLowerCase() === email.toLowerCase()) { currentSalonMember = null; renderSalonView(); }
+   showAdminFeedback(`Revoked Private Salon access for ${email}.`);
+   await loadSalonAdminData();
  }
 
  function exportSalonMembersCSV() {
- const headers = ['Name', 'Email', 'Status', 'Visits', 'Registered_MMT', 'LastActive_MMT', 'Device'];
- const rows = (salonState.members || []).map(m => [
- m.name || '',
- m.email || '',
- m.suspended ? 'Suspended' : 'Active',
- String(m.loginCount || 1),
- formatMyanmarTime(m.registeredAt),
- formatMyanmarTime(m.lastActiveAt || m.registeredAt),
- m.device || ''
- ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
- const csv = [headers.join(','), ...rows].join('\n');
- const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `the-artists-loft-vip-members-${new Date().toISOString().slice(0, 10)}.csv`;
- a.click();
- URL.revokeObjectURL(url);
+   const headers = ['Name', 'Email', 'Status', 'Visits', 'NewsletterOptIn', 'Registered_MMT', 'LastActive_MMT'];
+   const rows = (salonState.members || []).map(m => [m.name || '', m.email || '', m.suspended ? 'Suspended' : 'Active', String(m.loginCount || 0), Number(m.newsletterOptIn) ? 'Confirmed' : 'No', formatMyanmarTime(m.registeredAt), formatMyanmarTime(m.lastActiveAt || m.registeredAt)].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+   downloadSalonCsv(headers, rows, 'members');
  }
 
  function exportSalonActivityCSV() {
- const headers = ['Timestamp_MMT', 'MemberName', 'MemberEmail', 'Action', 'Details', 'Device'];
- const rows = (salonState.memberLogs || []).map(entry => [
- formatMyanmarTime(entry.timestamp),
- entry.memberName || '',
- entry.memberEmail || '',
- entry.action || '',
- entry.details || '',
- entry.device || ''
- ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
- const csv = [headers.join(','), ...rows].join('\n');
- const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `the-artists-loft-vip-activity-${new Date().toISOString().slice(0, 10)}.csv`;
- a.click();
- URL.revokeObjectURL(url);
+   const headers = ['Timestamp_MMT', 'MemberName', 'MemberEmail', 'Action', 'Details', 'Device'];
+   const rows = (salonState.memberLogs || []).map(e => [formatMyanmarTime(e.timestamp), e.memberName || '', e.memberEmail || '', e.action || '', e.details || '', e.device || ''].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+   downloadSalonCsv(headers, rows, 'activity');
+ }
+
+ function downloadSalonCsv(headers, rows, kind) {
+   const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
+   const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url;
+   a.download = `the-artists-loft-vip-${kind}-${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(url);
+ }
+
+ async function sendAdminNewsletter(event) {
+   event.preventDefault();
+   const subject = document.getElementById('salon-newsletter-subject').value.trim();
+   const text = document.getElementById('salon-newsletter-message').value.trim();
+   const recipients = Number(salonState.optedInCount || 0);
+   if (!recipients) return showAdminFeedback('There are no confirmed newsletter opt-ins.', true);
+   if (!window.confirm(`Send this newsletter to the confirmed opt-in segment (currently ${recipients} active Salon members)? This will send immediately.`)) return;
+   const button = document.getElementById('salon-newsletter-send-btn');
+   button.disabled = true; button.textContent = 'Sending…';
+   try {
+     const response = await fetch('/api/salon/admin', { method: 'POST', headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify({ action: 'send_newsletter', subject, text }) });
+     const data = await response.json().catch(() => ({}));
+     if (!response.ok || !data.ok) throw new Error(data.error || 'Newsletter send failed.');
+     showAdminFeedback(`Newsletter sent to the Resend confirmed-opt-in segment (${data.recipientCount} recorded opt-ins).`);
+     document.getElementById('salon-newsletter-form').reset();
+   } catch (error) { showAdminFeedback(error.message || 'Newsletter send failed.', true); }
+   finally { button.disabled = false; button.textContent = 'Send Newsletter'; }
  }
 
  async function saveVipArtworkFromAdmin(event) {
@@ -4702,7 +4537,7 @@
  if (tabName === 'backdrop') populateBackdropAdminUI();
  if (tabName === 'experience') populateExperienceAdminUI();
  if (tabName === 'audio') renderAdminAudioManager();
- if (tabName === 'salon') renderAdminSalonManager();
+ if (tabName === 'salon') { renderAdminSalonManager(); loadSalonAdminData(); }
  if (tabName === 'artists') renderAdminArtistsList();
  if (tabName === 'visitors') loadVisitorActivityFromCloud();
  if (tabName === 'logs') {
@@ -6867,6 +6702,12 @@
  window.handleNewsletterSubmit = handleNewsletterSubmit;
  window.switchSalonAuthMode = switchSalonAuthMode;
  window.handleSalonMemberSubmit = handleSalonMemberSubmit;
+ window.handleSalonResetConfirm = handleSalonResetConfirm;
+ window.requestSalonNewsletterConfirmation = requestSalonNewsletterConfirmation;
+ window.showSalonEmailLinkFeedback = showSalonEmailLinkFeedback;
+ window.loadSalonAdminData = loadSalonAdminData;
+ window.migrateLegacySalonMembers = migrateLegacySalonMembers;
+ window.sendAdminNewsletter = sendAdminNewsletter;
  window.signOutSalonMember = signOutSalonMember;
  window.reserveVipArtwork = reserveVipArtwork;
  window.inspectVipArtwork = inspectVipArtwork;
@@ -6893,6 +6734,9 @@
  window.formatMyanmarTime = formatMyanmarTime;
 
  // Initial Render & Cloudflare D1 Startup
+ loadLocalSalonState();
+ loadSalonSession();
+ processSalonEmailLinks();
  renderGalleryAboutSection();
  renderArtistSelectorBar();
  renderSelectedArtistProfile();
