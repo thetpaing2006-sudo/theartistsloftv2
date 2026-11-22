@@ -6748,6 +6748,9 @@
   renderCategoryFilterBar();
   renderArtworksGrid();
   renderSalonView();
+  if (!hasSalonResetParam && typeof setVipAuthMode === "function") {
+    setVipAuthMode("login");
+  }
   updateSoundButtonUI();
   bindFirstInteractionAudioUnlock();
   startAmbientSoundscape();
