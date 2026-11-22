@@ -29,14 +29,14 @@ export async function onRequestGet({ request, env }) {
   });
   let result = await response.json().catch(() => ({}));
   if (!response.ok && (response.status === 409 || /already exists|already been taken|duplicate/i.test(String(result.message || result.name || "")))) {
-    // A duplicate may be a prior provider-level unsubscribe. The fresh confirmation click is
-    // explicit renewed consent; update only that known contact, preserving the dedicated segment setup.
     const byEmail = encodeURIComponent(record.member_email);
     const lookup = await fetch(`https://api.resend.com/contacts/${byEmail}`, {
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` }
     });
     const contact = await lookup.json().catch(() => ({}));
-    if (!lookup.ok) return jsonResponse({ ok: false, error: "The email service could not verify this subscription. Please contact the gallery." }, 502);
+    if (!lookup.ok) {
+      return jsonResponse({ ok: false, error: `Resend lookup (${lookup.status}): ${contact.message || contact.name || "Could not verify subscription."}` }, 502);
+    }
     if (contact.unsubscribed) {
       response = await fetch(`https://api.resend.com/contacts/${byEmail}`, {
         method: "PATCH",
@@ -45,14 +45,13 @@ export async function onRequestGet({ request, env }) {
       });
       result = await response.json().catch(() => ({}));
     } else {
-      // Existing active contact: a fresh email confirmation just recorded renewed consent.
       response = new Response(JSON.stringify(contact), { status: 200, headers: { "Content-Type": "application/json" } });
       result = contact;
     }
   }
   if (!response.ok) {
     console.error("Resend newsletter confirmation failed", response.status, result.message || result.name || "unknown error");
-    return jsonResponse({ ok: false, error: "The email service could not confirm this subscription. Please try again later." }, 502);
+    return jsonResponse({ ok: false, error: `Resend (${response.status}): ${result.message || result.name || "The email service could not confirm this subscription."}` }, 502);
   }
   const update = await env.DB.prepare("UPDATE salon_newsletter_tokens SET used_at = ?1 WHERE token_hash = ?2 AND used_at IS NULL AND expires_at > ?1")
     .bind(now, tokenHash).run();
@@ -63,7 +62,6 @@ export async function onRequestGet({ request, env }) {
     .bind(randomHex(16), record.member_email, record.name || "Collector", new Date().toISOString()).run();
   return jsonResponse({ ok: true, message: "Your newsletter subscription is confirmed." });
 }
-
 
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return jsonResponse({ ok: false, error: "Database unavailable" }, 503);
@@ -86,8 +84,8 @@ export async function onRequestPost({ request, env }) {
     await sendResendEmail(env, {
       to: member.email,
       subject: "Confirm your Collector Newsletter subscription",
-      html: `<p>Hello ${String(member.name || "Collector").replace(/[&<>"']/g, "")},</p><p>Please confirm that you want to receive occasional Collector Newsletter emails from The Artist's Loft.</p><p><a href="${confirmUrl}">Confirm newsletter subscription</a></p><p>This link expires in 24 hours. If you did not request this, ignore this email.</p>`,
-      text: `Please confirm your Collector Newsletter subscription within 24 hours: ${confirmUrl}\n\nIf you did not request this, ignore this email.`
+      html: `<p>Hello ${String(member.name || "Collector").replace(/[&<>"']/g, "")},</p><p>Please confirm that you want to receive occasional Collector Newsletter emails from The Artist's Loft.</p><p><a href="${confirmUrl}" style="display:inline-block;padding:12px 24px;background:#d4af37;color:#111;text-decoration:none;border-radius:6px;font-weight:bold;">Confirm Newsletter Subscription</a></p><p>Or copy and paste this link into your browser:<br><a href="${confirmUrl}">${confirmUrl}</a></p><p>This link expires in 24 hours. If you did not request this, ignore this email.</p>`,
+      text: `Hello ${String(member.name || "Collector")},\n\nPlease confirm your Collector Newsletter subscription by opening the link below:\n\n${confirmUrl}\n\nThis link expires in 24 hours. If you did not request this, ignore this email.`
     });
   } catch (error) {
     console.error("Salon newsletter confirmation delivery failed", error.message);
