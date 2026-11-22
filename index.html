@@ -6736,26 +6736,39 @@
  window.formatMyanmarTime = formatMyanmarTime;
 
  // Initial Render & Cloudflare D1 Startup
- loadLocalSalonState();
- loadSalonSession();
- processSalonEmailLinks();
- renderGalleryAboutSection();
- renderArtistSelectorBar();
- renderSelectedArtistProfile();
- renderCategoryFilterBar();
- renderArtworksGrid();
- renderSalonView();
- updateSoundButtonUI();
- bindFirstInteractionAudioUnlock();
- startAmbientSoundscape();
- initVisitorCounter();
- trackVisitorEvent('page_view', 'home');
- loadCloudGallery(true);
+  loadLocalSalonState();
+  loadSalonSession();
+  const hasSalonResetParam =
+    new URLSearchParams(window.location.search).has("salon-reset") ||
+    window.location.hash.includes("salon-reset");
+  processSalonEmailLinks();
+  renderGalleryAboutSection();
+  renderArtistSelectorBar();
+  renderSelectedArtistProfile();
+  renderCategoryFilterBar();
+  renderArtworksGrid();
+  renderSalonView();
+  updateSoundButtonUI();
+  bindFirstInteractionAudioUnlock();
+  startAmbientSoundscape();
+  initVisitorCounter();
+  trackVisitorEvent('page_view', 'home');
+  loadCloudGallery(true);
   if (hasSalonResetParam) {
-    const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
-      el => /private\s*salon/i.test(el.textContent || "")
-    );
-    if (salonTrigger) salonTrigger.click();
+    setTimeout(() => {
+      if (typeof switchTab === "function") {
+        switchTab("vip-salon");
+      } else if (typeof openSalonView === "function") {
+        openSalonView();
+      } else {
+        const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
+          el => /private\s*salon/i.test(el.textContent || "")
+        );
+        if (salonTrigger) salonTrigger.click();
+      }
+      const salonSection = document.getElementById("vip-salon") || document.getElementById("salon-view");
+      if (salonSection) salonSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   }
  </script>
  
