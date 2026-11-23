@@ -4469,14 +4469,18 @@ function openWallPreviewById(id) {
 
  const cone = document.getElementById('wall-spotlight-cone');
  const btn = document.getElementById('wall-spotlight-btn');
- const unit = document.getElementById('wall-hanging-unit');
+	 const unit = document.getElementById('wall-hanging-unit');
 
- if (cone) {
- cone.classList.remove('is-neutral', 'is-off');
- if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
- if (wallSpotlightMode === 'off') cone.classList.add('is-off');
- }
- if (unit) {
+	 if (cone) {
+	 cone.classList.remove('is-neutral', 'is-off');
+	 if (wallSpotlightMode === 'neutral') cone.classList.add('is-neutral');
+	 if (wallSpotlightMode === 'off') cone.classList.add('is-off');
+	 // The modal reveal sets an inline opacity, which otherwise overrides `.is-off`.
+	 // Restore the normal toggle transition and explicitly hide the cone when Off.
+	 cone.style.transition = 'opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1)';
+	 cone.style.opacity = wallSpotlightMode === 'off' ? '0' : '';
+	 }
+	 if (unit) {
  unit.classList.remove('is-unlit', 'is-lit-warm', 'is-lit-neutral');
  unit.style.filter = '';
  if (wallSpotlightMode === 'off') {
