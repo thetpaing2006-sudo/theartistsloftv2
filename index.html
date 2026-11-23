@@ -3907,7 +3907,7 @@ z-index: 12;
  ${safeDesc ? `<p class="text-sm text-[#26231F]/75 dark:text-[#EDE7DA]/75 font-light leading-relaxed line-clamp-2 mb-4">${safeDesc}</p>` : ''}
  </div>
  <div class="pt-3 border-t border-[#9C8265]/15 dark:border-[#D4B483]/15 flex flex-wrap items-center justify-between gap-2">
- <button type="button" onclick="event.stopPropagation(); openWallPreviewById('${safeId}')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#9C8265]/45 dark:border-[#D4B483]/35 text-[10px] uppercase tracking-[0.18em] font-medium text-[#26231F]/85 dark:text-[#EDE7DA]/85 hover:border-[#26231F] dark:hover:border-[#D4B483] transition-colors">
+ <button type="button" onclick="event.stopPropagation(); ('${safeId}')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#9C8265]/45 dark:border-[#D4B483]/35 text-[10px] uppercase tracking-[0.18em] font-medium text-[#26231F]/85 dark:text-[#EDE7DA]/85 hover:border-[#26231F] dark:hover:border-[#D4B483] transition-colors">
  <svg class="w-3 h-3 text-[#9C8265] dark:text-[#D4B483]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
  <rect x="3" y="4" width="18" height="14" rx="2" />
  <path d="M7 20h10" stroke-linecap="round" />
@@ -4132,7 +4132,7 @@ function openWallPreviewById(id) {
   // စစဝင်ဝင်ချင်း Dark / Spotlight ပိတ်ထားရန် (transition မပါဘဲ ချက်ချင်း မှောင်/ပိတ်ထားမည်)
   if (dimmer) {
     dimmer.style.transition = 'none';
-    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0.88)';
+    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0.92)';
   }
   if (cone) {
     cone.style.transition = 'none';
@@ -4140,7 +4140,7 @@ function openWallPreviewById(id) {
   }
   if (hangingUnit) {
     hangingUnit.style.transition = 'none';
-    hangingUnit.style.filter = 'brightness(0.28) contrast(0.92)';
+    hangingUnit.style.filter = 'brightness(0.22) contrast(0.92)';
   }
 
   populateWallPreviewContent(art);
@@ -4151,24 +4151,27 @@ function openWallPreviewById(id) {
     modal.classList.add('is-open');
     applyProportionalWallSizing(art, currentWallScalePct);
 
-    // ဝင်ပြီးနောက် 6.5 စက္ကန့်အတွင်း Dark မှ Light / Spotlight ဖြည်းဖြည်းချင်း လင်းလာစေရန်
-    setTimeout(() => {
-      const revealEase = '6.5s cubic-bezier(0.16, 1, 0.3, 1)';
-      if (dimmer) {
-        dimmer.style.transition = `background-color ${revealEase}`;
-      }
-      if (cone) {
-        cone.style.transition = `opacity ${revealEase}, transform ${revealEase}, background 2.5s ease`;
-        cone.style.opacity = wallSpotlightMode === 'off' ? '0' : '0.9';
-      }
-      if (hangingUnit) {
-        hangingUnit.style.transition = `transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter ${revealEase}`;
-        hangingUnit.style.filter = '';
-      }
-      if (typeof setWallRoomBrightness === 'function') {
-        setWallRoomBrightness(targetBrightness);
-      }
-    }, 120);
+    // ဝင်ပြီးနောက် 10 စက္ကန့်အတွင်း Dark မှ Light / Spotlight ဖြည်းဖြည်းချင်း လင်းလာစေရန်
+    // (10s linear-out curve ဖြစ်သည့်အတွက် အစပိုင်းမှာလည်း မြန်မသွားဘဲ သိသိသာသာ နှေးနှေးလေး လင်းလာမည်)
+    const revealDuration = '10s cubic-bezier(0.12, 0.78, 0.32, 1)';
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (dimmer) {
+          dimmer.style.transition = `background-color ${revealDuration}`;
+        }
+        if (cone) {
+          cone.style.transition = `opacity ${revealDuration}, transform ${revealDuration}, background 4s ease`;
+          cone.style.opacity = wallSpotlightMode === 'off' ? '0' : '0.9';
+        }
+        if (hangingUnit) {
+          hangingUnit.style.transition = `transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter ${revealDuration}`;
+          hangingUnit.style.filter = '';
+        }
+        if (typeof setWallRoomBrightness === 'function') {
+          setWallRoomBrightness(targetBrightness);
+        }
+      }, 150);
+    });
   });
   document.body.style.overflow = 'hidden';
 }
