@@ -662,34 +662,28 @@
  <div class="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/55 dark:from-[#12110F]/35 via-transparent to-[#F3EFE6]/55 dark:to-[#12110F]/35"></div>
  </div>
 
- <!-- Top Minimalist Navigation Header -->
- <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/20 dark:border-[#D4B483]/20 transition-all">
- <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
- 
-<!-- Left Navigation Links -->
- <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-6 md:w-1/3" aria-label="Main Navigation">
- <button type="button" onclick="showSection('home')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="home">Home</button>
- <button type="button" onclick="showSection('artworks')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
- <button type="button" onclick="showSection('salon')" class="nav-link inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 text-[#9C8265] dark:text-[#D4B483]" data-target="salon">
- <span id="nav-salon-lock-icon" class="text-[10px]" aria-hidden="true">🔒</span>
- <span>Private Salon</span>
- </button>
- <button type="button" onclick="showSection('about')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="about">About</button>
- <button type="button" onclick="showSection('contact')" class="nav-link md:hidden text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="contact">Contact</button>
- </nav>
+ <!-- Top Classic Two-Tier Museum Masthead Header -->
+ <header class="w-full px-5 pt-4 pb-3.5 md:px-12 md:pt-5 md:pb-4 bg-[#F3EFE6]/92 dark:bg-[#12110F]/92 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/25 dark:border-[#D4B483]/25 transition-all">
+ <div class="max-w-screen-xl mx-auto">
 
- <!-- Center Brand Logo (5 taps opens hidden Admin Console) -->
- <div class="md:w-1/3 flex justify-center items-center">
+ <!-- Tier 1: Gallery Origin (Left), Centered Brand Masthead Logo (5 taps opens Admin Console), Utility Pills (Right) -->
+ <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-3 pb-3.5">
+ <div class="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[#9C8265] dark:text-[#D4B483] font-medium">
+ <span>Yangon</span>
+ <span class="opacity-50">•</span>
+ <span>Myanmar</span>
+ </div>
+
+ <div class="flex justify-center items-center">
  <button type="button" onclick="handleSecretBrandTap(event)" class="group flex items-center justify-center focus:outline-none select-none" aria-label="The Artist's Loft">
  <img id="header-brand-logo"
  src="logo.jpg"
- alt="The Artist's Loft"
- class="h-10 sm:h-12 md:h-14 w-auto max-w-[230px] object-contain transition-transform duration-300 group-hover:scale-105">
+ alt="The Artist's Loft — Unique Art Works"
+ class="h-12 sm:h-14 md:h-16 w-auto max-w-[270px] object-contain transition-transform duration-300 group-hover:scale-105">
  </button>
  </div>
 
- <!-- Right Links + Theme Toggle + Classic Gallery Ambience Sound Toggle -->
- <div class="flex items-center justify-center md:justify-end gap-3 sm:gap-4 md:w-1/3">
+ <div class="flex items-center justify-center sm:justify-end gap-2.5 sm:gap-3">
  <button type="button" id="theme-toggle-btn" onclick="toggleThemeMode()" title="Switch Light / Midnight Gallery Dark Mode"
  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9C8265]/40 dark:border-[#D4B483]/35 bg-[#FAF7F0]/75 dark:bg-[#1E1B17]/80 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.18em] text-[#26231F]/80 dark:text-[#EDE7DA]/85 transition-all">
  <span id="theme-toggle-icon" aria-hidden="true">☾</span>
@@ -705,11 +699,24 @@
  </span>
  <span id="sound-toggle-label">Sound On</span>
  </button>
-
- <button type="button" onclick="showSection('contact')" class="hidden md:inline-block nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">
- Contact Us
- </button>
  </div>
+ </div>
+
+ <!-- Tier 2: Symmetrical Navigation Along a Fine Hairline Rule -->
+ <nav class="pt-3 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 flex flex-wrap justify-center items-center gap-4 sm:gap-7 md:gap-9" aria-label="Main Navigation">
+ <button type="button" onclick="showSection('home')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="home">Home</button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('artworks')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('salon')" class="nav-link inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1 text-[#9C8265] dark:text-[#D4B483]" data-target="salon">
+ <span id="nav-salon-lock-icon" class="text-[10px]" aria-hidden="true">🔒</span>
+ <span>Private Salon</span>
+ </button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('about')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="about">About</button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('contact')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">Contact Us</button>
+ </nav>
 
  </div>
  </header>
