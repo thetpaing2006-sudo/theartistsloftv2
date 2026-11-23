@@ -2583,9 +2583,7 @@
 
  function getSavedAdminToken() {
  try {
- return sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
- || localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
- || '';
+ return sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';
  } catch (e) {
  return '';
  }
@@ -2594,12 +2592,11 @@
  function setSavedAdminToken(token) {
  const clean = String(token || '').trim();
  try {
+ localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
  if (clean) {
  sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
- localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
  } else {
  sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
- localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
  }
  } catch (e) {}
  }
