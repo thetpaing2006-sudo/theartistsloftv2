@@ -169,11 +169,12 @@ export async function onRequestGet({ request, env }) {
     await archiveAndPurgeOldLogs(env, false).catch(() => {});
 
     const [recentRes, topArtRes, countryRes] = await Promise.all([
-      env.DB.prepare(`
+     env.DB.prepare(`
         SELECT id, timestamp, event_type, item_name, country, device
         FROM visitor_logs
+        WHERE timestamp >= datetime('now', '-30 days')
         ORDER BY timestamp DESC
-        LIMIT 100
+        LIMIT 5000
       `).all(),
       env.DB.prepare(`
         SELECT item_name, COUNT(*) as views
