@@ -1554,7 +1554,7 @@
  <div class="flex items-center gap-3"><input id="experience-wall-color" type="color" value="#D6CFC4" aria-label="Choose default wall color" onchange="previewGalleryExperienceSettings()" class="h-11 w-14 cursor-pointer rounded-lg border border-[#A69076]/40 bg-transparent p-1">
  <div class="text-xs"><span id="experience-wall-hex" class="block font-medium">#D6CFC4</span><span id="experience-wall-preset-name" class="opacity-60">Soft Greige</span></div></div></div>
  <div><div class="flex justify-between mb-2"><label for="experience-room-light" class="text-[11px] uppercase tracking-wider">Room Light Default</label><span id="experience-room-light-label" class="text-xs font-medium">65%</span></div>
- <input id="experience-room-light" type="range" min="30" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"><p class="text-[11px] opacity-60 mt-1">Recommended: 65% for warm, controlled gallery ambience.</p></div>
+ <input id="experience-room-light" type="range" min="5" max="90" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"><p class="text-[11px] opacity-60 mt-1">Recommended: 65% for warm, controlled gallery ambience (min 5%).</p></div>
  <div><div class="flex justify-between mb-2"><label for="experience-scroll-min" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Minimum</label><span id="experience-scroll-min-label" class="text-xs font-medium">42%</span></div>
  <input id="experience-scroll-min" type="range" min="0" max="65" step="1" oninput="previewGalleryExperienceSettings()" class="w-full accent-[#26231F] dark:accent-[#D4B483]"></div>
  <div><div class="flex justify-between mb-2"><label for="experience-scroll-max" class="text-[11px] uppercase tracking-wider">Scroll Opacity — Maximum</label><span id="experience-scroll-max-label" class="text-xs font-medium">72%</span></div>
@@ -4168,9 +4168,10 @@
  const minOpacity = Math.max(0, Math.min(65, Number.isFinite(minValue) ? minValue : DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMin));
  let maxOpacity = Math.max(55, Math.min(90, Number(input.scrollOpacityMax) || DEFAULT_GALLERY_EXPERIENCE.scrollOpacityMax));
  if (maxOpacity <= minOpacity) maxOpacity = Math.min(90, minOpacity + 10);
+ const rawRoomBrightness = Number(input.roomBrightness);
  return {
  defaultWallColor: wallColor,
- roomBrightness: Math.max(30, Math.min(90, Number(input.roomBrightness) || DEFAULT_GALLERY_EXPERIENCE.roomBrightness)),
+ roomBrightness: Math.max(5, Math.min(90, Number.isFinite(rawRoomBrightness) ? rawRoomBrightness : DEFAULT_GALLERY_EXPERIENCE.roomBrightness)),
  scrollOpacityMin: minOpacity,
  scrollOpacityMax: maxOpacity,
  spotlightIntensity: Math.max(25, Math.min(100, Number(input.spotlightIntensity) || DEFAULT_GALLERY_EXPERIENCE.spotlightIntensity)),
