@@ -2400,9 +2400,9 @@ async function syncBackdropFromGallery() {
   applyBackdropImages(loadedFromApi ? (resolvedBackdropPair || DEFAULT_BACKDROP_IMAGES) : DEFAULT_BACKDROP_IMAGES);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  syncBackdropFromGallery();
-});
+// Backdrop settings are loaded by loadCloudGallery() below. Avoid a second
+// startup request here: its legacy default-image fallback can race with and
+// overwrite the saved `backdrop_config` selected in the Admin Console.
  </script>
 
  <!-- Application Logic Connected to Cloudflare Pages Functions (/api/*), D1 & R2 -->
