@@ -12,13 +12,13 @@
 <meta property="og:site_name" content="The Artist's Loft">
 <meta property="og:title" content="The Artist's Loft — Curated Myanmar Fine Art">
 <meta property="og:description" content="Discover original paintings and curated fine art by artists from Myanmar at The Artist's Loft.">
-<meta property="og:image" content="https://media.theartistsloftmm.art/Logo.jpg">
+<meta property="og:image" content="https://theartistsloftmyanmar.com/the-artists-loft-logo.png">
 
 <!-- Twitter Card Tags -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Artist's Loft — Curated Myanmar Fine Art">
 <meta name="twitter:description" content="Discover original paintings and curated fine art by artists from Myanmar at The Artist's Loft.">
-<meta name="twitter:image" content="https://media.theartistsloftmm.art/Logo.jpg">
+<meta name="twitter:image" content="https://theartistsloftmyanmar.com/the-artists-loft-logo.png">
 
 <!-- Structured Data (ArtGallery Schema) -->
 <script type="application/ld+json">
@@ -40,9 +40,9 @@
  <title>The Artist's Loft — Curated Myanmar Fine Art</title>
 
  <!-- Dynamic Browser Tab Favicon -->
- <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="logo.jpg">
- <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/jpeg" href="logo.jpg">
- <link id="dynamic-apple-icon" rel="apple-touch-icon" href="logo.jpg">
+ <link id="dynamic-favicon" rel="icon" type="image/png" href="the-artists-loft-logo.png">
+ <link id="dynamic-shortcut-icon" rel="shortcut icon" type="image/png" href="the-artists-loft-logo.png">
+ <link id="dynamic-apple-icon" rel="apple-touch-icon" type="image/png" href="the-artists-loft-logo.png">
 
  <!-- Google Fonts: Playfair Display & Inter -->
  <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -676,7 +676,7 @@ z-index: 12;
  <div class="flex justify-center items-center">
  <button type="button" onclick="handleSecretBrandTap(event)" class="group flex items-center justify-center focus:outline-none select-none" aria-label="The Artist's Loft">
  <img id="header-brand-logo"
- src="logo.jpg"
+ src="the-artists-loft-logo.png"
  alt="The Artist's Loft — Unique Art Works"
  class="h-12 sm:h-14 md:h-16 w-auto max-w-[270px] object-contain transition-transform duration-300 group-hover:scale-105">
  </button>
@@ -2245,7 +2245,7 @@ z-index: 12;
  };
  tryNext();
  }
- window.addEventListener('DOMContentLoaded', initBrandLogoResolver);
+ // Use the supplied transparent PNG directly; do not replace it with a repository logo.jpg.
 
  function handleArtistFallback(img, artistName = 'Artist') {
  if (!img || img.dataset.fallbackApplied === 'true') return;
