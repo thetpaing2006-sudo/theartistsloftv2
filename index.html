@@ -2339,6 +2339,70 @@ z-index: 12;
  }
  window.addEventListener('DOMContentLoaded', verifyAllImagesLoaded);
  window.addEventListener('load', verifyAllImagesLoaded);
+  // Hard refresh လုပ်တဲ့အခါ အရင် default ပုံဖျတ်ကနဲမပေါ်ဘဲ Admin Console ပုံရောက်မှသာ ပေါ်လာစေရန်
+const DEFAULT_BACKDROP_IMAGES = ['05582-mtoung3.jpg', '8899c-mtoung4.jpg'];
+
+function applyBackdropImages(urls) {
+  const list = Array.isArray(urls) && urls.length ? urls : DEFAULT_BACKDROP_IMAGES;
+  const firstUrl = list[0] || DEFAULT_BACKDROP_IMAGES[0];
+  const secondUrl = list[1] || firstUrl;
+  const transparentPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+  [
+    { el: document.getElementById('home-bg-1'), url: firstUrl, idx: 1 },
+    { el: document.getElementById('home-bg-2'), url: secondUrl, idx: 2 }
+  ].forEach(({ el, url, idx }) => {
+    if (!el || !url) return;
+    delete el.dataset.fallbackApplied;
+    el.onerror = () => handleBgFallback(el, idx);
+    el.classList.remove('opacity-[0.34]', 'dark:opacity-[0.44]');
+    el.classList.add('opacity-0');
+    if (el.getAttribute('src') !== url) {
+      el.src = transparentPixel;
+    }
+    const reveal = () => {
+      if (el.getAttribute('src') !== url) return;
+      el.classList.remove('opacity-0');
+      el.classList.add('opacity-[0.34]', 'dark:opacity-[0.44]');
+    };
+    el.onload = reveal;
+    el.src = url;
+    if (el.complete && el.naturalWidth > 0 && el.getAttribute('src') === url) {
+      reveal();
+    }
+  });
+}
+
+async function syncBackdropFromGallery() {
+  let loadedFromApi = false;
+  let resolvedBackdropPair = null;
+  try {
+    const res = await fetch('/api/gallery', { cache: 'no-store' });
+    const data = await res.json();
+    if (res.ok && data && data.ok) {
+      loadedFromApi = true;
+      const settings = data.settings || {};
+      const bgSetting = settings.gallery_backdrop || settings.background_images || settings.backdrop_images;
+      if (Array.isArray(bgSetting) && bgSetting.length) {
+        resolvedBackdropPair = bgSetting;
+      } else if (bgSetting && typeof bgSetting === 'object') {
+        const pair = [
+          bgSetting.left || bgSetting.image1 || bgSetting.first || bgSetting.url,
+          bgSetting.right || bgSetting.image2 || bgSetting.second || bgSetting.url
+        ].filter(Boolean);
+        if (pair.length) resolvedBackdropPair = pair;
+      } else if (typeof bgSetting === 'string' && bgSetting.trim()) {
+        resolvedBackdropPair = [bgSetting.trim(), bgSetting.trim()];
+      }
+    }
+  } catch (e) {}
+
+  applyBackdropImages(loadedFromApi ? (resolvedBackdropPair || DEFAULT_BACKDROP_IMAGES) : DEFAULT_BACKDROP_IMAGES);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  syncBackdropFromGallery();
+});
  </script>
 
  <!-- Application Logic Connected to Cloudflare Pages Functions (/api/*), D1 & R2 -->
