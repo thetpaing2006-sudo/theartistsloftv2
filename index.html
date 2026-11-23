@@ -65,6 +65,53 @@
  };
  </script>
 
+ <script>
+ // Early image fallback handlers so inline onerror attributes never throw ReferenceError before body scripts parse
+ function createEarlyPlaceholderSvg(title, category, aspect) {
+ const isLandscape = aspect === '4/3';
+ const w = isLandscape ? 800 : 600;
+ const h = isLandscape ? 600 : 800;
+ const safeT = String(title || 'Artwork').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+ const safeC = String(category || 'Fine Art').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+ <rect width="${w}" height="${h}" fill="#E9E2D3"/>
+ <rect x="28" y="28" width="${w - 56}" height="${h - 56}" fill="none" stroke="#9C8265" stroke-width="1" opacity="0.4"/>
+ <text x="${w / 2}" y="${h / 2 - 12}" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#26231F" opacity="0.75">${safeT}</text>
+ <text x="${w / 2}" y="${h / 2 + 22}" text-anchor="middle" font-family="sans-serif" font-size="11" letter-spacing="3" fill="#9C8265">${safeC.toUpperCase()}</text>
+ </svg>`;
+ return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+ }
+ window.handleBgFallback = function(img, index) {
+ if (!img || img.dataset.fallbackApplied === 'true') return;
+ img.dataset.fallbackApplied = 'true';
+ img.onerror = null;
+ img.src = createEarlyPlaceholderSvg(`Lotus Study ${index === 2 ? 'II' : 'I'}`, "The Artist's Loft", '3/4');
+ };
+ window.handleArtistFallback = function(img, artistName) {
+ if (!img || img.dataset.fallbackApplied === 'true') return;
+ img.dataset.fallbackApplied = 'true';
+ img.onerror = null;
+ const safeName = String(artistName || 'Artist').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="750" viewBox="0 0 600 750">
+ <rect width="600" height="750" fill="#EDE9E1"/>
+ <circle cx="300" cy="270" r="95" fill="#A69076" opacity="0.35"/>
+ <path d="M130 680 C130 510, 470 510, 470 680" fill="#A69076" opacity="0.28"/>
+ <text x="300" y="440" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#2C2C2C" opacity="0.75">${safeName}</text>
+ <text x="300" y="472" text-anchor="middle" font-family="sans-serif" font-size="11" letter-spacing="3" fill="#2C2C2C" opacity="0.5">ARTIST PORTRAIT</text>
+ </svg>`;
+ img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+ };
+ window.handleCardImageError = function(img) {
+ if (!img || img.dataset.fallbackApplied === 'true') return;
+ img.dataset.fallbackApplied = 'true';
+ img.onerror = null;
+ const title = img.getAttribute('data-title') || img.alt || 'Artwork';
+ const category = img.getAttribute('data-category') || 'Fine Art';
+ const aspect = img.getAttribute('data-aspect') || '3/4';
+ img.src = createEarlyPlaceholderSvg(title, category, aspect);
+ };
+ </script>
+
  <style>
  /* Crisp High-DPI Artwork Rendering */
  img {
@@ -1792,10 +1839,13 @@
  <span class="text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] block mb-1">Total Events (30d)</span>
  <strong id="visitor-stat-events" class="font-serif text-2xl text-[#2C2C2C] dark:text-[#EDE7DA]">0</strong>
  </div>
- <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
- <span class="text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] block mb-1">Unique Visitors</span>
+ <button type="button" id="unique-visitors-card-btn" onclick="toggleUniqueVisitorsPanel()" title="Click to view Unique Visitors list" class="text-left p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/35 hover:border-[#9C8265] dark:hover:border-[#D4B483] transition-all cursor-pointer group">
+ <span class="text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] flex items-center justify-between mb-1">
+ <span>Unique Visitors</span>
+ <span id="unique-visitors-chevron" class="text-[11px] opacity-75 group-hover:opacity-100 transition-transform">▾ View</span>
+ </span>
  <strong id="visitor-stat-unique" class="font-serif text-2xl text-[#2C2C2C] dark:text-[#EDE7DA]">0</strong>
- </div>
+ </button>
  <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
  <span class="text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] block mb-1">Top Traffic Source</span>
  <strong id="visitor-stat-top-source" class="font-serif text-lg text-[#2C2C2C] dark:text-[#EDE7DA] truncate block">—</strong>
@@ -1803,6 +1853,22 @@
  <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20">
  <span class="text-[10px] uppercase tracking-[0.2em] text-[#9C8265] dark:text-[#D4B483] block mb-1">Mobile / Desktop</span>
  <strong id="visitor-stat-devices" class="font-serif text-lg text-[#2C2C2C] dark:text-[#EDE7DA]">0 / 0</strong>
+ </div>
+ </div>
+
+ <!-- Expandable Unique Visitors List Drawer -->
+ <div id="unique-visitors-dropdown-panel" class="hidden p-4 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#9C8265]/40 dark:border-[#D4B483]/35 space-y-3">
+ <div class="flex items-center justify-between gap-2 border-b border-[#A69076]/20 pb-2">
+ <div>
+ <span class="text-[10px] uppercase tracking-[0.22em] text-[#9C8265] dark:text-[#D4B483] font-semibold block">Unique Visitors Breakdown (30d)</span>
+ <span class="text-[11px] opacity-65">Grouped by individual device ID with source, viewed artworks, and last active time (MMT)</span>
+ </div>
+ <button type="button" onclick="toggleUniqueVisitorsPanel(false)" class="px-2.5 py-1 rounded-lg border border-[#A69076]/35 text-[11px] hover:bg-[#A69076] hover:text-white transition-colors">
+ Close ✕
+ </button>
+ </div>
+ <div id="unique-visitors-list-container" class="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+ <p class="text-xs opacity-60 py-3 text-center">No unique visitor records yet.</p>
  </div>
  </div>
 
@@ -5296,7 +5362,7 @@
  _meta: parseVisitorMetadataFromRow(row)
  }));
 
- const uniqueVisitorSet = new Set();
+ const uniqueVisitorMap = new Map();
  const sourceCounts = new Map();
  const deviceDetailCounts = new Map();
  const cleanArtworkViews = new Map();
@@ -5304,8 +5370,33 @@
  let desktopCount = 0;
 
  parsedRows.forEach(r => {
- if (r._meta.visitorId && r._meta.visitorId !== 'Legacy') {
- uniqueVisitorSet.add(r._meta.visitorId);
+ const rawVid = r._meta.visitorId || 'Legacy';
+ const baseVid = rawVid.split('(')[0].trim() || rawVid;
+ if (baseVid && baseVid !== 'Legacy') {
+ const existing = uniqueVisitorMap.get(baseVid) || {
+ id: baseVid,
+ events: 0,
+ source: r._meta.source || 'Direct',
+ deviceDetail: r._meta.deviceDetail || r.device || 'Desktop',
+ country: r.country || 'XX',
+ lastSeen: r.timestamp,
+ artworks: new Set(),
+ memberLabel: ''
+ };
+ existing.events += 1;
+ if (!existing.lastSeen || new Date(r.timestamp) > new Date(existing.lastSeen)) {
+ existing.lastSeen = r.timestamp;
+ existing.source = r._meta.source || existing.source;
+ existing.deviceDetail = r._meta.deviceDetail || existing.deviceDetail;
+ existing.country = r.country || existing.country;
+ }
+ const memberMatch = String(r._meta.cleanItem || '').match(/MEMBER:([^|]+)/);
+ if (memberMatch) existing.memberLabel = memberMatch[1].trim();
+ if (r.event_type === 'view_artwork' || r.event_type === 'wall_preview') {
+ const cleanTitle = String(r._meta.cleanItem || '').split('|')[0].trim();
+ if (cleanTitle && cleanTitle !== '-') existing.artworks.add(cleanTitle);
+ }
+ uniqueVisitorMap.set(baseVid, existing);
  }
  const src = r._meta.source || 'Direct';
  sourceCounts.set(src, (sourceCounts.get(src) || 0) + 1);
@@ -5327,11 +5418,14 @@
  const sortedSources = Array.from(sourceCounts.entries()).sort((a, b) => b[1] - a[1]);
  const sortedDevices = Array.from(deviceDetailCounts.entries()).sort((a, b) => b[1] - a[1]);
  const sortedArtworks = Array.from(cleanArtworkViews.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
+ const sortedUniqueVisitors = Array.from(uniqueVisitorMap.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
 
  if (statEventsEl) statEventsEl.textContent = String(parsedRows.length);
- if (statUniqueEl) statUniqueEl.textContent = String(uniqueVisitorSet.size || (parsedRows.length > 0 ? 1 : 0));
+ if (statUniqueEl) statUniqueEl.textContent = String(sortedUniqueVisitors.length || (parsedRows.length > 0 ? 1 : 0));
  if (statTopSourceEl) statTopSourceEl.textContent = sortedSources[0] ? `${sortedSources[0][0]} (${sortedSources[0][1]})` : 'Direct';
  if (statDevicesEl) statDevicesEl.textContent = `${mobileCount} / ${desktopCount}`;
+
+ renderUniqueVisitorsList(sortedUniqueVisitors);
 
  if (topSourcesEl) {
  topSourcesEl.innerHTML = sortedSources.length
@@ -5403,6 +5497,56 @@
  }).join('')
  : `<p class="text-xs opacity-60 py-4 text-center">No visitor activity in the last 30 days.</p>`;
  }
+ }
+
+ function toggleUniqueVisitorsPanel(forceOpen = null) {
+ const panel = document.getElementById('unique-visitors-dropdown-panel');
+ const chevron = document.getElementById('unique-visitors-chevron');
+ const btn = document.getElementById('unique-visitors-card-btn');
+ if (!panel) return;
+ const willOpen = forceOpen !== null ? Boolean(forceOpen) : panel.classList.contains('hidden');
+ panel.classList.toggle('hidden', !willOpen);
+ if (chevron) chevron.textContent = willOpen ? '▴ Hide' : '▾ View';
+ if (btn) {
+ btn.classList.toggle('ring-2', willOpen);
+ btn.classList.toggle('ring-[#9C8265]', willOpen);
+ btn.classList.toggle('dark:ring-[#D4B483]', willOpen);
+ }
+ if (typeof playSoftGalleryChime === 'function') playSoftGalleryChime('select');
+ }
+
+ function renderUniqueVisitorsList(visitors) {
+ const container = document.getElementById('unique-visitors-list-container');
+ if (!container) return;
+ if (!visitors || visitors.length === 0) {
+ container.innerHTML = `<p class="text-xs opacity-60 py-3 text-center">No unique visitor records in the last 30 days.</p>`;
+ return;
+ }
+ container.innerHTML = visitors.map((v, idx) => {
+ const viewedList = Array.from(v.artworks || []);
+ const viewedHtml = viewedList.length
+ ? `<div class="text-[11px] opacity-80 mt-1">Viewed: <span class="font-medium text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(viewedList.slice(0, 4).join(', '))}${viewedList.length > 4 ? ` (+${viewedList.length - 4} more)` : ''}</span></div>`
+ : '';
+ const memberBadge = v.memberLabel
+ ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-800 dark:text-amber-200 font-medium">${escapeHTML(v.memberLabel)}</span>`
+ : '';
+ return `
+ <div class="p-3 rounded-xl bg-white dark:bg-[#1B1916] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+ <div class="min-w-0">
+ <div class="flex flex-wrap items-center gap-1.5">
+ <span class="font-semibold text-[#9C8265] dark:text-[#D4B483]">#${idx + 1}</span>
+ <span class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#2C2C2C]/10 dark:bg-[#EDE7DA]/10 font-medium">${escapeHTML(v.id)}</span>
+ ${memberBadge}
+ <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">via ${escapeHTML(v.source)}</span>
+ <span class="opacity-70">[${escapeHTML(v.country)} • ${escapeHTML(v.deviceDetail)}]</span>
+ <span class="px-2 py-0.5 rounded-full text-[10px] bg-[#9C8265]/15 font-medium">${v.events} ${v.events === 1 ? 'event' : 'events'}</span>
+ </div>
+ ${viewedHtml}
+ </div>
+ <span class="text-[11px] opacity-65 font-medium flex-shrink-0">Last: ${escapeHTML(formatMyanmarTime(v.lastSeen))}</span>
+ </div>
+ `;
+ }).join('');
  }
 
  async function triggerMonthlyReportNow() {
@@ -6673,6 +6817,7 @@
  window.deleteArtistFromAdmin = deleteArtistFromAdmin;
  window.saveGalleryAboutFromAdmin = saveGalleryAboutFromAdmin;
  window.loadVisitorActivityFromCloud = loadVisitorActivityFromCloud;
+ window.toggleUniqueVisitorsPanel = toggleUniqueVisitorsPanel;
  window.triggerMonthlyReportNow = triggerMonthlyReportNow;
  window.downloadEditLogsCSV = downloadEditLogsCSV;
  window.downloadEditLogsJSON = downloadEditLogsJSON;
