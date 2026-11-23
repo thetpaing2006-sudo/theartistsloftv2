@@ -707,12 +707,12 @@
  <button type="button" onclick="showSection('home')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="home">Home</button>
  <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
  <button type="button" onclick="showSection('artworks')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
- <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <span class="nav-salon-dot text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
  <button type="button" onclick="showSection('salon')" class="nav-link inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1 text-[#9C8265] dark:text-[#D4B483]" data-target="salon">
  <span id="nav-salon-lock-icon" class="text-[10px]" aria-hidden="true">🔒</span>
  <span>Private Salon</span>
  </button>
- <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <span class="nav-salon-dot text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
  <button type="button" onclick="showSection('about')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="about">About</button>
  <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
  <button type="button" onclick="showSection('contact')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">Contact Us</button>
@@ -2931,9 +2931,12 @@
 
  function applyPrivateSalonVisibility() {
  const enabled = Boolean(isPrivateSalonEnabled);
- // Hide/show navigation button and Contact section's Collector's Circle card
+ // Hide/show navigation button, its adjacent separator dots, and Contact section's Collector's Circle card
  document.querySelectorAll('.nav-link[data-target="salon"]').forEach(btn => {
  btn.classList.toggle('hidden', !enabled);
+ });
+ document.querySelectorAll('.nav-salon-dot').forEach(dot => {
+ dot.classList.toggle('hidden', !enabled);
  });
  const circleBox = document.getElementById('collectors-circle-box');
  if (circleBox) circleBox.classList.toggle('hidden', !enabled);
