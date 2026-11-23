@@ -4105,36 +4105,34 @@ z-index: 12;
  renderWallArtworkThumbs();
  }
 
- function openWallPreviewById(id) {
-  const list = typeof getWallPreviewArtworksList === 'function' ? getWallPreviewArtworksList() : artworks;
+function openWallPreviewById(id) {
+  const list = getWallPreviewArtworksList();
   const art = list.find(a => a.id === id) || artworks.find(a => a.id === id) || artworks[0];
   if (!art) return;
 
-  if (typeof playSoftGalleryChime === 'function') playSoftGalleryChime('open');
-  if (typeof trackVisitorEvent === 'function') trackVisitorEvent('wall_preview', art.title || id);
+  playSoftGalleryChime('open');
+  trackVisitorEvent('wall_preview', art.title || id);
   currentWallArtworkId = art.id;
-
-  const targetBrightness = (typeof galleryExperience !== 'undefined' && galleryExperience && typeof galleryExperience.roomBrightness === 'number')
-    ? galleryExperience.roomBrightness
-    : currentWallRoomBrightnessPct;
 
   const modal = document.getElementById('wall-preview-modal');
   const dimmer = document.getElementById('wall-room-dimmer');
   const cone = document.getElementById('wall-spotlight-cone');
   const hangingUnit = document.getElementById('wall-hanging-unit');
-  const slider = document.getElementById('wall-scale-slider');
+  const targetBrightness = (typeof galleryExperience !== 'undefined' && galleryExperience && typeof galleryExperience.roomBrightness === 'number')
+    ? galleryExperience.roomBrightness
+    : currentWallRoomBrightnessPct;
 
+  const slider = document.getElementById('wall-scale-slider');
   if (slider) slider.value = '100';
   currentWallScalePct = 100;
-  if (typeof applyWallPreviewDefaultColor === 'function') applyWallPreviewDefaultColor();
-
+  applyWallPreviewDefaultColor();
   const lightSlider = document.getElementById('wall-ambient-slider');
   if (lightSlider) lightSlider.value = String(targetBrightness);
 
-  // 1. စစဝင်ဝင်ချင်း Dark / Spotlight ပိတ်ထားရန် (transition မပါဘဲ ချက်ချင်း မှောင်/ပိတ်ထားမည်)
+  // စစဝင်ဝင်ချင်း Dark / Spotlight ပိတ်ထားရန် (transition မပါဘဲ ချက်ချင်း မှောင်/ပိတ်ထားမည်)
   if (dimmer) {
     dimmer.style.transition = 'none';
-    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0.72)';
+    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0.88)';
   }
   if (cone) {
     cone.style.transition = 'none';
@@ -4142,48 +4140,36 @@ z-index: 12;
   }
   if (hangingUnit) {
     hangingUnit.style.transition = 'none';
-    hangingUnit.style.filter = 'brightness(0.45) contrast(0.95)';
+    hangingUnit.style.filter = 'brightness(0.28) contrast(0.92)';
   }
 
-  if (typeof populateWallPreviewContent === 'function') {
-    populateWallPreviewContent(art);
-  } else {
-    const imgEl = document.getElementById('wall-preview-img');
-    const titleEl = document.getElementById('wall-preview-title');
-    const metaEl = document.getElementById('wall-preview-meta');
-    if (imgEl) imgEl.src = art.image || '';
-    if (titleEl) titleEl.textContent = art.title || 'Untitled';
-    if (metaEl) metaEl.textContent = [art.medium, art.size, art.year].filter(Boolean).join(' • ');
-  }
+  populateWallPreviewContent(art);
 
-  if (!modal) return;
   modal.classList.remove('hidden', 'is-open');
   void modal.offsetWidth;
-
   requestAnimationFrame(() => {
     modal.classList.add('is-open');
     applyProportionalWallSizing(art, currentWallScalePct);
 
-    // 2. ဝင်ပြီးနောက် 3 စက္ကန့်အတွင်း Dark မှ Light / Spotlight လင်းလာစေရန်
+    // ဝင်ပြီးနောက် 6.5 စက္ကန့်အတွင်း Dark မှ Light / Spotlight ဖြည်းဖြည်းချင်း လင်းလာစေရန်
     setTimeout(() => {
-      const ease3s = '3s cubic-bezier(0.22, 1, 0.36, 1)';
+      const revealEase = '6.5s cubic-bezier(0.16, 1, 0.3, 1)';
       if (dimmer) {
-        dimmer.style.transition = `background-color ${ease3s}`;
+        dimmer.style.transition = `background-color ${revealEase}`;
       }
       if (cone) {
-        cone.style.transition = `opacity ${ease3s}, transform ${ease3s}, background 1.4s ease`;
-        cone.style.opacity = wallSpotlightMode === 'off' ? '0' : '0.85';
+        cone.style.transition = `opacity ${revealEase}, transform ${revealEase}, background 2.5s ease`;
+        cone.style.opacity = wallSpotlightMode === 'off' ? '0' : '0.9';
       }
       if (hangingUnit) {
-        hangingUnit.style.transition = `transform 0.52s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1), filter ${ease3s}`;
+        hangingUnit.style.transition = `transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter ${revealEase}`;
         hangingUnit.style.filter = '';
       }
       if (typeof setWallRoomBrightness === 'function') {
         setWallRoomBrightness(targetBrightness);
       }
-    }, 60);
+    }, 120);
   });
-
   document.body.style.overflow = 'hidden';
 }
 
