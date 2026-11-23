@@ -81,11 +81,10 @@
  </svg>`;
  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
  }
- window.handleBgFallback = function(img, index) {
- if (!img || img.dataset.fallbackApplied === 'true') return;
- img.dataset.fallbackApplied = 'true';
+ window.handleBgFallback = function(img) {
+ if (!img) return;
  img.onerror = null;
- img.src = createEarlyPlaceholderSvg(`Lotus Study ${index === 2 ? 'II' : 'I'}`, "The Artist's Loft", '3/4');
+ img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
  };
  window.handleArtistFallback = function(img, artistName) {
  if (!img || img.dataset.fallbackApplied === 'true') return;
@@ -654,9 +653,9 @@ z-index: 12;
 
  <!-- Global Soft Background Lotus Paintings Across All Pages -->
  <div id="global-art-backdrop" class="fixed inset-0 z-0 flex w-full h-full pointer-events-none select-none overflow-hidden" aria-hidden="true">
-     <img id="home-bg-1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Lotus Study I" onerror="handleBgFallback(this, 1)"
+     <img id="home-bg-1" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" onerror="handleBgFallback(this)"
          class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal transition-opacity duration-500">
-    <img id="home-bg-2" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Lotus Study II" onerror="handleBgFallback(this, 2)"
+    <img id="home-bg-2" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" onerror="handleBgFallback(this)"
          class="w-1/2 h-full object-cover opacity-[0.34] dark:opacity-[0.44] brightness-100 dark:brightness-[0.96] dark:contrast-[1.06] mix-blend-multiply dark:mix-blend-normal transition-opacity duration-500">
  <div class="absolute inset-0 bg-gradient-to-b from-[#F3EFE6]/75 dark:from-[#12110F]/45 via-transparent to-[#F3EFE6]/80 dark:to-[#12110F]/55"></div>
  <div class="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/55 dark:from-[#12110F]/35 via-transparent to-[#F3EFE6]/55 dark:to-[#12110F]/35"></div>
@@ -1637,11 +1636,11 @@ z-index: 12;
  <input id="backdrop-left-file-input" type="file" accept="image/*" onchange="uploadBackdropFileToR2('left', this)" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
  <p id="backdrop-left-upload-status" class="hidden text-[11px] text-[#9C8265] font-medium"></p>
  <select id="backdrop-left-select" onchange="onBackdropSelectChange('left', this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
- <option value="05582-mtoung3.jpg">Default: Lotus Study I (05582-mtoung3.jpg)</option>
+ <option value="">No background image</option>
  </select>
  <input id="backdrop-left-url-input" type="text" placeholder="Or paste custom R2 image URL..." oninput="onBackdropCustomUrlInput('left', this.value)" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-xs outline-none focus:border-[#2C2C2C]">
  <div class="h-28 rounded-xl overflow-hidden bg-[#E7E0D2] dark:bg-[#23201C] border border-[#A69076]/20">
- <img id="backdrop-left-preview" src="05582-mtoung3.jpg" alt="Left Backdrop Preview" class="w-full h-full object-cover">
+ <img id="backdrop-left-preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Left Backdrop Preview" class="w-full h-full object-cover">
  </div>
  </div>
 
@@ -1650,11 +1649,11 @@ z-index: 12;
  <input id="backdrop-right-file-input" type="file" accept="image/*" onchange="uploadBackdropFileToR2('right', this)" class="w-full text-xs text-[#2C2C2C]/70 dark:text-[#EDE7DA]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:uppercase file:tracking-wider file:bg-[#2C2C2C] file:text-[#FAF9F6] hover:file:bg-[#A69076] cursor-pointer">
  <p id="backdrop-right-upload-status" class="hidden text-[11px] text-[#9C8265] font-medium"></p>
  <select id="backdrop-right-select" onchange="onBackdropSelectChange('right', this.value)" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-sm outline-none focus:border-[#2C2C2C]">
- <option value="8899c-mtoung4.jpg">Default: Lotus Study II (8899c-mtoung4.jpg)</option>
+ <option value="">No background image</option>
  </select>
  <input id="backdrop-right-url-input" type="text" placeholder="Or paste custom R2 image URL..." oninput="onBackdropCustomUrlInput('right', this.value)" class="w-full px-3.5 py-2 rounded-xl border border-[#A69076]/40 bg-white dark:bg-[#1B1916] text-xs outline-none focus:border-[#2C2C2C]">
  <div class="h-28 rounded-xl overflow-hidden bg-[#E7E0D2] dark:bg-[#23201C] border border-[#A69076]/20">
- <img id="backdrop-right-preview" src="8899c-mtoung4.jpg" alt="Right Backdrop Preview" class="w-full h-full object-cover">
+ <img id="backdrop-right-preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Right Backdrop Preview" class="w-full h-full object-cover">
  </div>
  </div>
  </div>
@@ -2263,11 +2262,10 @@ z-index: 12;
  img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
  }
 
- function handleBgFallback(img, index) {
- if (!img || img.dataset.fallbackApplied === 'true') return;
- img.dataset.fallbackApplied = 'true';
+ function handleBgFallback(img) {
+ if (!img) return;
  img.onerror = null;
- img.src = createArtPlaceholderDataURL(`Lotus Study ${index === 2 ? 'II' : 'I'}`, "The Artist's Loft", '3/4');
+ img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
  }
 
  function applyArtFallback(img, title, category, aspect = '3/4') {
@@ -2340,7 +2338,7 @@ z-index: 12;
  window.addEventListener('DOMContentLoaded', verifyAllImagesLoaded);
  window.addEventListener('load', verifyAllImagesLoaded);
   // Hard refresh လုပ်တဲ့အခါ အရင် default ပုံဖျတ်ကနဲမပေါ်ဘဲ Admin Console ပုံရောက်မှသာ ပေါ်လာစေရန်
-const DEFAULT_BACKDROP_IMAGES = ['05582-mtoung3.jpg', '8899c-mtoung4.jpg'];
+const DEFAULT_BACKDROP_IMAGES = [];
 
 function applyBackdropImages(urls) {
   const list = Array.isArray(urls) && urls.length ? urls : DEFAULT_BACKDROP_IMAGES;
@@ -2424,11 +2422,24 @@ async function syncBackdropFromGallery() {
 
  const DEFAULT_BACKDROP_CONFIG = {
  layout: 'split', // 'split' | 'single' | 'home-only'
- leftImage: '05582-mtoung3.jpg',
- rightImage: '8899c-mtoung4.jpg',
+ leftImage: '',
+ rightImage: '',
  lightOpacity: 34,
  darkOpacity: 44
  };
+ const TRANSPARENT_BACKDROP_PIXEL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+ function sanitizeBackdropImage(value) {
+ const image = String(value || '').trim();
+ return /(?:^|\/)(?:05582-mtoung3|8899c-mtoung4)\.jpg(?:[?#].*)?$/i.test(image) ? '' : image;
+ }
+ function sanitizeBackdropConfig(config) {
+ return {
+ ...DEFAULT_BACKDROP_CONFIG,
+ ...(config || {}),
+ leftImage: sanitizeBackdropImage(config && config.leftImage),
+ rightImage: sanitizeBackdropImage(config && config.rightImage)
+ };
+ }
  let backdropConfig = { ...DEFAULT_BACKDROP_CONFIG };
  let isPrivateSalonEnabled = true;
  let currentActiveSectionId = 'home';
@@ -2910,10 +2921,7 @@ async function syncBackdropFromGallery() {
  };
  }
  if (data.settings.backdrop_config && typeof data.settings.backdrop_config === 'object') {
- backdropConfig = {
- ...DEFAULT_BACKDROP_CONFIG,
- ...data.settings.backdrop_config
- };
+ backdropConfig = sanitizeBackdropConfig(data.settings.backdrop_config);
  try {
  localStorage.setItem(BACKDROP_STORAGE_KEY, JSON.stringify(backdropConfig));
  } catch (e) {}
@@ -6731,7 +6739,7 @@ function openWallPreviewById(id) {
  const raw = localStorage.getItem(BACKDROP_STORAGE_KEY);
  if (!raw) return;
  const parsed = JSON.parse(raw);
- backdropConfig = { ...DEFAULT_BACKDROP_CONFIG, ...parsed };
+ backdropConfig = sanitizeBackdropConfig(parsed);
  } catch (e) {}
  }
 
@@ -6749,15 +6757,21 @@ function openWallPreviewById(id) {
  const hideOnNonHome = backdropConfig.layout === 'home-only' && currentActiveSectionId !== 'home';
  container.style.display = hideOnNonHome ? 'none' : 'flex';
 
- const leftSrc = backdropConfig.leftImage || '05582-mtoung3.jpg';
- const rightSrc = backdropConfig.rightImage || '8899c-mtoung4.jpg';
- if (img1.getAttribute('src') !== leftSrc) {
+ const leftSrc = sanitizeBackdropImage(backdropConfig.leftImage);
+ const rightSrc = sanitizeBackdropImage(backdropConfig.rightImage);
+ img1.style.display = leftSrc ? '' : 'none';
+ img2.style.display = rightSrc && backdropConfig.layout !== 'single' ? '' : 'none';
+ if (leftSrc && img1.getAttribute('src') !== leftSrc) {
  img1.dataset.fallbackApplied = 'false';
  img1.src = leftSrc;
+ } else if (!leftSrc && img1.getAttribute('src') !== TRANSPARENT_BACKDROP_PIXEL) {
+ img1.src = TRANSPARENT_BACKDROP_PIXEL;
  }
- if (img2.getAttribute('src') !== rightSrc) {
+ if (rightSrc && img2.getAttribute('src') !== rightSrc) {
  img2.dataset.fallbackApplied = 'false';
  img2.src = rightSrc;
+ } else if (!rightSrc && img2.getAttribute('src') !== TRANSPARENT_BACKDROP_PIXEL) {
+ img2.src = TRANSPARENT_BACKDROP_PIXEL;
  }
 
  img1.style.transition = 'none';
@@ -6791,7 +6805,7 @@ function openWallPreviewById(id) {
  const darkLabel = document.getElementById('backdrop-dark-opacity-label');
 
  const buildOptions = (defaultFile, defaultLabel) => {
- const defaultOpt = `<option value="${escapeHTML(defaultFile)}">${escapeHTML(defaultLabel)}</option>`;
+ const defaultOpt = '<option value="">No background image</option>';
  const artOpts = artworks.map(a =>
  `<option value="${escapeHTML(a.image)}">${escapeHTML(a.title)} (${escapeHTML(a.category || 'Fine Art')})</option>`
  ).join('');
@@ -6799,7 +6813,8 @@ function openWallPreviewById(id) {
  };
 
  if (leftSelect) {
- leftSelect.innerHTML = buildOptions('05582-mtoung3.jpg', 'Default: Lotus Study I (05582-mtoung3.jpg)');
+ backdropConfig.leftImage = sanitizeBackdropImage(backdropConfig.leftImage);
+ leftSelect.innerHTML = buildOptions();
  const matchL = Array.from(leftSelect.options).some(o => o.value === backdropConfig.leftImage);
  if (matchL) {
  leftSelect.value = backdropConfig.leftImage;
@@ -6809,7 +6824,8 @@ function openWallPreviewById(id) {
  }
  }
  if (rightSelect) {
- rightSelect.innerHTML = buildOptions('8899c-mtoung4.jpg', 'Default: Lotus Study II (8899c-mtoung4.jpg)');
+ backdropConfig.rightImage = sanitizeBackdropImage(backdropConfig.rightImage);
+ rightSelect.innerHTML = buildOptions();
  const matchR = Array.from(rightSelect.options).some(o => o.value === backdropConfig.rightImage);
  if (matchR) {
  rightSelect.value = backdropConfig.rightImage;
@@ -6818,8 +6834,8 @@ function openWallPreviewById(id) {
  rightUrlInput.value = backdropConfig.rightImage || '';
  }
  }
- if (leftPrev) leftPrev.src = backdropConfig.leftImage || '05582-mtoung3.jpg';
- if (rightPrev) rightPrev.src = backdropConfig.rightImage || '8899c-mtoung4.jpg';
+ if (leftPrev) leftPrev.src = backdropConfig.leftImage || TRANSPARENT_BACKDROP_PIXEL;
+ if (rightPrev) rightPrev.src = backdropConfig.rightImage || TRANSPARENT_BACKDROP_PIXEL;
 
  const lPct = Number(backdropConfig.lightOpacity ?? 34);
  const dPct = Number(backdropConfig.darkOpacity ?? 44);
