@@ -493,13 +493,13 @@
  opacity: 0;
  }
  .wall-room-dimmer {
- position: absolute;
- inset: 0;
- pointer-events: none;
- background: rgba(6, 5, 5, 0);
- transition: background-color 0.25s ease;
- z-index: 12;
- }
+position: absolute;
+inset: 0;
+pointer-events: none;
+background: rgba(6, 5, 5, 0);
+transition: background-color 3s cubic-bezier(0.22, 1, 0.36, 1);
+z-index: 12;
+}
  #wall-artwork-stage-layer {
  z-index: 16;
  perspective: 1200px;
@@ -4106,33 +4106,33 @@
  }
 
  function openWallPreviewById(id) {
- const list = getWallPreviewArtworksList();
- const art = list.find(a => a.id === id) || artworks.find(a => a.id === id) || artworks[0];
- if (!art) return;
+  const list = getWallPreviewArtworksList();
+  const art = list.find(a => a.id === id) || artworks.find(a => a.id === id) || artworks[0];
+  if (!art) return;
 
- playSoftGalleryChime('open');
- trackVisitorEvent('wall_preview', art.title || id);
- currentWallArtworkId = art.id;
+  playSoftGalleryChime('open');
+  trackVisitorEvent('wall_preview', art.title || id);
+  currentWallArtworkId = art.id;
 
- const modal = document.getElementById('wall-preview-modal');
- const slider = document.getElementById('wall-scale-slider');
- if (slider) slider.value = '100';
- currentWallScalePct = 100;
- applyWallPreviewDefaultColor();
- const lightSlider = document.getElementById('wall-ambient-slider');
- if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
- setWallRoomBrightness(galleryExperience.roomBrightness);
+  const modal = document.getElementById('wall-preview-modal');
+  const dimmer = document.getElementById('wall-room-dimmer');
+  if (dimmer) {
+    dimmer.style.transition = 'none';
+    dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0)';
+  }
 
- populateWallPreviewContent(art);
-
- modal.classList.remove('hidden', 'is-open');
- void modal.offsetWidth;
- requestAnimationFrame(() => {
- modal.classList.add('is-open');
- applyProportionalWallSizing(art, currentWallScalePct);
- });
- document.body.style.overflow = 'hidden';
- }
+  requestAnimationFrame(() => {
+    if (modal) modal.classList.add('is-open');
+    setTimeout(() => {
+      if (dimmer) {
+        dimmer.style.transition = 'background-color 3s cubic-bezier(0.22, 1, 0.36, 1)';
+      }
+      if (typeof setWallRoomBrightness === 'function') {
+        setWallRoomBrightness(currentWallRoomBrightnessPct);
+      }
+    }, 60);
+  });
+}
 
  function preloadImagePromise(src) {
  return new Promise((resolve) => {
