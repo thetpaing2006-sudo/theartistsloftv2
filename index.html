@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en" class="scroll-smooth">
 <head>
  <!-- Primary SEO Meta Tags -->
@@ -2937,9 +2936,11 @@
  btn.classList.toggle('hidden', !enabled);
  btn.style.display = enabled ? '' : 'none';
  });
- document.querySelectorAll('.nav-salon-dot').forEach(dot => {
- dot.classList.toggle('hidden', !enabled);
- dot.style.display = enabled ? '' : 'none';
+ document.querySelectorAll('.nav-salon-dot').forEach((dot, idx) => {
+ // Keep one separator dot visible between Artworks and About when Private Salon is hidden
+ const keepSingleDot = !enabled && idx === 0;
+ dot.classList.toggle('hidden', !enabled && !keepSingleDot);
+ dot.style.display = (enabled || keepSingleDot) ? '' : 'none';
  });
  const circleBox = document.getElementById('collectors-circle-box');
  if (circleBox) circleBox.classList.toggle('hidden', !enabled);
