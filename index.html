@@ -499,12 +499,12 @@ transition: background-color 3s cubic-bezier(0.22, 1, 0.36, 1);
 z-index: 12;
 }
  #wall-artwork-stage-layer {
- z-index: 16;
- perspective: 1200px;
- transform-origin: 50% 48%;
- transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
- will-change: transform;
- }
+	 z-index: 16;
+	 perspective: 1200px;
+	 transform-origin: 50% 36%;
+	 transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+	 will-change: transform;
+	 }
  #wall-preview-modal .wall-canvas-stage {
  opacity: 0.86;
  transform: scale(0.975) translateY(8px);
@@ -1252,7 +1252,7 @@ z-index: 12;
  </div>
  <div class="flex items-center gap-1.5">
  <label for="wall-scale-slider" class="text-[9px] sm:text-[10px] uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#D4B483]">Size:</label>
- <input id="wall-scale-slider" type="range" min="60" max="220" step="5" value="100" oninput="setWallPreviewScale(this.value)" aria-label="Room and artwork zoom, 60 to 220 percent" class="w-20 sm:w-28 accent-[#D4B483] cursor-pointer">
+	 <input id="wall-scale-slider" type="range" min="60" max="240" step="5" value="100" oninput="setWallPreviewScale(this.value)" aria-label="Room and artwork zoom, 60 to 240 percent" class="w-20 sm:w-28 accent-[#D4B483] cursor-pointer">
  <button type="button" onclick="resetWallAutoScale()" title="Reset to True Physical Room Scale" class="px-2 py-0.5 rounded border border-white/20 text-[9px] uppercase tracking-wider text-[#FAF9F6]/75 hover:border-[#D4B483] hover:text-[#D4B483] transition-colors">
  True Size
  </button>
@@ -4427,11 +4427,11 @@ function openWallPreviewById(id) {
  }
 
  function setWallPreviewScale(pctValue) {
- currentWallScalePct = Math.max(60, Math.min(220, Number(pctValue) || 100));
- const art = artworks.find(a => a.id === currentWallArtworkId);
- if (art) {
- applyProportionalWallSizing(art, currentWallScalePct);
- }
+	 currentWallScalePct = Math.max(60, Math.min(240, Number(pctValue) || 100));
+	 const art = artworks.find(a => a.id === currentWallArtworkId);
+	 if (art) {
+	 applyProportionalWallSizing(art, currentWallScalePct);
+	 }
  }
 
  function setWallRoomBrightness(pctValue) {
@@ -4514,7 +4514,7 @@ function openWallPreviewById(id) {
  if (!unit || !imgEl) return;
 
  const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
- const factor = Math.max(0.6, Math.min(2.2, (Number(scalePct) || 100) / 100));
+	 const factor = Math.max(0.6, Math.min(2.4, (Number(scalePct) || 100) / 100));
 
  // Keep artwork & frame at true 1:1 physical scale (vs 64" credenza), and apply user Size zoom across the room environment
  const baseStageW = stageEl?.clientWidth || Math.min(window.innerWidth - 24, 1152);
@@ -4558,9 +4558,9 @@ function openWallPreviewById(id) {
  // Camera dolly: the artwork advances most, while furniture and light beam move at
  // progressively gentler rates so the whole room remains readable and the spotlight stays present.
  if (stageLayer) {
- const artLift = (factor - 1) * -7;
- stageLayer.style.transform = `translate3d(0, ${artLift.toFixed(1)}px, 0) scale(${factor.toFixed(3)})`;
- }
+	 const artLift = (factor - 1) * 10;
+	 stageLayer.style.transform = `translate3d(0, ${artLift.toFixed(1)}px, 0) scale(${factor.toFixed(3)})`;
+	 }
  if (furnitureEl) {
  const roomScale = 1 + ((factor - 1) * 0.56);
  const roomLift = (factor - 1) * 4;
