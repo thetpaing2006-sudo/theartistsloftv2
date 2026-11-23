@@ -4115,23 +4115,35 @@ z-index: 12;
   currentWallArtworkId = art.id;
 
   const modal = document.getElementById('wall-preview-modal');
+  const slider = document.getElementById('wall-scale-slider');
+  if (slider) slider.value = '100';
+  currentWallScalePct = 100;
+  applyWallPreviewDefaultColor();
+  const lightSlider = document.getElementById('wall-ambient-slider');
+  if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
+  setWallRoomBrightness(galleryExperience.roomBrightness);
+
+  populateWallPreviewContent(art);
+
   const dimmer = document.getElementById('wall-room-dimmer');
   if (dimmer) {
     dimmer.style.transition = 'none';
     dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0)';
   }
 
+  modal.classList.remove('hidden', 'is-open');
+  void modal.offsetWidth;
   requestAnimationFrame(() => {
-    if (modal) modal.classList.add('is-open');
+    modal.classList.add('is-open');
+    applyProportionalWallSizing(art, currentWallScalePct);
     setTimeout(() => {
       if (dimmer) {
         dimmer.style.transition = 'background-color 3s cubic-bezier(0.22, 1, 0.36, 1)';
       }
-      if (typeof setWallRoomBrightness === 'function') {
-        setWallRoomBrightness(currentWallRoomBrightnessPct);
-      }
+      setWallRoomBrightness(galleryExperience.roomBrightness);
     }, 60);
   });
+  document.body.style.overflow = 'hidden';
 }
 
  function preloadImagePromise(src) {
