@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -663,34 +662,28 @@
  <div class="absolute inset-0 bg-gradient-to-r from-[#F3EFE6]/55 dark:from-[#12110F]/35 via-transparent to-[#F3EFE6]/55 dark:to-[#12110F]/35"></div>
  </div>
 
- <!-- Top Minimalist Navigation Header -->
- <header class="w-full px-5 py-6 md:px-12 md:py-8 bg-[#F3EFE6]/90 dark:bg-[#12110F]/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/20 dark:border-[#D4B483]/20 transition-all">
- <div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
- 
-<!-- Left Navigation Links -->
- <nav class="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-6 md:w-1/3" aria-label="Main Navigation">
- <button type="button" onclick="showSection('home')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="home">Home</button>
- <button type="button" onclick="showSection('artworks')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
- <button type="button" onclick="showSection('salon')" class="nav-link inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1 text-[#9C8265] dark:text-[#D4B483]" data-target="salon">
- <span id="nav-salon-lock-icon" class="text-[10px]" aria-hidden="true">🔒</span>
- <span>Private Salon</span>
- </button>
- <button type="button" onclick="showSection('about')" class="nav-link text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="about">About</button>
- <button type="button" onclick="showSection('contact')" class="nav-link md:hidden text-xs uppercase tracking-[0.2em] font-medium transition-colors py-1" data-target="contact">Contact</button>
- </nav>
+ <!-- Top Classic Two-Tier Museum Masthead Header -->
+ <header class="w-full px-5 pt-4 pb-3.5 md:px-12 md:pt-5 md:pb-4 bg-[#F3EFE6]/92 dark:bg-[#12110F]/92 backdrop-blur-md sticky top-0 z-40 border-b border-[#9C8265]/25 dark:border-[#D4B483]/25 transition-all">
+ <div class="max-w-screen-xl mx-auto">
 
- <!-- Center Brand Logo (5 taps opens hidden Admin Console) -->
- <div class="md:w-1/3 flex justify-center items-center">
+ <!-- Tier 1: Gallery Origin (Left), Centered Brand Masthead Logo (5 taps opens Admin Console), Utility Pills (Right) -->
+ <div class="grid grid-cols-1 sm:grid-cols-3 items-center gap-3 pb-3.5">
+ <div class="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[#9C8265] dark:text-[#D4B483] font-medium">
+ <span>Yangon</span>
+ <span class="opacity-50">•</span>
+ <span>Myanmar</span>
+ </div>
+
+ <div class="flex justify-center items-center">
  <button type="button" onclick="handleSecretBrandTap(event)" class="group flex items-center justify-center focus:outline-none select-none" aria-label="The Artist's Loft">
  <img id="header-brand-logo"
  src="logo.jpg"
- alt="The Artist's Loft"
- class="h-10 sm:h-12 md:h-14 w-auto max-w-[230px] object-contain transition-transform duration-300 group-hover:scale-105">
+ alt="The Artist's Loft — Unique Art Works"
+ class="h-12 sm:h-14 md:h-16 w-auto max-w-[270px] object-contain transition-transform duration-300 group-hover:scale-105">
  </button>
  </div>
 
- <!-- Right Links + Theme Toggle + Classic Gallery Ambience Sound Toggle -->
- <div class="flex items-center justify-center md:justify-end gap-3 sm:gap-4 md:w-1/3">
+ <div class="flex items-center justify-center sm:justify-end gap-2.5 sm:gap-3">
  <button type="button" id="theme-toggle-btn" onclick="toggleThemeMode()" title="Switch Light / Midnight Gallery Dark Mode"
  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9C8265]/40 dark:border-[#D4B483]/35 bg-[#FAF7F0]/75 dark:bg-[#1E1B17]/80 hover:border-[#26231F] dark:hover:border-[#D4B483] text-[10px] uppercase tracking-[0.18em] text-[#26231F]/80 dark:text-[#EDE7DA]/85 transition-all">
  <span id="theme-toggle-icon" aria-hidden="true">☾</span>
@@ -706,11 +699,24 @@
  </span>
  <span id="sound-toggle-label">Sound On</span>
  </button>
-
- <button type="button" onclick="showSection('contact')" class="hidden md:inline-block nav-link text-xs uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">
- Contact Us
- </button>
  </div>
+ </div>
+
+ <!-- Tier 2: Symmetrical Navigation Along a Fine Hairline Rule -->
+ <nav class="pt-3 border-t border-[#9C8265]/20 dark:border-[#D4B483]/20 flex flex-wrap justify-center items-center gap-4 sm:gap-7 md:gap-9" aria-label="Main Navigation">
+ <button type="button" onclick="showSection('home')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="home">Home</button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('artworks')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="artworks">Artworks</button>
+ <span class="nav-salon-dot text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('salon')" class="nav-link inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1 text-[#9C8265] dark:text-[#D4B483]" data-target="salon">
+ <span id="nav-salon-lock-icon" class="text-[10px]" aria-hidden="true">🔒</span>
+ <span>Private Salon</span>
+ </button>
+ <span class="nav-salon-dot text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('about')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="about">About</button>
+ <span class="text-[#9C8265]/45 dark:text-[#D4B483]/45 text-xs hidden sm:inline" aria-hidden="true">•</span>
+ <button type="button" onclick="showSection('contact')" class="nav-link text-[11px] uppercase tracking-[0.22em] font-medium transition-colors py-1" data-target="contact">Contact Us</button>
+ </nav>
 
  </div>
  </header>
@@ -1723,6 +1729,22 @@
 
  <!-- ==================== ADMIN TAB 4B: VIP SALON & MEMBERS ==================== -->
  <div id="admin-panel-salon" class="hidden space-y-8">
+ <!-- Private Salon Public Visibility Toggle -->
+ <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+ <div>
+ <div class="flex items-center gap-2 mb-1">
+ <span id="admin-salon-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+ <h4 class="font-serif text-xl">Private Salon Public Access</h4>
+ </div>
+ <p id="admin-salon-status-desc" class="text-xs text-[#2C2C2C]/65 dark:text-[#EDE7DA]/65">
+ Currently <strong>ON</strong> — Visitors can see the Private Salon menu and Collector's Circle card.
+ </p>
+ </div>
+ <button type="button" id="admin-toggle-salon-visibility-btn" onclick="togglePrivateSalonVisibility()" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.18em] font-medium transition-colors flex-shrink-0">
+ Turn OFF Private Salon
+ </button>
+ </div>
+
  <!-- Add / Edit VIP Exclusive Artwork -->
  <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-5">
  <div>
@@ -2344,6 +2366,7 @@
  darkOpacity: 44
  };
  let backdropConfig = { ...DEFAULT_BACKDROP_CONFIG };
+ let isPrivateSalonEnabled = true;
  let currentActiveSectionId = 'home';
 
  // Default Artist Profile (MT. Oung)
@@ -2577,9 +2600,7 @@
 
  function getSavedAdminToken() {
  try {
- return sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
- || localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY)
- || '';
+ return sessionStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';
  } catch (e) {
  return '';
  }
@@ -2588,12 +2609,11 @@
  function setSavedAdminToken(token) {
  const clean = String(token || '').trim();
  try {
+ localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
  if (clean) {
  sessionStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
- localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, clean);
  } else {
  sessionStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
- localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
  }
  } catch (e) {}
  }
@@ -2845,6 +2865,10 @@
  if (data.settings.vip_salon_data && typeof data.settings.vip_salon_data === 'object') {
  renderSalonView();
  }
+ if (data.settings.private_salon_enabled !== undefined) {
+ isPrivateSalonEnabled = data.settings.private_salon_enabled !== false && data.settings.private_salon_enabled !== 'false';
+ applyPrivateSalonVisibility();
+ }
  }
 
  isLoadingArtworks = false;
@@ -2904,6 +2928,74 @@
  };
  let currentSalonMember = null;
  let currentSalonAuthMode = 'login';
+
+ function applyPrivateSalonVisibility() {
+ const enabled = Boolean(isPrivateSalonEnabled);
+ // Hide/show navigation button, its adjacent separator dots, and Contact section's Collector's Circle card
+ document.querySelectorAll('.nav-link[data-target="salon"]').forEach(btn => {
+ btn.classList.toggle('hidden', !enabled);
+ btn.style.display = enabled ? '' : 'none';
+ });
+ document.querySelectorAll('.nav-salon-dot').forEach((dot, idx) => {
+ // Keep one separator dot visible between Artworks and About when Private Salon is hidden
+ const keepSingleDot = !enabled && idx === 0;
+ dot.classList.toggle('hidden', !enabled && !keepSingleDot);
+ dot.style.display = (enabled || keepSingleDot) ? '' : 'none';
+ });
+ const circleBox = document.getElementById('collectors-circle-box');
+ if (circleBox) circleBox.classList.toggle('hidden', !enabled);
+
+ // If currently viewing #section-salon while turned off, redirect safely to Home
+ const salonSection = document.getElementById('section-salon');
+ if (!enabled && salonSection && !salonSection.classList.contains('hidden')) {
+ showSection('home');
+ }
+
+ // Sync Admin Console toggle UI
+ const dot = document.getElementById('admin-salon-status-dot');
+ const desc = document.getElementById('admin-salon-status-desc');
+ const toggleBtn = document.getElementById('admin-toggle-salon-visibility-btn');
+ if (dot) {
+ dot.className = `w-2.5 h-2.5 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-amber-500'}`;
+ }
+ if (desc) {
+ desc.innerHTML = enabled
+ ? 'Currently <strong>ON</strong> — Visitors can see the Private Salon menu and Collector\'s Circle card.'
+ : 'Currently <strong>OFF</strong> — Private Salon is hidden from public navigation and Contact page.';
+ }
+ if (toggleBtn) {
+ toggleBtn.textContent = enabled ? 'Turn OFF Private Salon' : 'Turn ON Private Salon';
+ }
+ }
+
+ async function togglePrivateSalonVisibility() {
+ const btn = document.getElementById('admin-toggle-salon-visibility-btn');
+ const nextState = !isPrivateSalonEnabled;
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Updating...';
+ }
+ try {
+ const res = await fetch(API_ENDPOINTS.settings, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({ key: 'private_salon_enabled', value: nextState })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Settings save failed (${res.status})`);
+ }
+ isPrivateSalonEnabled = nextState;
+ applyPrivateSalonVisibility();
+ showAdminFeedback(`Private Salon is now ${nextState ? 'ON (Visible)' : 'OFF (Hidden)'}.`);
+ await recordEditLog('Updated', 'VIP Salon', 'Public Visibility', nextState ? 'Enabled Private Salon' : 'Disabled Private Salon');
+ } catch (err) {
+ showAdminFeedback('Could not update Private Salon visibility: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ applyPrivateSalonVisibility();
+ } finally {
+ if (btn) btn.disabled = false;
+ }
+ }
 
  function recordSalonMemberActivity(actionLabel, details = '') {
    if (!currentSalonMember) return;
@@ -3310,6 +3402,7 @@
  }
 
  function renderAdminSalonManager() {
+   applyPrivateSalonVisibility();
    const memberCountEl = document.getElementById('admin-salon-member-count');
    const artistSelect = document.getElementById('vip-art-artist-select');
    const artListEl = document.getElementById('admin-vip-art-list');
@@ -6838,6 +6931,7 @@
  window.migrateLegacySalonMembers = migrateLegacySalonMembers;
  window.sendAdminNewsletter = sendAdminNewsletter;
  window.signOutSalonMember = signOutSalonMember;
+ window.togglePrivateSalonVisibility = togglePrivateSalonVisibility;
  window.reserveVipArtwork = reserveVipArtwork;
  window.inspectVipArtwork = inspectVipArtwork;
  window.toggleSuspendSalonMember = toggleSuspendSalonMember;
