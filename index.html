@@ -451,9 +451,15 @@
  mask-image: radial-gradient(ellipse 46% 60% at 50% 39%, #000 0%, rgba(0, 0, 0, 0.86) 48%, rgba(0, 0, 0, 0.36) 72%, transparent 100%);
  opacity: var(--spotlight-strength, 0.85);
  transform-origin: 50% 8%;
- transition: opacity 0.58s ease, background 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+ transition: opacity 2.6s cubic-bezier(0.22, 1, 0.36, 1),
+ background 1.4s ease,
+ transform 2.8s cubic-bezier(0.16, 1, 0.3, 1);
  z-index: 14;
  mix-blend-mode: screen;
+ }
+ .wall-spotlight-cone.is-ignite-sweep {
+ transition: opacity 2.8s cubic-bezier(0.16, 1, 0.3, 1),
+ transform 2.8s cubic-bezier(0.16, 1, 0.3, 1);
  }
  .wall-spotlight-cone::before {
  content: '';
@@ -497,7 +503,7 @@
  inset: 0;
  pointer-events: none;
  background: rgba(6, 5, 5, 0);
- transition: background-color 0.25s ease;
+ transition: background-color 1.8s cubic-bezier(0.22, 1, 0.36, 1);
  z-index: 12;
  }
  #wall-artwork-stage-layer {
@@ -4120,8 +4126,23 @@
  currentWallScalePct = 100;
  applyWallPreviewDefaultColor();
  const lightSlider = document.getElementById('wall-ambient-slider');
- if (lightSlider) lightSlider.value = String(galleryExperience.roomBrightness);
- setWallRoomBrightness(galleryExperience.roomBrightness);
+ const baseBrightness = galleryExperience.roomBrightness;
+ if (lightSlider) lightSlider.value = String(baseBrightness);
+
+ // Start with a dimmed gallery room & soft unlit spotlight before igniting smoothly
+ const cone = document.getElementById('wall-spotlight-cone');
+ const dimmer = document.getElementById('wall-room-dimmer');
+ const targetStrength = Math.max(0.25, Math.min(1, (Number(galleryExperience.spotlightIntensity) || 85) / 100));
+ if (dimmer) {
+ dimmer.style.transition = 'background-color 0.35s ease';
+ dimmer.style.backgroundColor = 'rgba(6, 5, 5, 0.46)';
+ }
+ if (cone && wallSpotlightMode !== 'off') {
+ cone.classList.remove('is-ignite-sweep');
+ cone.style.transition = 'none';
+ cone.style.opacity = '0.08';
+ cone.style.transform = 'scale(0.92)';
+ }
 
  populateWallPreviewContent(art);
 
@@ -4130,6 +4151,20 @@
  requestAnimationFrame(() => {
  modal.classList.add('is-open');
  applyProportionalWallSizing(art, currentWallScalePct);
+
+ // Smoothly dim the room to target brightness while bringing up the spotlight beam
+ setTimeout(() => {
+ setWallRoomBrightness(baseBrightness);
+ if (dimmer) {
+ dimmer.style.transition = 'background-color 2.2s cubic-bezier(0.22, 1, 0.36, 1)';
+ }
+ if (cone && wallSpotlightMode !== 'off') {
+ cone.classList.add('is-ignite-sweep');
+ cone.style.transition = 'opacity 2.6s cubic-bezier(0.16, 1, 0.3, 1), transform 2.8s cubic-bezier(0.16, 1, 0.3, 1)';
+ cone.style.opacity = String(targetStrength.toFixed(3));
+ cone.style.transform = 'scale(1)';
+ }
+ }, 90);
  });
  document.body.style.overflow = 'hidden';
  }
@@ -4399,6 +4434,20 @@
  const dims = parseArtworkPhysicalDimensions(art?.size, art?.aspect || '3/4');
  const factor = Math.max(0.6, Math.min(2.2, (Number(scalePct) || 100) / 100));
 
+ // Use actual loaded natural aspect ratio when available so landscape/portrait frames match the artwork cleanly
+ const hasNaturalRatio = imgEl.naturalWidth > 0 && imgEl.naturalHeight > 0;
+ const naturalRatio = hasNaturalRatio ? (imgEl.naturalWidth / imgEl.naturalHeight) : (dims.widthIn / dims.heightIn);
+ let effectiveWidthIn = dims.widthIn;
+ let effectiveHeightIn = dims.heightIn;
+ if (hasNaturalRatio && Number.isFinite(naturalRatio) && naturalRatio > 0) {
+ const dimRatio = dims.widthIn / dims.heightIn;
+ if (Math.abs(dimRatio - naturalRatio) > 0.25) {
+ const area = dims.widthIn * dims.heightIn;
+ effectiveWidthIn = Math.sqrt(area * naturalRatio);
+ effectiveHeightIn = area / effectiveWidthIn;
+ }
+ }
+
  // Keep artwork & frame at true 1:1 physical scale (vs 64" credenza), and apply user Size zoom across the room environment
  const baseStageW = stageEl?.clientWidth || Math.min(window.innerWidth - 24, 1152);
  const baseCredenzaPx = (credenzaEl && credenzaEl.offsetWidth > 100)
@@ -4411,8 +4460,8 @@
  const maxAllowedHeightPx = Math.max(100, stageH * (isMobile ? 0.48 : 0.54));
  const maxAllowedWidthPx = Math.max(110, baseStageW * (isMobile ? 0.76 : 0.82));
 
- let targetW = dims.widthIn * pxPerInch;
- let targetH = dims.heightIn * pxPerInch;
+ let targetW = effectiveWidthIn * pxPerInch;
+ let targetH = effectiveHeightIn * pxPerInch;
 
  if (targetH > maxAllowedHeightPx) {
  const clampRatio = maxAllowedHeightPx / targetH;
@@ -4427,8 +4476,8 @@
 
  // Ensure intimate small pieces stay clearly visible while keeping realistic small scale
  const minSidePx = isMobile ? 36 : 44;
- if (targetW < minSidePx) {
- const minRatio = minSidePx / targetW;
+ if (Math.min(targetW, targetH) < minSidePx) {
+ const minRatio = minSidePx / Math.min(targetW, targetH);
  targetW *= minRatio;
  targetH *= minRatio;
  }
@@ -4437,1840 +4486,9 @@
  imgEl.style.height = `${Math.round(targetH)}px`;
  imgEl.style.maxWidth = 'none';
  imgEl.style.maxHeight = 'none';
-
- // Camera dolly: the artwork advances most, while furniture and light beam move at
- // progressively gentler rates so the whole room remains readable and the spotlight stays present.
- if (stageLayer) {
- const artLift = (factor - 1) * -7;
- stageLayer.style.transform = `translate3d(0, ${artLift.toFixed(1)}px, 0) scale(${factor.toFixed(3)})`;
- }
- if (furnitureEl) {
- const roomScale = 1 + ((factor - 1) * 0.56);
- const roomLift = (factor - 1) * 4;
- furnitureEl.style.transform = `translate3d(0, ${roomLift.toFixed(1)}px, 0) scale(${roomScale.toFixed(3)})`;
- }
- if (spotlightEl) {
- const beamScale = 1 + ((factor - 1) * 0.76);
- spotlightEl.style.transform = `scale(${beamScale.toFixed(3)})`;
- }
- if (stageEl) {
- const textureScale = Math.max(1, factor);
- const grain = Math.max(3, 3 * textureScale);
- stageEl.style.backgroundSize = `100% 100%, ${grain}px ${grain}px, ${grain}px ${grain}px`;
- stageEl.style.backgroundPosition = 'center, center, center';
- }
-
- // Inverse frame & mat thickness: larger artworks use sleek slim frames; smaller works use richer frames/mats
- const maxDimIn = Math.max(dims.widthIn, dims.heightIn);
- const isMonumental = maxDimIn >= 48;
- const isLarge = maxDimIn >= 34;
- const isSmall = maxDimIn <= 18;
-
- const frameThickPx = isMonumental ? 4 : (isLarge ? 6 : (isSmall ? 13 : 9));
- const matPadPx = isMonumental ? 4 : (isLarge ? 7 : (isSmall ? 18 : 12));
- const slimThickPx = isMonumental ? 3 : (isLarge ? 4 : (isSmall ? 8 : 6));
- const floaterGapPx = isMonumental ? 2 : (isLarge ? 3 : (isSmall ? 6 : 4));
-
- unit.style.setProperty('--wall-frame-thick', `${frameThickPx}px`);
- unit.style.setProperty('--wall-mat-pad', `${matPadPx}px`);
- unit.style.setProperty('--wall-slim-thick', `${slimThickPx}px`);
- unit.style.setProperty('--wall-floater-gap', `${floaterGapPx}px`);
- const noFrame = unit.classList.contains('wall-frame-none');
- const floaterFrame = unit.classList.contains('wall-frame-oak-slim') || unit.classList.contains('wall-frame-walnut-floater');
- const framePadding = noFrame ? 0 : (floaterFrame ? floaterGapPx : matPadPx);
- const frameBorder = noFrame ? 0 : (floaterFrame ? slimThickPx : frameThickPx);
- const horizontalFrame = 2 * (framePadding + frameBorder);
- const verticalFrame = 2 * (framePadding + frameBorder);
- unit.style.width = `${Math.round(targetW + horizontalFrame)}px`;
- unit.style.height = `${Math.round(targetH + verticalFrame)}px`;
-
- if (pillEl) {
- const sizeText = art?.size ? ` • ${art.size}` : '';
- pillEl.textContent = `Room Zoom: ${Math.round(factor * 100)}% (${dims.sizeTier} • vs 64" Credenza)${sizeText}`;
- }
- }
-
- function toggleWallFurniture() {
- playSoftGalleryChime('select');
- isWallFurnitureOn = !isWallFurnitureOn;
- const bench = document.getElementById('wall-furniture-silhouette');
- const btn = document.getElementById('wall-furniture-btn');
- if (bench) bench.style.opacity = isWallFurnitureOn ? '1' : '0';
- if (btn) btn.textContent = `Interior: ${isWallFurnitureOn ? 'On' : 'Off'}`;
- }
-
- function inquireAboutArtworkWithFrame(artTitle, artistName, frameLabel) {
- playSoftGalleryChime('select');
- trackVisitorEvent('inquire_artwork', `${artTitle} (${artistName}) [${frameLabel}]`);
- closeLightbox();
- showSection('contact');
- const msgBox = document.getElementById('contact-message');
- if (msgBox) {
- msgBox.value = `Hello, I would like to inquire about "${artTitle}" by ${artistName} (previewed with ${frameLabel}).`;
- msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
- msgBox.focus();
- }
- }
-
- // ==================== LIGHTBOX STATE & HELPERS ====================
- let currentLightboxId = null;
- let isLightboxTransitioning = false;
-
- function getVisibleLightboxArtworks() {
- const artistWorks = getArtistArtworks(activeArtistId);
- return activeCategory === 'All'
- ? artistWorks
- : artistWorks.filter(a => a.category === activeCategory);
- }
-
- function inquireAboutArtwork(artTitle, artistName) {
- playSoftGalleryChime('select');
- trackVisitorEvent('inquire_artwork', `${artTitle} (${artistName})`);
- closeLightbox();
- showSection('contact');
- const msgBox = document.getElementById('contact-message');
- if (msgBox) {
- msgBox.value = `Hello, I would like to inquire about "${artTitle}" by ${artistName}.`;
- msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
- msgBox.focus();
- }
- }
-
- function populateLightboxContent(art, list) {
- const img = document.getElementById('lightbox-img');
- const titleEl = document.getElementById('lightbox-title');
- const catEl = document.getElementById('lightbox-category');
- const placardEl = document.getElementById('lightbox-placard');
- const descEl = document.getElementById('lightbox-desc');
- const priceEl = document.getElementById('lightbox-price');
- const dotEl = document.getElementById('lightbox-status-dot');
- const statusTextEl = document.getElementById('lightbox-status-text');
- const counterEl = document.getElementById('lightbox-counter');
- const inquiryBtn = document.getElementById('lightbox-inquiry-btn');
- const wallBtn = document.getElementById('lightbox-wall-btn');
-
- const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
- const artistName = artist ? artist.name : 'MT. Oung';
- const isSold = (art.status || 'Available').toLowerCase() === 'sold' || (art.status || '').toLowerCase() === 'collected';
-
- if (img) {
- img.src = art.image;
- img.alt = art.title || 'Artwork';
- img.onerror = () => applyArtFallback(img, art.title, art.category, art.aspect || '3/4');
- }
- if (titleEl) titleEl.textContent = art.title || '';
- if (catEl) catEl.textContent = `${artistName} • ${art.category || 'Fine Art'}`;
- if (placardEl) {
- const parts = [art.medium, art.size, art.year, art.provenance].filter(Boolean);
- placardEl.textContent = parts.join(' | ');
- }
- if (descEl) descEl.textContent = art.description || '';
- if (dotEl) dotEl.className = `w-2.5 h-2.5 rounded-full ${isSold ? 'bg-red-400' : 'bg-emerald-400'}`;
- if (statusTextEl) {
- statusTextEl.textContent = isSold ? 'Collected' : 'Available';
- statusTextEl.className = `text-[10px] uppercase tracking-[0.25em] font-medium ${isSold ? 'text-red-300' : 'text-emerald-300'}`;
- }
- if (priceEl) {
- priceEl.textContent = isSold ? 'In Private Collection' : (art.price || 'Price Upon Request');
- }
- if (counterEl && list && list.length > 0) {
- const idx = list.findIndex(item => item.id === art.id);
- counterEl.textContent = `${idx + 1} / ${list.length}`;
- }
- if (wallBtn) {
- wallBtn.onclick = (e) => {
- if (e) e.stopPropagation();
- openWallPreviewById(art.id);
- };
- }
- if (inquiryBtn) {
- inquiryBtn.classList.toggle('hidden', isSold);
- inquiryBtn.onclick = () => inquireAboutArtwork(art.title, artistName);
- }
- }
-
- function openLightboxById(id) {
- const list = getVisibleLightboxArtworks();
- const art = list.find(a => a.id === id) || artworks.find(a => a.id === id);
- if (!art) return;
-
- playSoftGalleryChime('click');
- trackVisitorEvent('view_artwork', art.title || id);
- currentLightboxId = art.id;
- const modal = document.getElementById('lightbox-modal');
- const img = document.getElementById('lightbox-img');
- const caption = document.getElementById('lightbox-caption');
-
- modal.classList.remove('is-open');
- img.classList.remove('lightbox-slide-out-left', 'lightbox-slide-out-right', 'lightbox-slide-in-from-right', 'lightbox-slide-in-from-left');
- caption.classList.remove('lightbox-caption-out', 'lightbox-caption-in');
-
- populateLightboxContent(art, list);
-
- modal.classList.remove('hidden');
- void modal.offsetWidth;
-
- requestAnimationFrame(() => {
- requestAnimationFrame(() => modal.classList.add('is-open'));
- });
- document.body.style.overflow = 'hidden';
- }
-
- function navigateLightbox(direction, event) {
- if (event) event.stopPropagation();
- if (isLightboxTransitioning) return;
-
- const list = getVisibleLightboxArtworks();
- if (list.length <= 1) return;
-
- playSoftGalleryChime('select');
- const currentIndex = list.findIndex(a => a.id === currentLightboxId);
- const nextIndex = (currentIndex + direction + list.length) % list.length;
- const nextArt = list[nextIndex];
- if (!nextArt) return;
-
- trackVisitorEvent('view_artwork', nextArt.title || nextArt.id);
- isLightboxTransitioning = true;
- currentLightboxId = nextArt.id;
-
- const img = document.getElementById('lightbox-img');
- const caption = document.getElementById('lightbox-caption');
- const outClass = direction > 0 ? 'lightbox-slide-out-left' : 'lightbox-slide-out-right';
- const inClass = direction > 0 ? 'lightbox-slide-in-from-right' : 'lightbox-slide-in-from-left';
-
- img.classList.add(outClass);
- caption.classList.add('lightbox-caption-out');
-
- setTimeout(() => {
- populateLightboxContent(nextArt, list);
- img.classList.remove(outClass);
- caption.classList.remove('lightbox-caption-out');
- img.classList.add(inClass);
- caption.classList.add('lightbox-caption-in');
- void img.offsetWidth;
-
- requestAnimationFrame(() => {
- img.style.transition = 'transform 0.62s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.52s ease, filter 0.58s ease';
- caption.style.transition = 'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.1s, opacity 0.45s ease 0.1s';
- img.classList.remove(inClass);
- caption.classList.remove('lightbox-caption-in');
- setTimeout(() => {
- img.style.transition = '';
- caption.style.transition = '';
- isLightboxTransitioning = false;
- }, 660);
- });
- }, 340);
- }
-
- function closeLightbox(event) {
- if (event) event.stopPropagation();
- playSoftGalleryChime('close');
- const modal = document.getElementById('lightbox-modal');
- currentLightboxId = null;
- modal.classList.remove('is-open');
- setTimeout(() => {
- modal.classList.add('hidden');
- document.body.style.overflow = '';
- }, 720);
- }
-
- let lightboxTouchStartX = 0;
- let lightboxTouchStartY = 0;
- const lightboxModalEl = document.getElementById('lightbox-modal');
- if (lightboxModalEl) {
- lightboxModalEl.addEventListener('touchstart', (e) => {
- lightboxTouchStartX = e.changedTouches[0].screenX;
- lightboxTouchStartY = e.changedTouches[0].screenY;
- playArtworkDragWhisper(0.45);
- }, { passive: true });
- lightboxModalEl.addEventListener('touchmove', (e) => {
- const dx = Math.abs(e.changedTouches[0].screenX - lightboxTouchStartX);
- const dy = Math.abs(e.changedTouches[0].screenY - lightboxTouchStartY);
- const dist = Math.max(dx, dy);
- if (dist > 14) {
- playArtworkDragWhisper(Math.min(1, dist / 120));
- }
- }, { passive: true });
- lightboxModalEl.addEventListener('touchend', (e) => {
- const diffX = e.changedTouches[0].screenX - lightboxTouchStartX;
- const diffY = e.changedTouches[0].screenY - lightboxTouchStartY;
- if (Math.abs(diffX) > 45) {
- navigateLightbox(diffX < 0 ? 1 : -1);
- } else if (diffY > 75 && Math.abs(diffX) < 55) {
- closeLightbox();
- }
- }, { passive: true });
- }
-
- document.addEventListener('keydown', (e) => {
- const wallOpen = !document.getElementById('wall-preview-modal').classList.contains('hidden');
- if (wallOpen) {
- if (e.key === 'ArrowRight') { e.preventDefault(); navigateWallPreview(1); return; }
- if (e.key === 'ArrowLeft') { e.preventDefault(); navigateWallPreview(-1); return; }
- if (e.key === 'Escape') { e.preventDefault(); closeWallPreview(); return; }
- }
- const lightboxOpen = !document.getElementById('lightbox-modal').classList.contains('hidden');
- if (lightboxOpen) {
- if (e.key === 'ArrowRight') { e.preventDefault(); navigateLightbox(1); return; }
- if (e.key === 'ArrowLeft') { e.preventDefault(); navigateLightbox(-1); return; }
- }
- if (e.key === 'Escape') { closeLightbox(); closeAdminModal(); }
- if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') { e.preventDefault(); openAdminModal(); }
- if (e.altKey && e.key.toLowerCase() === 'a') { e.preventDefault(); openAdminModal(); }
- });
-
- // ==================== ADMIN CONSOLE LOGIC (CLOUDFLARE D1 + R2) ====================
- function switchAdminTab(tabName) {
- playSoftGalleryChime('select');
- ['artworks', 'artists', 'gallery', 'experience', 'backdrop', 'audio', 'salon', 'visitors', 'logs'].forEach(t => {
- const panel = document.getElementById('admin-panel-' + t);
- const btn = document.getElementById('admin-tab-btn-' + t);
- const isSelected = t === tabName;
- if (panel) panel.classList.toggle('hidden', !isSelected);
- if (btn) {
- btn.className = isSelected
- ? 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
- : 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
- }
- });
- if (tabName === 'gallery') populateGalleryAboutAdminForm();
- if (tabName === 'backdrop') populateBackdropAdminUI();
- if (tabName === 'experience') populateExperienceAdminUI();
- if (tabName === 'audio') renderAdminAudioManager();
- if (tabName === 'salon') { renderAdminSalonManager(); loadSalonAdminData(); }
- if (tabName === 'artists') renderAdminArtistsList();
- if (tabName === 'visitors') loadVisitorActivityFromCloud();
- if (tabName === 'logs') {
- loadEditLogsFromCloud();
- renderAdminEditLogsList();
- }
- }
-
- function showAdminFeedback(message, isError = false) {
- const box = document.getElementById('admin-publish-feedback');
- if (!box) return;
- box.textContent = message;
- box.className = isError
- ? 'p-4 rounded-2xl text-xs font-medium bg-red-500/15 border border-red-400/40 text-red-700 dark:text-red-300'
- : 'p-4 rounded-2xl text-xs font-medium bg-emerald-500/15 border border-emerald-500/35 text-emerald-800 dark:text-emerald-200';
- box.classList.remove('hidden');
- setTimeout(() => {
- box.classList.add('hidden');
- }, 5500);
- }
-
- function updateAdminGateUI() {
- const titleEl = document.getElementById('admin-gate-title');
- const subEl = document.getElementById('admin-gate-subtitle');
- const submitBtn = document.getElementById('admin-gate-submit-btn');
- const pinInput = document.getElementById('admin-pin-input');
- if (titleEl) titleEl.textContent = 'Curator Access';
- if (subEl) subEl.innerHTML = 'Enter your Cloudflare <code>ADMIN_API_TOKEN</code> to manage D1 &amp; R2.';
- if (pinInput) pinInput.placeholder = 'Enter ADMIN_API_TOKEN';
- if (submitBtn) submitBtn.textContent = 'Unlock Console';
- }
-
- function openAdminModal() {
- playSoftGalleryChime('click');
- const modal = document.getElementById('admin-modal');
- modal.classList.remove('hidden');
- document.getElementById('admin-pin-error').classList.add('hidden');
- updateAdminGateUI();
-
- const savedToken = getSavedAdminToken();
- if (isAdminUnlocked && savedToken) {
- showAdminDashboard();
- } else {
- document.getElementById('admin-login-view').classList.remove('hidden');
- document.getElementById('admin-dashboard-view').classList.add('hidden');
- const pinInput = document.getElementById('admin-pin-input');
- pinInput.value = savedToken;
- setTimeout(() => pinInput.focus(), 100);
- }
- }
-
- function closeAdminModal() {
- playSoftGalleryChime('close');
- document.getElementById('admin-modal').classList.add('hidden');
- resetAdminForm();
- resetArtistForm();
- }
-
- function lockAdminSession() {
- isAdminUnlocked = false;
- setSavedAdminToken('');
- document.getElementById('admin-dashboard-view').classList.add('hidden');
- document.getElementById('admin-login-view').classList.remove('hidden');
- const pinInput = document.getElementById('admin-pin-input');
- pinInput.value = '';
- pinInput.focus();
- }
-
- async function verifyAdminPin(event) {
- event.preventDefault();
- const entered = document.getElementById('admin-pin-input').value.trim();
- const errorEl = document.getElementById('admin-pin-error');
- const submitBtn = document.getElementById('admin-gate-submit-btn');
- errorEl.classList.add('hidden');
-
- if (entered.length < 4) {
- errorEl.textContent = 'Please enter a valid ADMIN_API_TOKEN.';
- errorEl.classList.remove('hidden');
- return;
- }
-
- submitBtn.disabled = true;
- submitBtn.textContent = 'Verifying Token...';
-
- try {
- const checkRes = await fetch(API_ENDPOINTS.settings, {
- method: 'POST',
- headers: {
- 'Content-Type': 'application/json',
- 'x-admin-token': entered,
- Authorization: `Bearer ${entered}`
- },
- body: JSON.stringify({ key: 'token_check', value: { verifiedAt: Date.now() } })
- });
-
- if (checkRes.status === 401 || checkRes.status === 403) {
- errorEl.textContent = 'Invalid ADMIN_API_TOKEN. Check Cloudflare Pages Variables & Secrets.';
- errorEl.classList.remove('hidden');
- return;
- }
-
- const checkData = await checkRes.json().catch(() => ({}));
- if (!checkRes.ok || checkData.ok === false) {
- errorEl.textContent = checkData.error || 'Unable to verify token against /api/settings.';
- errorEl.classList.remove('hidden');
- return;
- }
-
- setSavedAdminToken(entered);
- try { localStorage.setItem(ANALYTICS_EXCLUDE_KEY, 'true'); } catch (e) {}
- isAdminUnlocked = true;
- await Promise.all([
- loadCloudGallery(false),
- loadEditLogsFromCloud()
- ]);
- showAdminDashboard();
- } catch (err) {
- console.warn('Gallery API sync notice:', err);
- errorEl.textContent = err.message || 'Unable to connect to Admin API.';
- errorEl.classList.remove('hidden');
- } finally {
- if (submitBtn) {
- submitBtn.disabled = false;
- submitBtn.textContent = 'Unlock Console';
- }
- }
- }
-
- function populateExperienceAdminUI() {
- const colorInput = document.getElementById('experience-wall-color');
- if (!colorInput) return;
- const values = normalizeGalleryExperience(galleryExperience);
- colorInput.value = values.defaultWallColor;
- const fields = {
- 'experience-room-light': values.roomBrightness,
- 'experience-scroll-min': values.scrollOpacityMin,
- 'experience-scroll-max': values.scrollOpacityMax,
- 'experience-spotlight-intensity': values.spotlightIntensity,
- 'experience-spotlight-softness': values.spotlightSoftness
- };
- Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.value = String(value); });
- previewGalleryExperienceSettings();
- }
-
- function readGalleryExperienceAdminForm() {
- return normalizeGalleryExperience({
- defaultWallColor: document.getElementById('experience-wall-color')?.value,
- roomBrightness: document.getElementById('experience-room-light')?.value,
- scrollOpacityMin: document.getElementById('experience-scroll-min')?.value,
- scrollOpacityMax: document.getElementById('experience-scroll-max')?.value,
- spotlightIntensity: document.getElementById('experience-spotlight-intensity')?.value,
- spotlightSoftness: document.getElementById('experience-spotlight-softness')?.value
- });
- }
-
- function previewGalleryExperienceSettings() {
- const next = readGalleryExperienceAdminForm();
- const preset = WALL_COLOR_PRESETS.find(p => p.hex.toLowerCase() === next.defaultWallColor.toLowerCase());
- const chosenColor = next.defaultWallColor;
- const colorName = preset ? preset.name : 'Custom Wall';
- const hex = document.getElementById('experience-wall-hex');
- const presetName = document.getElementById('experience-wall-preset-name');
- if (hex) hex.textContent = chosenColor;
- if (presetName) presetName.textContent = colorName;
- const labels = {
- 'experience-room-light-label': `${next.roomBrightness}%`,
- 'experience-scroll-min-label': `${next.scrollOpacityMin}%`,
- 'experience-scroll-max-label': `${next.scrollOpacityMax}%`,
- 'experience-spotlight-intensity-label': `${next.spotlightIntensity}%`,
- 'experience-spotlight-softness-label': `${next.spotlightSoftness} px`
- };
- Object.entries(labels).forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.textContent = text; });
- const status = document.getElementById('experience-save-status');
- if (status) status.textContent = `Preview: ${colorName} ${chosenColor} · ${next.roomBrightness}% light · ${next.scrollOpacityMin}–${next.scrollOpacityMax}% scroll · ${next.spotlightIntensity}% spotlight.`;
- const stage = document.getElementById('wall-canvas-stage');
- const wallLabel = document.getElementById('wall-color-name');
- const modal = document.getElementById('wall-preview-modal');
- if (stage && modal && !modal.classList.contains('hidden')) {
- stage.style.backgroundColor = chosenColor;
- if (wallLabel) wallLabel.textContent = colorName;
- setWallRoomBrightness(next.roomBrightness);
- const cone = document.getElementById('wall-spotlight-cone');
- if (cone) {
- const strength = next.spotlightIntensity / 100;
- cone.style.setProperty('--spotlight-softness', `${next.spotlightSoftness}px`);
- cone.style.setProperty('--spotlight-beam-opacity', (0.72 * strength).toFixed(3));
- cone.style.setProperty('--spotlight-bulb-opacity', (0.82 * strength).toFixed(3));
- cone.style.setProperty('--spotlight-strength', strength.toFixed(3));
- }
- }
- requestGalleryScrollUpdate();
- return next;
- }
-
- function resetGalleryExperienceAdmin() {
- galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
- populateExperienceAdminUI();
- const status = document.getElementById('experience-save-status');
- if (status) status.textContent = 'Recommended values restored in the form. Save to persist them.';
- }
-
- async function saveGalleryExperienceFromAdmin() {
- const button = document.getElementById('save-experience-btn');
- const status = document.getElementById('experience-save-status');
- if (button) { button.disabled = true; button.textContent = 'Saving…'; }
- try {
- const next = readGalleryExperienceAdminForm();
- const res = await fetch(API_ENDPOINTS.settings, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({ key: 'gallery_experience', value: next })
- });
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) throw new Error(data.error || `Settings save failed (${res.status})`);
- galleryExperience = next;
- applyGalleryExperienceSettings();
- if (status) status.textContent = 'Experience settings saved.';
- await recordEditLog('Updated', 'Gallery Experience', 'Viewing defaults', `Wall: ${next.defaultWallColor}; room light: ${next.roomBrightness}%; scroll opacity ${next.scrollOpacityMin}–${next.scrollOpacityMax}%; spotlight ${next.spotlightIntensity}% / ${next.spotlightSoftness}px`);
- } catch (err) {
- if (status) status.textContent = `Could not save: ${err.message || 'Please try again.'}`;
- } finally {
- if (button) { button.disabled = false; button.textContent = 'Save Experience Settings'; }
- }
- }
-
- function showAdminDashboard() {
- document.getElementById('admin-login-view').classList.add('hidden');
- document.getElementById('admin-dashboard-view').classList.remove('hidden');
- populateAdminArtistDropdown();
- populateAdminCategoryDropdown();
- renderAdminArtworksList();
- renderAdminArtistsList();
- renderAdminEditLogsList();
- populateGalleryAboutAdminForm();
- populateBackdropAdminUI();
- populateExperienceAdminUI();
- renderAdminAudioManager();
- }
-
- async function uploadFileToR2(file, folder = 'artworks') {
- const compressed = await compressImageFile(file, folder === 'artists' ? 768 : 1280, folder === 'artists' ? 0.84 : 0.82);
- const formData = new FormData();
- formData.append('file', compressed.file);
- formData.append('folder', folder);
-
- const res = await fetch(API_ENDPOINTS.upload, {
- method: 'POST',
- headers: getAdminAuthHeaders(),
- body: formData
- });
-
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok || !data.url) {
- throw new Error(data.error || `R2 upload failed (${res.status})`);
- }
-
- return { url: data.url, key: data.key, aspect: compressed.aspect };
- }
-
- function populateAdminArtistDropdown(selectedArtistId = '') {
- const select = document.getElementById('art-artist-select');
- if (!select) return;
- const targetId = selectedArtistId || activeArtistId;
- select.innerHTML = artists.map(a => {
- const isSelected = a.id === targetId ? 'selected' : '';
- return `<option value="${escapeHTML(a.id)}" ${isSelected}>${escapeHTML(a.name)}</option>`;
- }).join('');
- }
-
- function populateAdminCategoryDropdown(selectedCat = '') {
- const select = document.getElementById('art-category-select');
- if (!select) return;
- const defaultCats = ['Sacred Art', 'Floral & Still Life', 'Landscapes', 'Portraits'];
- const allCats = new Set(defaultCats);
- artworks.forEach(a => {
- if (a.category) allCats.add(a.category);
- });
-
- select.innerHTML = Array.from(allCats).map(cat => {
- const isSelected = cat === selectedCat ? 'selected' : '';
- return `<option value="${escapeHTML(cat)}" ${isSelected}>${escapeHTML(cat)}</option>`;
- }).join('');
- }
-
- function renderAdminArtworksList() {
- const list = document.getElementById('admin-artworks-list');
- const totalCount = document.getElementById('admin-total-count');
- if (totalCount) totalCount.textContent = artworks.length;
- if (!list) return;
-
- list.innerHTML = artworks.map(art => {
- const isSold = (art.status || 'Available').toLowerCase() === 'sold' || (art.status || '').toLowerCase() === 'collected';
- const dotClass = isSold ? 'bg-red-500' : 'bg-emerald-500';
- const statusInfo = isSold ? 'Collected' : (escapeHTML(art.price) || 'Available');
- const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
- const artistName = artist ? escapeHTML(artist.name) : 'MT. Oung';
- const metaLine = [art.medium || 'Oil on Canvas', art.size, statusInfo].filter(Boolean).join(' • ');
-
- return `
- <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
- <div class="flex items-center gap-3.5 min-w-0">
- <img src="${escapeHTML(art.image)}"
- alt="${escapeHTML(art.title)}"
- data-title="${escapeHTML(art.title)}"
- data-category="${escapeHTML(art.category)}"
- data-aspect="${escapeHTML(art.aspect || '3/4')}"
- onerror="handleCardImageError(this)"
- class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
- <div class="min-w-0">
- <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${artistName} • ${escapeHTML(art.category)}</span>
- <div class="flex items-center gap-1.5">
- <span class="w-2 h-2 rounded-full ${dotClass} flex-shrink-0"></span>
- <h5 class="font-serif text-base truncate">${escapeHTML(art.title)}</h5>
- </div>
- <span class="text-[11px] opacity-60 block truncate">${escapeHTML(metaLine)}</span>
- </div>
- </div>
- <div class="flex items-center gap-2 flex-shrink-0">
- <button type="button" onclick="editArtworkInAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
- Edit
- </button>
- <button type="button" onclick="deleteArtworkFromAdmin('${escapeHTML(art.id)}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
- Delete
- </button>
- </div>
- </div>
- `;
- }).join('');
- }
-
- function formatArtworkDimensionsFromInches(heightInVal, widthInVal) {
- const h = parseFloat(heightInVal);
- const w = parseFloat(widthInVal);
- if (!Number.isFinite(h) || !Number.isFinite(w) || h <= 0 || w <= 0) return '';
- const hInStr = Number.isInteger(h) ? String(h) : h.toFixed(1).replace(/\.0$/, '');
- const wInStr = Number.isInteger(w) ? String(w) : w.toFixed(1).replace(/\.0$/, '');
- const hCmStr = (h * 2.54).toFixed(1).replace(/\.0$/, '');
- const wCmStr = (w * 2.54).toFixed(1).replace(/\.0$/, '');
- return `${hInStr} × ${wInStr} in (${hCmStr} × ${wCmStr} cm)`;
- }
-
- function updateComputedSizePreview() {
- const hInput = document.getElementById('art-height-in-input');
- const wInput = document.getElementById('art-width-in-input');
- const previewEl = document.getElementById('art-computed-size-preview');
- if (!hInput || !wInput || !previewEl) return;
- const formatted = formatArtworkDimensionsFromInches(hInput.value, wInput.value);
- previewEl.textContent = formatted
- ? `Saved Format (H × W): ${formatted}`
- : 'Enter height & width in inches (H × W cm auto-calculated)';
- }
-
- async function saveArtworkFromAdmin(event) {
- event.preventDefault();
- const submitBtn = document.getElementById('save-artwork-btn');
- submitBtn.disabled = true;
- submitBtn.textContent = 'Uploading & Saving...';
-
- try {
- const editId = document.getElementById('edit-artwork-id').value;
- const artistId = document.getElementById('art-artist-select').value || activeArtistId;
- const artistObj = artists.find(a => a.id === artistId);
- const artistName = artistObj ? artistObj.name : '';
- const title = document.getElementById('art-title-input').value.trim();
- const selectedCat = document.getElementById('art-category-select').value;
- const newCat = document.getElementById('art-new-category-input').value.trim();
- const category = newCat !== '' ? newCat : selectedCat;
- const medium = document.getElementById('art-medium-input').value.trim() || 'Oil on Canvas';
- const heightInRaw = document.getElementById('art-height-in-input').value;
- const widthInRaw = document.getElementById('art-width-in-input').value;
- const size = formatArtworkDimensionsFromInches(heightInRaw, widthInRaw);
- if (!size) {
- throw new Error('Please enter valid Height (in) and Width (in) in inches.');
- }
- const year = document.getElementById('art-year-input').value.trim();
- const provenance = document.getElementById('art-provenance-input').value.trim();
- const status = document.getElementById('art-status-select').value || 'Available';
- const price = document.getElementById('art-price-input').value.trim();
- const description = document.getElementById('art-desc-input').value.trim();
- const urlInput = document.getElementById('art-url-input').value.trim();
- const fileInput = document.getElementById('art-file-input');
-
- let imageSrc = urlInput;
- let aspect = parseFloat(widthInRaw) > parseFloat(heightInRaw) ? '4/3' : '3/4';
-
- if (fileInput.files && fileInput.files[0]) {
- submitBtn.textContent = 'Uploading to R2...';
- const uploaded = await uploadFileToR2(fileInput.files[0], 'artworks');
- imageSrc = uploaded.url;
- aspect = uploaded.aspect;
- } else if (!imageSrc && editId) {
- const existing = artworks.find(a => a.id === editId);
- if (existing) {
- imageSrc = existing.image;
- aspect = existing.aspect || aspect;
- }
- } else if (!imageSrc) {
- imageSrc = createArtPlaceholderDataURL(title, category, aspect);
- }
-
- const docId = editId || ('art-' + Date.now());
- const existingArt = artworks.find(a => a.id === docId);
- const minOrder = artworks.reduce((min, item) => Math.min(min, typeof item.order === 'number' ? item.order : 0), 0);
- const sortOrder = existingArt ? (typeof existingArt.order === 'number' ? existingArt.order : 0) : (minOrder - 1);
-
- submitBtn.textContent = 'Saving to D1...';
- const res = await fetch(API_ENDPOINTS.artworks, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({
- id: docId,
- title,
- artist_id: artistId,
- artist_name: artistName,
- category,
- medium,
- dimensions: size,
- year,
- price,
- status,
- image_url: imageSrc,
- description,
- sort_order: sortOrder
- })
- });
-
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `D1 save failed (${res.status})`);
- }
-
- await loadCloudGallery(false);
- await recordEditLog(
- editId ? 'Updated' : 'Added',
- 'Artwork',
- title,
- `${category} • ${medium} • ${size} (${status})`
- );
-
- showAdminFeedback(`"${title}" (${size}) saved to Cloudflare D1 & R2!`);
- resetAdminForm();
- populateAdminCategoryDropdown();
- } catch (err) {
- console.error('Error publishing artwork:', err);
- showAdminFeedback('Save failed: ' + (err.message || 'Check ADMIN_API_TOKEN & Bindings.'), true);
- } finally {
- submitBtn.disabled = false;
- submitBtn.textContent = 'Publish to Live Gallery';
- }
- }
-
- function editArtworkInAdmin(id) {
- const art = artworks.find(a => a.id === id);
- if (!art) return;
-
- document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
- document.getElementById('edit-artwork-id').value = art.id;
- populateAdminArtistDropdown(art.artistId || 'mt-oung');
- document.getElementById('art-title-input').value = art.title || '';
- populateAdminCategoryDropdown(art.category);
- document.getElementById('art-new-category-input').value = '';
- document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
-
- const parsedDims = parseArtworkPhysicalDimensions(art.size, art.aspect || '3/4');
- const hInput = document.getElementById('art-height-in-input');
- const wInput = document.getElementById('art-width-in-input');
- if (hInput) hInput.value = art.size ? String(Math.round(parsedDims.heightIn * 10) / 10) : '';
- if (wInput) wInput.value = art.size ? String(Math.round(parsedDims.widthIn * 10) / 10) : '';
- updateComputedSizePreview();
-
- document.getElementById('art-year-input').value = art.year || '';
- document.getElementById('art-provenance-input').value = art.provenance || '';
- document.getElementById('art-status-select').value = art.status || 'Available';
- document.getElementById('art-price-input').value = art.price || '';
- const currentImg = String(art.image || '');
- document.getElementById('art-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
- document.getElementById('art-desc-input').value = art.description || '';
- document.getElementById('cancel-edit-btn').classList.remove('hidden');
- document.getElementById('save-artwork-btn').textContent = 'Update Artwork';
-
- const formContainer = document.getElementById('admin-form-container');
- if (formContainer) {
- setTimeout(() => {
- formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
- }, 60);
- }
- }
-
- function resetAdminForm() {
- document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
- document.getElementById('admin-artwork-form').reset();
- document.getElementById('edit-artwork-id').value = '';
- document.getElementById('art-medium-input').value = 'Oil on Canvas';
- document.getElementById('art-status-select').value = 'Available';
- updateComputedSizePreview();
- document.getElementById('cancel-edit-btn').classList.add('hidden');
- document.getElementById('save-artwork-btn').textContent = 'Publish to Live Gallery';
- const statusEl = document.getElementById('art-file-status');
- if (statusEl) statusEl.classList.add('hidden');
- }
-
- async function deleteArtworkFromAdmin(id) {
- const target = artworks.find(a => a.id === id);
- try {
- const res = await fetch(`${API_ENDPOINTS.artworks}?id=${encodeURIComponent(id)}`, {
- method: 'DELETE',
- headers: getAdminAuthHeaders()
- });
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `Delete failed (${res.status})`);
- }
-
- await loadCloudGallery(false);
- showAdminFeedback(`Deleted "${target?.title || 'Artwork'}" from D1.`);
- if (target) {
- await recordEditLog('Deleted', 'Artwork', target.title, `Removed from ${target.category || 'Gallery'}`);
- }
- } catch (err) {
- console.error('Delete failed:', err);
- showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
- }
- }
-
- // ==================== ADMIN: ARTISTS MANAGEMENT ====================
- function renderAdminArtistsList() {
- const list = document.getElementById('admin-artists-list');
- const countEl = document.getElementById('admin-artists-count');
- if (countEl) countEl.textContent = artists.length;
- if (!list) return;
-
- list.innerHTML = artists.map(artist => {
- const safeId = escapeHTML(artist.id);
- const safeName = escapeHTML(artist.name);
- const safeSub = escapeHTML(artist.subtitle || '');
- const safeImg = escapeHTML(artist.image || 'artist.jpg');
- const worksCount = artworks.filter(w => (w.artistId || 'mt-oung') === artist.id).length;
-
- return `
- <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/20 dark:border-[#D4B483]/20">
- <div class="flex items-center gap-3.5 min-w-0">
- <img src="${safeImg}"
- alt="${safeName}"
- data-artist-name="${safeName}"
- onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')"
- class="w-14 h-14 rounded-xl object-cover bg-[#EFECE6] flex-shrink-0">
- <div class="min-w-0">
- <span class="text-[10px] uppercase tracking-wider text-[#A69076] dark:text-[#D4B483] block truncate">${worksCount} ${worksCount === 1 ? 'Work' : 'Works'}</span>
- <h5 class="font-serif text-base truncate">${safeName}</h5>
- <span class="text-[11px] opacity-60 block truncate">${safeSub}</span>
- </div>
- </div>
- <div class="flex items-center gap-2 flex-shrink-0">
- <button type="button" onclick="editArtistInAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
- Edit
- </button>
- ${artists.length > 1 ? `
- <button type="button" onclick="deleteArtistFromAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
- Delete
- </button>
- ` : ''}
- </div>
- </div>
- `;
- }).join('');
- }
-
- async function saveArtistFromAdmin(event) {
- event.preventDefault();
- const submitBtn = document.getElementById('save-artist-btn');
- submitBtn.disabled = true;
- submitBtn.textContent = 'Saving Artist...';
-
- try {
- const editId = document.getElementById('edit-artist-id').value;
- const name = document.getElementById('artist-name-input').value.trim();
- const subtitle = document.getElementById('artist-subtitle-input').value.trim();
- const bio = document.getElementById('artist-bio-input').value.trim();
- const urlInput = document.getElementById('artist-url-input').value.trim();
- const fileInput = document.getElementById('artist-file-input');
-
- let imageSrc = urlInput;
- if (fileInput.files && fileInput.files[0]) {
- submitBtn.textContent = 'Uploading Portrait to R2...';
- const uploaded = await uploadFileToR2(fileInput.files[0], 'artists');
- imageSrc = uploaded.url;
- } else if (!imageSrc && editId) {
- const existing = artists.find(a => a.id === editId);
- if (existing) imageSrc = existing.image;
- } else if (!imageSrc) {
- imageSrc = 'artist.jpg';
- }
-
- const docId = editId || ('artist-' + Date.now());
- const existingArtist = artists.find(a => a.id === docId);
- const sortOrder = existingArtist ? (existingArtist.order || 1) : (artists.length + 1);
- const fullBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
-
- submitBtn.textContent = 'Saving to D1...';
- const res = await fetch(API_ENDPOINTS.artists, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({
- id: docId,
- name,
- bio: fullBio,
- portrait_url: imageSrc,
- sort_order: sortOrder
- })
- });
-
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `Artist save failed (${res.status})`);
- }
-
- await loadCloudGallery(false);
- showAdminFeedback(`Artist "${name}" saved to Cloudflare D1 & R2!`);
- await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle || 'Artist profile updated');
- resetArtistForm();
- } catch (err) {
- console.error('Error saving artist:', err);
- showAdminFeedback('Artist save failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
- } finally {
- submitBtn.disabled = false;
- submitBtn.textContent = 'Save Artist Profile';
- }
- }
-
- function editArtistInAdmin(id) {
- const artist = artists.find(a => a.id === id);
- if (!artist) return;
-
- document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
- document.getElementById('edit-artist-id').value = artist.id;
- document.getElementById('artist-name-input').value = artist.name || '';
- document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
- const currentImg = String(artist.image || '');
- document.getElementById('artist-url-input').value = (currentImg.startsWith('data:') || currentImg === 'PENDING_R2_UPLOAD') ? '' : currentImg;
- document.getElementById('artist-bio-input').value = artist.bio || '';
- document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
- document.getElementById('save-artist-btn').textContent = 'Update Artist Profile';
-
- const artistFormContainer = document.getElementById('admin-artist-form-container');
- if (artistFormContainer) {
- setTimeout(() => {
- artistFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
- }, 60);
- }
- }
-
- function resetArtistForm() {
- document.getElementById('admin-artist-form-heading').textContent = 'Add New Artist Profile';
- document.getElementById('admin-artist-form').reset();
- document.getElementById('edit-artist-id').value = '';
- document.getElementById('cancel-artist-edit-btn').classList.add('hidden');
- document.getElementById('save-artist-btn').textContent = 'Save Artist Profile';
- const statusEl = document.getElementById('artist-file-status');
- if (statusEl) statusEl.classList.add('hidden');
- }
-
- async function deleteArtistFromAdmin(id) {
- if (artists.length <= 1) return;
- const target = artists.find(a => a.id === id);
- try {
- const res = await fetch(`${API_ENDPOINTS.artists}?id=${encodeURIComponent(id)}`, {
- method: 'DELETE',
- headers: getAdminAuthHeaders()
- });
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `Delete failed (${res.status})`);
- }
- if (activeArtistId === id) activeArtistId = artists[0].id;
- await loadCloudGallery(false);
- showAdminFeedback(`Deleted artist "${target?.name || id}".`);
- if (target) {
- await recordEditLog('Deleted', 'Artist', target.name, 'Removed artist profile');
- }
- } catch (err) {
- showAdminFeedback('Delete failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
- }
- }
-
- // ==================== ADMIN: VISITOR ACTIVITY & MONTHLY EMAIL REPORT ====================
- async function loadVisitorActivityFromCloud() {
- updateAnalyticsExclusionButtonUI();
- const topArtEl = document.getElementById('visitor-top-artworks');
- const topCountryEl = document.getElementById('visitor-top-countries');
- const topSourcesEl = document.getElementById('visitor-top-sources');
- const listEl = document.getElementById('admin-visitor-logs-list');
- const statEventsEl = document.getElementById('visitor-stat-events');
- const statUniqueEl = document.getElementById('visitor-stat-unique');
- const statTopSourceEl = document.getElementById('visitor-stat-top-source');
- const statDevicesEl = document.getElementById('visitor-stat-devices');
-
- try {
- const res = await fetch(API_ENDPOINTS.activity, {
- headers: getAdminAuthHeaders(),
- cache: 'no-store'
- });
- const data = await res.json();
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `HTTP ${res.status}`);
- }
- visitorActivityData = {
- logs: data.logs || [],
- topArtworks: data.topArtworks || [],
- topCountries: data.topCountries || []
- };
- } catch (err) {
- if (listEl) {
- listEl.innerHTML = `<p class="text-xs text-red-600 py-3 text-center">${escapeHTML(err.message || 'Unable to load visitor logs')}</p>`;
- }
- return;
- }
-
- const parsedRows = visitorActivityData.logs.map(row => ({
- ...row,
- _meta: parseVisitorMetadataFromRow(row)
- }));
-
- const uniqueVisitorMap = new Map();
- const sourceCounts = new Map();
- const deviceDetailCounts = new Map();
- const cleanArtworkViews = new Map();
- let mobileCount = 0;
- let desktopCount = 0;
-
- parsedRows.forEach(r => {
- const rawVid = r._meta.visitorId || 'Legacy';
- const baseVid = rawVid.split('(')[0].trim() || rawVid;
- if (baseVid && baseVid !== 'Legacy') {
- const existing = uniqueVisitorMap.get(baseVid) || {
- id: baseVid,
- events: 0,
- source: r._meta.source || 'Direct',
- deviceDetail: r._meta.deviceDetail || r.device || 'Desktop',
- country: r.country || 'XX',
- lastSeen: r.timestamp,
- artworks: new Set(),
- memberLabel: ''
- };
- existing.events += 1;
- if (!existing.lastSeen || new Date(r.timestamp) > new Date(existing.lastSeen)) {
- existing.lastSeen = r.timestamp;
- existing.source = r._meta.source || existing.source;
- existing.deviceDetail = r._meta.deviceDetail || existing.deviceDetail;
- existing.country = r.country || existing.country;
- }
- const memberMatch = String(r._meta.cleanItem || '').match(/MEMBER:([^|]+)/);
- if (memberMatch) existing.memberLabel = memberMatch[1].trim();
- if (r.event_type === 'view_artwork' || r.event_type === 'wall_preview') {
- const cleanTitle = String(r._meta.cleanItem || '').split('|')[0].trim();
- if (cleanTitle && cleanTitle !== '-') existing.artworks.add(cleanTitle);
- }
- uniqueVisitorMap.set(baseVid, existing);
- }
- const src = r._meta.source || 'Direct';
- sourceCounts.set(src, (sourceCounts.get(src) || 0) + 1);
-
- const devLabel = r._meta.deviceDetail || r.device || 'Desktop';
- deviceDetailCounts.set(devLabel, (deviceDetailCounts.get(devLabel) || 0) + 1);
-
- if (r.device === 'Mobile') mobileCount++;
- else desktopCount++;
-
- if (r.event_type === 'view_artwork' || r.event_type === 'wall_preview') {
- const artTitle = r._meta.cleanItem;
- if (artTitle && artTitle !== '-') {
- cleanArtworkViews.set(artTitle, (cleanArtworkViews.get(artTitle) || 0) + 1);
- }
- }
- });
-
- const sortedSources = Array.from(sourceCounts.entries()).sort((a, b) => b[1] - a[1]);
- const sortedDevices = Array.from(deviceDetailCounts.entries()).sort((a, b) => b[1] - a[1]);
- const sortedArtworks = Array.from(cleanArtworkViews.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
- const sortedUniqueVisitors = Array.from(uniqueVisitorMap.values()).sort((a, b) => new Date(b.lastSeen || 0) - new Date(a.lastSeen || 0));
-
- if (statEventsEl) statEventsEl.textContent = String(parsedRows.length);
- if (statUniqueEl) statUniqueEl.textContent = String(sortedUniqueVisitors.length || (parsedRows.length > 0 ? 1 : 0));
- if (statTopSourceEl) statTopSourceEl.textContent = sortedSources[0] ? `${sortedSources[0][0]} (${sortedSources[0][1]})` : 'Direct';
- if (statDevicesEl) statDevicesEl.textContent = `${mobileCount} / ${desktopCount}`;
-
- renderUniqueVisitorsList(sortedUniqueVisitors);
-
- if (topSourcesEl) {
- topSourcesEl.innerHTML = sortedSources.length
- ? sortedSources.map(([srcName, cnt]) =>
- `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
- <span class="truncate pr-2 font-medium">${escapeHTML(srcName)}</span>
- <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${cnt}</span>
- </div>`
- ).join('')
- : `<p class="opacity-60">No traffic source data yet.</p>`;
- }
-
- if (topArtEl) {
- const fallbackArtList = visitorActivityData.topArtworks.map(a => [
- parseVisitorMetadataFromRow({ item_name: a.item_name }).cleanItem,
- Number(a.views || 0)
- ]);
- const displayArtList = sortedArtworks.length ? sortedArtworks : fallbackArtList;
- topArtEl.innerHTML = displayArtList.length
- ? displayArtList.map(([title, views], i) =>
- `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
- <span class="truncate pr-2">${i + 1}. ${escapeHTML(title)}</span>
- <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${views} views</span>
- </div>`
- ).join('')
- : `<p class="opacity-60">No artwork view events yet.</p>`;
- }
-
- if (topCountryEl) {
- const countryHtml = visitorActivityData.topCountries.length
- ? visitorActivityData.topCountries.map(c =>
- `<span class="inline-block px-2 py-0.5 rounded bg-[#A69076]/15 mr-1.5 mb-1">${escapeHTML(c.country)}: <strong>${Number(c.count || 0)}</strong></span>`
- ).join('')
- : `<span class="opacity-60">No country data yet.</span>`;
- const devicesHtml = sortedDevices.length
- ? sortedDevices.slice(0, 6).map(([dName, dCnt]) =>
- `<div class="flex justify-between py-0.5 border-b border-[#A69076]/10 last:border-0">
- <span class="truncate pr-2">${escapeHTML(dName)}</span>
- <span class="font-medium text-[#9C8265] dark:text-[#D4B483] flex-shrink-0">${dCnt}</span>
- </div>`
- ).join('')
- : `<div class="opacity-75">Mobile <strong>${mobileCount}</strong> • Desktop <strong>${desktopCount}</strong></div>`;
- topCountryEl.innerHTML = `
- <div class="mb-2">${countryHtml}</div>
- <div class="space-y-1 pt-1 border-t border-[#A69076]/15">${devicesHtml}</div>
- `;
- }
-
- if (listEl) {
- listEl.innerHTML = parsedRows.length
- ? parsedRows.map(row => {
- const mmtTime = formatMyanmarTime(row.timestamp);
- const vBadge = row._meta.visitorId !== 'Legacy'
- ? `<span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#2C2C2C]/10 dark:bg-[#EDE7DA]/10 text-[#2C2C2C] dark:text-[#EDE7DA] mr-1">${escapeHTML(row._meta.visitorId)}</span>`
- : '';
- const srcBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 mr-1.5">via ${escapeHTML(row._meta.source)}</span>`;
- return `
- <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
- <div class="flex flex-wrap items-center gap-y-1">
- ${vBadge}
- <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-[#9C8265]/15 text-[#9C8265] dark:text-[#D4B483] font-medium mr-1.5">${escapeHTML(row.event_type)}</span>
- <span class="font-medium mr-1.5">${escapeHTML(row._meta.cleanItem)}</span>
- ${srcBadge}
- <span class="opacity-65">[${escapeHTML(row.country || 'XX')} • ${escapeHTML(row._meta.deviceDetail)}]</span>
- </div>
- <span class="text-[11px] opacity-65 font-medium flex-shrink-0">${escapeHTML(mmtTime)}</span>
- </div>
- `;
- }).join('')
- : `<p class="text-xs opacity-60 py-4 text-center">No visitor activity in the last 30 days.</p>`;
- }
- }
-
- function toggleUniqueVisitorsPanel(forceOpen = null) {
- const panel = document.getElementById('unique-visitors-dropdown-panel');
- const chevron = document.getElementById('unique-visitors-chevron');
- const btn = document.getElementById('unique-visitors-card-btn');
- if (!panel) return;
- const willOpen = forceOpen !== null ? Boolean(forceOpen) : panel.classList.contains('hidden');
- panel.classList.toggle('hidden', !willOpen);
- if (chevron) chevron.textContent = willOpen ? '▴ Hide' : '▾ View';
- if (btn) {
- btn.classList.toggle('ring-2', willOpen);
- btn.classList.toggle('ring-[#9C8265]', willOpen);
- btn.classList.toggle('dark:ring-[#D4B483]', willOpen);
- }
- if (typeof playSoftGalleryChime === 'function') playSoftGalleryChime('select');
- }
-
- function renderUniqueVisitorsList(visitors) {
- const container = document.getElementById('unique-visitors-list-container');
- if (!container) return;
- if (!visitors || visitors.length === 0) {
- container.innerHTML = `<p class="text-xs opacity-60 py-3 text-center">No unique visitor records in the last 30 days.</p>`;
- return;
- }
- container.innerHTML = visitors.map((v, idx) => {
- const viewedList = Array.from(v.artworks || []);
- const viewedHtml = viewedList.length
- ? `<div class="text-[11px] opacity-80 mt-1">Viewed: <span class="font-medium text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(viewedList.slice(0, 4).join(', '))}${viewedList.length > 4 ? ` (+${viewedList.length - 4} more)` : ''}</span></div>`
- : '';
- const memberBadge = v.memberLabel
- ? `<span class="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-800 dark:text-amber-200 font-medium">${escapeHTML(v.memberLabel)}</span>`
- : '';
- return `
- <div class="p-3 rounded-xl bg-white dark:bg-[#1B1916] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
- <div class="min-w-0">
- <div class="flex flex-wrap items-center gap-1.5">
- <span class="font-semibold text-[#9C8265] dark:text-[#D4B483]">#${idx + 1}</span>
- <span class="px-2 py-0.5 rounded font-mono text-[11px] bg-[#2C2C2C]/10 dark:bg-[#EDE7DA]/10 font-medium">${escapeHTML(v.id)}</span>
- ${memberBadge}
- <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">via ${escapeHTML(v.source)}</span>
- <span class="opacity-70">[${escapeHTML(v.country)} • ${escapeHTML(v.deviceDetail)}]</span>
- <span class="px-2 py-0.5 rounded-full text-[10px] bg-[#9C8265]/15 font-medium">${v.events} ${v.events === 1 ? 'event' : 'events'}</span>
- </div>
- ${viewedHtml}
- </div>
- <span class="text-[11px] opacity-65 font-medium flex-shrink-0">Last: ${escapeHTML(formatMyanmarTime(v.lastSeen))}</span>
- </div>
- `;
- }).join('');
- }
-
- async function triggerMonthlyReportNow() {
- const btn = document.getElementById('archive-report-now-btn');
- if (btn) {
- btn.disabled = true;
- btn.textContent = 'Sending Report...';
- }
- try {
- const res = await fetch(API_ENDPOINTS.activity, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({ action: 'archive_now' })
- });
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `Failed (${res.status})`);
- }
- if (data.sent) {
- showAdminFeedback(`Emailed readable report + CSV (${data.count} events) and purged archived logs from D1!`);
- await recordEditLog('Archived & Purged', 'Visitor Logs', 'Monthly Report', `Sent ${data.count} events via Web3Forms`);
- } else {
- showAdminFeedback(data.reason || 'No visitor logs to archive right now.');
- }
- await loadVisitorActivityFromCloud();
- } catch (err) {
- showAdminFeedback('Report failed: ' + (err.message || 'Check WEB3FORMS_ACCESS_KEY.'), true);
- } finally {
- if (btn) {
- btn.disabled = false;
- btn.textContent = 'Email Report & Purge Now';
- }
- }
- }
-
- // ==================== ADMIN: GALLERY ABOUT, EDIT LOGS & EXPORT ====================
- function populateGalleryAboutAdminForm() {
- const hInput = document.getElementById('about-heading-input');
- const sInput = document.getElementById('about-subtitle-input');
- const bInput = document.getElementById('about-body-input');
- if (hInput) hInput.value = galleryAbout.heading || DEFAULT_GALLERY_ABOUT.heading;
- if (sInput) sInput.value = galleryAbout.subtitle || DEFAULT_GALLERY_ABOUT.subtitle;
- if (bInput) bInput.value = galleryAbout.body || DEFAULT_GALLERY_ABOUT.body;
- }
-
- async function saveGalleryAboutFromAdmin(event) {
- event.preventDefault();
- const heading = document.getElementById('about-heading-input').value.trim();
- const subtitle = document.getElementById('about-subtitle-input').value.trim();
- const body = document.getElementById('about-body-input').value.trim();
-
- const nextAbout = { heading, subtitle, body, updatedAt: Date.now() };
-
- try {
- const res = await fetch(API_ENDPOINTS.settings, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({ key: 'gallery_about', value: nextAbout })
- });
- const data = await res.json().catch(() => ({}));
- if (!res.ok || !data.ok) {
- throw new Error(data.error || `Settings save failed (${res.status})`);
- }
- galleryAbout = nextAbout;
- renderGalleryAboutSection();
- showAdminFeedback('Gallery About page saved to Cloudflare D1!');
- await recordEditLog('Updated', 'Gallery About', heading, 'Updated gallery curatorial statement');
- } catch (err) {
- showAdminFeedback('Update failed: ' + err.message, true);
- }
- }
-
- function renderAdminEditLogsList() {
- const list = document.getElementById('admin-edit-logs-list');
- const countEl = document.getElementById('admin-log-count');
- if (countEl) countEl.textContent = editLogs.length;
- if (!list) return;
-
- if (editLogs.length === 0) {
- list.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
- return;
- }
-
- list.innerHTML = editLogs.map(log => {
- const dateStr = log.timestamp ? formatMyanmarTime(log.timestamp) : '';
- const badgeColor = log.action === 'Deleted'
- ? 'bg-red-500/15 text-red-600'
- : (log.action === 'Added' || log.action === 'Initialized' ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-amber-500/15 text-amber-700 dark:text-amber-300');
- return `
- <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
- <div>
- <div class="flex items-center gap-2 mb-0.5">
- <span class="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-medium ${badgeColor}">${escapeHTML(log.action)}</span>
- <span class="text-[11px] uppercase tracking-wider text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(log.targetType)}</span>
- <span class="font-serif text-sm font-medium">${escapeHTML(log.targetName)}</span>
- </div>
- ${log.details ? `<p class="text-xs opacity-70">${escapeHTML(log.details)}</p>` : ''}
- </div>
- <span class="text-[11px] opacity-55 flex-shrink-0">${escapeHTML(dateStr)}</span>
- </div>
- `;
- }).join('');
- }
-
- function downloadEditLogsCSV() {
- const headers = ['Timestamp', 'Action', 'TargetType', 'TargetName', 'Details'];
- const rows = editLogs.map(l => [
- l.timestamp || '',
- l.action || '',
- l.targetType || '',
- l.targetName || '',
- l.details || ''
- ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
- const csv = [headers.join(','), ...rows].join('\n');
- const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
- a.click();
- URL.revokeObjectURL(url);
- }
-
- function downloadEditLogsJSON() {
- const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), editLogs }, null, 2)], { type: 'application/json' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
- a.click();
- URL.revokeObjectURL(url);
- }
-
- function exportArtworksJSON() {
- const payload = {
- exportedAt: new Date().toISOString(),
- galleryAbout,
- artists,
- artworks,
- editLogs
- };
- const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `the-artists-loft-backup-${new Date().toISOString().slice(0, 10)}.json`;
- a.click();
- URL.revokeObjectURL(url);
- }
-
- async function handleContactSubmit(event) {
- event.preventDefault();
- const form = document.getElementById('contact-form');
- const submitBtn = document.getElementById('contact-submit-btn');
- const feedback = document.getElementById('contact-feedback');
- const name = document.getElementById('contact-name').value.trim();
- const email = document.getElementById('contact-email').value.trim();
- const message = document.getElementById('contact-message').value.trim();
- const botcheck = document.getElementById('contact-botcheck').checked;
-
- if (botcheck) return;
- if (!name || !email || !message) return;
-
- submitBtn.disabled = true;
- submitBtn.textContent = 'Sending...';
- feedback.classList.add('hidden');
-
- try {
- const res = await fetch(API_ENDPOINTS.contact, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ name, email, message, botcheck })
- });
- const data = await res.json();
-
- if (res.ok && data.success) {
- playSoftGalleryChime('success');
- trackVisitorEvent('contact_submit', name);
- feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
- feedback.className = 'p-4 rounded-2xl bg-[#A69076]/15 border border-[#A69076]/40 text-center text-sm text-[#2C2C2C] dark:text-[#EDE7DA]';
- feedback.classList.remove('hidden');
- form.reset();
- } else {
- throw new Error(data.message || 'Unable to send message right now.');
- }
- } catch (err) {
- feedback.textContent = 'Notice: ' + (err.message || 'Please try again later.');
- feedback.className = 'p-4 rounded-2xl bg-red-50 border border-red-200 text-center text-sm text-red-700';
- feedback.classList.remove('hidden');
- } finally {
- submitBtn.disabled = false;
- submitBtn.textContent = 'Send Message';
- }
- }
-
- // ==================== ORGANIC ROW SCROLL ZOOM-IN / ZOOM-OUT ANIMATION ====================
- let galleryScrollRaf = null;
- let galleryScrollBound = false;
- let galleryScrollSettleTimer = null;
- let isGalleryScrolling = false;
-
- function getCardRandomSeed(card, idx) {
- if (card.dataset.randSeeded === 'true') {
- return {
- phase: parseFloat(card.dataset.randPhase),
- scaleMin: parseFloat(card.dataset.randScaleMin),
- yOffset: parseFloat(card.dataset.randYOffset)
- };
- }
- const seed = (idx * 73 + 19) % 100 / 100;
- const phase = (seed - 0.5) * 0.24;
- const scaleMin = 0.81 + (seed * 0.055);
- const yOffset = 26 + Math.round(seed * 18);
- card.dataset.randSeeded = 'true';
- card.dataset.randPhase = phase.toFixed(3);
- card.dataset.randScaleMin = scaleMin.toFixed(3);
- card.dataset.randYOffset = String(yOffset);
- return { phase, scaleMin, yOffset };
- }
-
- function updateGalleryScrollPresence() {
- galleryScrollRaf = null;
- const artworksSection = document.getElementById('section-artworks');
- if (!artworksSection || artworksSection.classList.contains('hidden')) return;
-
- const cards = Array.from(document.querySelectorAll('#artworks-masonry-grid .reveal-item'));
- if (cards.length === 0) return;
-
- const vh = window.innerHeight || document.documentElement.clientHeight;
- const headerHeight = 105;
- const topFadeStart = headerHeight + 135;
- const topFadeEnd = headerHeight - 80;
- const bottomFadeStart = vh + 55;
- const bottomFadeEnd = vh * 0.68;
-
- cards.forEach((card, idx) => {
- if (card.dataset.hovered === 'true' && !isGalleryScrolling) {
- card.style.opacity = '1';
- card.style.filter = 'none';
- return;
- }
-
- const rect = card.getBoundingClientRect();
- const center = (rect.top + rect.bottom) * 0.5;
- const { phase, scaleMin, yOffset } = getCardRandomSeed(card, idx);
- const adjustedCenter = center + (phase * 155);
-
- let progress = 1;
- if (adjustedCenter < topFadeStart) {
- progress = (adjustedCenter - topFadeEnd) / (topFadeStart - topFadeEnd);
- } else if (adjustedCenter > bottomFadeEnd) {
- progress = 1 - ((adjustedCenter - bottomFadeEnd) / (bottomFadeStart - bottomFadeEnd));
- }
-
- progress = Math.max(0, Math.min(1, progress));
- const eased = progress * progress * (3 - 2 * progress);
-
- const opacity = (galleryExperience.scrollOpacityMin + ((galleryExperience.scrollOpacityMax - galleryExperience.scrollOpacityMin) * eased)) / 100;
- const translateY = (1 - eased) * (adjustedCenter < topFadeStart ? -9 : Math.min(yOffset, 12));
- const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
- const scale = isGalleryScrolling && !reduceMotion
- ? scaleMin + ((1 - scaleMin) * eased)
- : 1;
- const blurPx = (1 - eased) * 0.7;
-
- card.style.opacity = opacity.toFixed(3);
- card.style.filter = blurPx > 0.08 ? `blur(${blurPx.toFixed(2)}px) saturate(0.82)` : 'saturate(0.88)';
- card.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(4)})`;
- });
- }
-
- function handleGalleryScroll() {
- isGalleryScrolling = true;
- if (galleryScrollSettleTimer) clearTimeout(galleryScrollSettleTimer);
- document.querySelectorAll('#artworks-masonry-grid .reveal-item[data-hovered="true"]').forEach(card => {
- card.dataset.hovered = 'false';
- card.classList.remove('is-pointer-lit');
- const glare = card.querySelector('.tilt-glare');
- if (glare) glare.style.opacity = '0';
- });
- requestGalleryScrollUpdate();
- galleryScrollSettleTimer = setTimeout(() => {
- isGalleryScrolling = false;
- galleryScrollSettleTimer = null;
- requestGalleryScrollUpdate();
- }, 180);
- }
-
- function requestGalleryScrollUpdate() {
- if (galleryScrollRaf === null) {
- galleryScrollRaf = requestAnimationFrame(updateGalleryScrollPresence);
- }
- }
-
- function initGalleryCardAnimations() {
- if (!galleryScrollBound) {
- galleryScrollBound = true;
- window.addEventListener('scroll', handleGalleryScroll, { passive: true });
- window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
- }
-
- document.querySelectorAll('#artworks-masonry-grid .tilt-card').forEach(card => {
- if (card.dataset.tiltBound === 'true') return;
- card.dataset.tiltBound = 'true';
- const glare = card.querySelector('.tilt-glare');
-
- card.addEventListener('mousemove', (e) => {
- if (isGalleryScrolling) return;
- card.dataset.hovered = 'true';
- card.classList.add('is-pointer-lit');
- card.style.opacity = '1';
- card.style.filter = 'none';
- const rect = card.getBoundingClientRect();
- const x = e.clientX - rect.left;
- const y = e.clientY - rect.top;
- const centerX = rect.width / 2;
- const centerY = rect.height / 2;
- const rotateX = ((y - centerY) / centerY) * -2.8;
- const rotateY = ((x - centerX) / centerX) * 2.8;
- card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-6px) scale(1.015)`;
- if (glare) {
- const pctX = (x / rect.width) * 100;
- const pctY = (y / rect.height) * 100;
- glare.style.background = `radial-gradient(circle at ${pctX}% ${pctY}%, rgba(255,255,255,0.44) 0%, rgba(255,255,255,0) 68%)`;
- glare.style.opacity = '1';
- }
- });
-
- card.addEventListener('focusin', () => {
- if (isGalleryScrolling) return;
- card.dataset.hovered = 'true';
- card.classList.add('is-pointer-lit');
- card.style.opacity = '1';
- card.style.filter = 'none';
- });
-
- card.addEventListener('focusout', () => {
- requestAnimationFrame(() => {
- if (!card.contains(document.activeElement)) {
- card.dataset.hovered = 'false';
- card.classList.remove('is-pointer-lit');
- requestGalleryScrollUpdate();
- }
- });
- });
-
- card.addEventListener('mouseleave', () => {
- card.dataset.hovered = 'false';
- card.classList.remove('is-pointer-lit');
- if (glare) glare.style.opacity = '0';
- requestGalleryScrollUpdate();
- });
- });
-
- updateGalleryScrollPresence();
- }
-
- // ==================== R2-BACKED RANDOM MP3 AMBIENCE, VOLUME & GENTLE UI SOUNDS ====================
- const AMBIENCE_STORAGE_KEY = 'tal_ambient_audio_v1';
- const DEFAULT_AMBIENCE_TRACKS = [];
-
- let ambienceTracks = DEFAULT_AMBIENCE_TRACKS.map(t => ({ ...t }));
- let ambienceTargetVolume = 0.07;
- let ambienceRandomMode = true;
-
- let audioCtx = null;
- let masterGain = null;
- let isSoundEnabled = true;
- let audioUnlockBound = false;
- let currentTrackIndex = -1;
- let ambienceFadeTimer = null;
- let isAmbienceStarted = false;
-
- let lastScrollChimeTime = 0;
- let lastScrollY = window.scrollY || 0;
- let scrollChimeBound = false;
- let lastDragWhisperTime = 0;
-
- function loadLocalAudioConfig() {
- try {
- const raw = localStorage.getItem(AMBIENCE_STORAGE_KEY);
- if (!raw) return;
- const parsed = JSON.parse(raw);
- applySavedAudioConfig(parsed);
- } catch (e) {}
- }
-
- function saveLocalAudioConfig() {
- try {
- localStorage.setItem(AMBIENCE_STORAGE_KEY, JSON.stringify({
- tracks: ambienceTracks,
- volume: ambienceTargetVolume,
- randomMode: ambienceRandomMode
- }));
- } catch (e) {}
- }
-
- async function persistAudioConfigToCloud(logAction = null) {
- saveLocalAudioConfig();
- renderAdminAudioManager();
-
- if (getSavedAdminToken()) {
- try {
- await fetch(API_ENDPOINTS.settings, {
- method: 'POST',
- headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
- body: JSON.stringify({
- key: 'ambient_audio',
- value: {
- tracks: ambienceTracks,
- volume: ambienceTargetVolume,
- randomMode: ambienceRandomMode,
- updatedAt: Date.now()
- }
- })
- });
- } catch (e) {}
- }
-
- if (logAction && typeof recordEditLog === 'function') {
- recordEditLog(logAction.action, 'Ambient Audio', logAction.name, logAction.details || '');
- }
- }
-
- function applySavedAudioConfig(cfg) {
- if (!cfg || typeof cfg !== 'object') return;
- if (Array.isArray(cfg.tracks)) {
- ambienceTracks = cfg.tracks
- .filter(t => t && t.url)
- .map((t, idx) => {
- const cleanUrl = String(t.url).trim().replace(
- 'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
- 'https://media.theartistsloftmm.art'
- );
- return {
- id: t.id || ('amb-' + (idx + 1)),
- title: t.title || `Ambience ${idx + 1}`,
- url: cleanUrl,
- enabled: t.enabled !== false
- };
- });
- }
- if (typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
- ambienceTargetVolume = Math.max(0, Math.min(0.6, cfg.volume));
- }
- if (typeof cfg.randomMode === 'boolean') {
- ambienceRandomMode = cfg.randomMode;
- }
- syncVolumeSliderUI();
- renderAdminAudioManager();
- }
-
- function getEnabledAmbienceTracks() {
- return ambienceTracks.filter(t => t.enabled !== false && t.url);
- }
-
- function getGalleryAudioElement() {
- let el = document.getElementById('gallery-bg-audio');
- if (!el) {
- el = document.createElement('audio');
- el.id = 'gallery-bg-audio';
- el.preload = 'none';
- document.body.appendChild(el);
- }
- return el;
- }
-
- function ensureAudioContext() {
- if (!audioCtx) {
- const AudioContextClass = window.AudioContext || window.webkitAudioContext;
- if (!AudioContextClass) return Promise.resolve(null);
- audioCtx = new AudioContextClass();
-
- masterGain = audioCtx.createGain();
- masterGain.gain.setValueAtTime(0.35, audioCtx.currentTime);
- masterGain.connect(audioCtx.destination);
- }
- if (audioCtx.state === 'suspended') {
- return audioCtx.resume().then(() => audioCtx).catch(() => audioCtx);
- }
- return Promise.resolve(audioCtx);
- }
-
- function updateSoundButtonUI() {
- const btn = document.getElementById('sound-toggle-btn');
- const label = document.getElementById('sound-toggle-label');
- if (!btn || !label) return;
- if (isSoundEnabled) {
- btn.classList.remove('sound-paused');
- label.textContent = 'Sound On';
- } else {
- btn.classList.add('sound-paused');
- label.textContent = 'Sound Off';
- }
- }
-
- function syncVolumeSliderUI() {
- const pct = Math.round(ambienceTargetVolume * 100);
- const slider = document.getElementById('admin-ambience-volume');
- const label = document.getElementById('admin-ambience-volume-label');
- const randomToggle = document.getElementById('admin-ambience-random-toggle');
- if (slider) slider.value = String(pct);
- if (label) label.textContent = `${pct}%`;
- if (randomToggle) randomToggle.checked = Boolean(ambienceRandomMode);
- }
-
- function setAmbienceVolumePercent(percentValue) {
- const pct = Math.max(0, Math.min(60, Number(percentValue) || 0));
- ambienceTargetVolume = pct / 100;
- const label = document.getElementById('admin-ambience-volume-label');
- if (label) label.textContent = `${pct}%`;
-
- const audioEl = getGalleryAudioElement();
- if (audioEl && isSoundEnabled && !audioEl.paused) {
- clearAmbienceFade();
- audioEl.volume = ambienceTargetVolume;
- }
- saveLocalAudioConfig();
- }
-
- function toggleAmbienceRandomMode(checked) {
- ambienceRandomMode = Boolean(checked);
- persistAudioConfigToCloud({
- action: 'Updated',
- name: 'Rotation Mode',
- details: ambienceRandomMode ? 'Random rotation enabled' : 'Sequential rotation enabled'
- });
- }
-
- function clearAmbienceFade() {
- if (ambienceFadeTimer) {
- clearInterval(ambienceFadeTimer);
- ambienceFadeTimer = null;
- }
- }
-
- function fadeAmbienceTo(targetVol, durationMs = 1000, onComplete = null) {
- const audioEl = getGalleryAudioElement();
- if (!audioEl) {
- if (onComplete) onComplete();
- return;
- }
- clearAmbienceFade();
- const clampedTarget = Math.max(0, Math.min(1, targetVol));
- const startVol = Number.isFinite(audioEl.volume) ? audioEl.volume : 0;
- const steps = 18;
- const stepMs = Math.max(20, Math.round(durationMs / steps));
- let step = 0;
-
- ambienceFadeTimer = setInterval(() => {
- step++;
- const progress = Math.min(1, step / steps);
- const eased = progress * progress * (3 - 2 * progress);
- audioEl.volume = startVol + (clampedTarget - startVol) * eased;
- if (step >= steps) {
- clearAmbienceFade();
- audioEl.volume = clampedTarget;
- if (onComplete) onComplete();
- }
- }, stepMs);
- }
-
- function pickNextTrackIndex(enabledList, excludeIndex = -1) {
- const len = enabledList.length;
- if (len <= 0) return -1;
- if (len === 1) return 0;
-
- if (ambienceRandomMode) {
- let nextIdx = Math.floor(Math.random() * len);
- if (nextIdx === excludeIndex) {
- nextIdx = (nextIdx + 1 + Math.floor(Math.random() * (len - 1))) % len;
- }
- return nextIdx;
- }
- return ((excludeIndex + 1) % len + len) % len;
- }
-
- function updateNowPlayingLabel(trackObj) {
- const el = document.getElementById('admin-now-playing-label');
- if (!el) return;
- if (!isSoundEnabled || !trackObj) {
- el.textContent = isSoundEnabled ? 'Now Playing: Ready' : 'Now Playing: Sound Muted';
- return;
- }
- el.textContent = `Now Playing: ${trackObj.title || trackObj.url}`;
- }
-
- function playAmbienceTrackById(trackId, forceSelect = true, attemptedIds = new Set()) {
- if (!isSoundEnabled) return;
- const enabled = getEnabledAmbienceTracks();
- if (enabled.length === 0) {
- updateNowPlayingLabel(null);
- return;
- }
-
- let chosen = null;
- if (trackId) {
- chosen = enabled.find(t => t.id === trackId) || null;
- }
- if (!chosen) {
- const currentIdx = enabled.findIndex(t => t.id === currentTrackIndex);
- const nextIdx = pickNextTrackIndex(enabled, currentIdx);
- chosen = enabled[nextIdx] || enabled[0];
- }
-
- currentTrackIndex = chosen.id;
- const nextAttempted = new Set(attemptedIds);
- nextAttempted.add(chosen.id);
-
- const audioEl = getGalleryAudioElement();
- audioEl.onended = () => {
- if (!isSoundEnabled) return;
- fadeAmbienceTo(0, 650, () => {
- playAmbienceTrackById(null, true, new Set());
- });
- };
-
- audioEl.onerror = () => {
- if (!isSoundEnabled) return;
- const remaining = enabled.filter(t => !nextAttempted.has(t.id));
- if (remaining.length > 0) {
- const fallback = remaining[Math.floor(Math.random() * remaining.length)];
- setTimeout(() => {
- playAmbienceTrackById(fallback.id, true, nextAttempted);
- }, 350);
+ imgEl.onload = () => {
+ if (currentWallArtworkId === art?.id) {
+ applyProportionalWallSizing(art, currentWallScalePct);
  }
  };
 
@@ -6291,151 +4509,592 @@
  }
  }
 
- function previewNextRandomAmbience() {
- if (!isSoundEnabled) {
- isSoundEnabled = true;
- updateSoundButtonUI();
- }
- playAmbienceTrackById(null, true, new Set());
- }
-
- function startAmbientSoundscape() {
- if (!isSoundEnabled) return;
- const audioEl = getGalleryAudioElement();
- if (isAmbienceStarted && audioEl.src && audioEl.paused && audioEl.currentTime > 0 && audioEl.currentTime < audioEl.duration) {
- audioEl.play().then(() => {
- fadeAmbienceTo(ambienceTargetVolume, 900);
- }).catch(() => {
- playAmbienceTrackById(null, true, new Set());
- });
- return;
- }
- playAmbienceTrackById(null, true, new Set());
- }
-
- function stopAmbientSoundscape() {
- clearAmbienceFade();
- const audioEl = getGalleryAudioElement();
- if (audioEl && !audioEl.paused) {
- fadeAmbienceTo(0, 400, () => {
- audioEl.pause();
- });
- } else if (audioEl) {
- audioEl.pause();
- }
- updateNowPlayingLabel(null);
- }
-
- async function toggleGallerySound(event) {
- if (event) event.stopPropagation();
- isSoundEnabled = !isSoundEnabled;
- updateSoundButtonUI();
- if (isSoundEnabled) {
- await ensureAudioContext();
- startAmbientSoundscape();
- playSoftGalleryChime('select');
- } else {
- stopAmbientSoundscape();
- }
- }
-
- // ==================== ADMIN AMBIENT AUDIO MANAGER ====================
- function renderAdminAudioManager() {
+ function setAmbienceVolumePercent(pctValue) {
+ const pct = Math.max(0, Math.min(40, Number(pctValue) || 0));
+ ambienceTargetVolume = pct / 100;
  syncVolumeSliderUI();
- const countEl = document.getElementById('admin-audio-count');
- const listEl = document.getElementById('admin-audio-tracks-list');
- if (countEl) countEl.textContent = ambienceTracks.length;
- if (!listEl) return;
-
- if (ambienceTracks.length === 0) {
- listEl.innerHTML = `<p class="text-xs opacity-60 py-4 text-center">No ambience tracks added yet. Upload an MP3 to R2 above.</p>`;
- return;
- }
-
- listEl.innerHTML = ambienceTracks.map((track, idx) => {
- const isPlaying = currentTrackIndex === track.id && isSoundEnabled;
- const isEnabled = track.enabled !== false;
- const safeId = escapeHTML(track.id);
- const safeTitle = escapeHTML(track.title || `Track ${idx + 1}`);
- const safeUrl = escapeHTML(track.url);
-
- return `
- <div class="p-3.5 rounded-2xl bg-[#FAF9F6] dark:bg-[#12110F] border ${isPlaying ? 'border-[#9C8265] dark:border-[#D4B483]' : 'border-[#A69076]/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <div class="min-w-0">
- <div class="flex items-center gap-2">
- <span class="w-2 h-2 rounded-full ${isPlaying ? 'bg-emerald-500' : (isEnabled ? 'bg-[#9C8265]' : 'bg-gray-400')}"></span>
- <h6 class="font-serif text-sm font-medium truncate">${safeTitle}</h6>
- ${isPlaying ? '<span class="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-300 font-medium">Playing</span>' : ''}
- </div>
- <p class="text-[11px] opacity-60 truncate mt-0.5">${safeUrl}</p>
- </div>
- <div class="flex items-center gap-2 flex-shrink-0">
- <button type="button" onclick="selectAndPlayAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg bg-[#26231F] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] text-xs hover:bg-[#9C8265] transition-colors">
- Play
- </button>
- <button type="button" onclick="toggleAmbienceTrackEnabled('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">
- ${isEnabled ? 'Disable' : 'Enable'}
- </button>
- <button type="button" onclick="deleteAmbienceTrack('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">
- Delete
- </button>
- </div>
- </div>
- `;
- }).join('');
- }
-
- function selectAndPlayAmbienceTrack(trackId) {
- const target = ambienceTracks.find(t => t.id === trackId);
- if (!target) return;
- target.enabled = true;
- if (!isSoundEnabled) {
- isSoundEnabled = true;
- updateSoundButtonUI();
+ const audioEl = getGalleryAudioElement();
+ if (audioEl && isSoundEnabled && !audioEl.paused) {
+ fadeAmbienceTo(ambienceTargetVolume, 250);
  }
  saveLocalAudioConfig();
- playAmbienceTrackById(trackId, true, new Set());
  }
 
- function toggleAmbienceTrackEnabled(trackId) {
- const target = ambienceTracks.find(t => t.id === trackId);
- if (!target) return;
- target.enabled = target.enabled === false ? true : false;
- if (!target.enabled && currentTrackIndex === trackId) {
- playAmbienceTrackById(null, true, new Set());
+ function toggleAmbienceRandomMode(checked) {
+ ambienceRandomMode = Boolean(checked);
+ saveLocalAudioConfig();
  }
- persistAudioConfigToCloud({
- action: 'Updated',
- name: target.title || 'Ambience Track',
- details: target.enabled ? 'Enabled in playlist' : 'Disabled in playlist'
+
+ async function persistAudioConfigToCloud(logAction = null) {
+ saveLocalAudioConfig();
+ renderAdminAudioManager();
+ try {
+ const res = await fetch(API_ENDPOINTS.settings, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({
+ key: 'ambient_audio',
+ value: {
+ tracks: ambienceTracks,
+ random: ambienceRandomMode,
+ volume: ambienceTargetVolume,
+ updatedAt: Date.now()
+ }
+ })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Audio settings save failed (${res.status})`);
+ }
+ if (logAction && typeof recordEditLog === 'function') {
+ await recordEditLog(logAction.action, 'Ambient Audio', logAction.name, logAction.details || '');
+ }
+ } catch (err) {
+ showAdminFeedback('Audio playlist saved locally, but cloud sync failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ }
+ }
+
+ // ==================== GALLERY CARD ANIMATIONS & SCROLL PRESENCE ====================
+ let galleryScrollRafId = null;
+
+ function updateGalleryCardsOnScroll() {
+ galleryScrollRafId = null;
+ const cards = Array.from(document.querySelectorAll('#artworks-masonry-grid .reveal-item'));
+ if (cards.length === 0) return;
+
+ const vh = window.innerHeight || 900;
+ const minOpacity = Math.max(0, Math.min(0.85, (Number(galleryExperience.scrollOpacityMin) || 42) / 100));
+ const maxOpacity = Math.max(minOpacity + 0.05, Math.min(1, (Number(galleryExperience.scrollOpacityMax) || 72) / 100));
+
+ cards.forEach(card => {
+ const rect = card.getBoundingClientRect();
+ const cardCenter = rect.top + rect.height / 2;
+ const distRatio = Math.min(1, Math.abs(cardCenter - vh * 0.5) / (vh * 0.72));
+ const visibility = 1 - distRatio;
+ const opacity = minOpacity + visibility * (maxOpacity - minOpacity);
+ const yOffset = (1 - visibility) * 8;
+ const blurPx = (1 - visibility) * 0.6;
+
+ if (!card.classList.contains('is-pointer-lit')) {
+ card.style.opacity = opacity.toFixed(3);
+ card.style.transform = `translate3d(0, ${yOffset.toFixed(1)}px, 0)`;
+ card.style.filter = `blur(${blurPx.toFixed(2)}px) saturate(${(0.84 + visibility * 0.16).toFixed(2)})`;
+ }
  });
  }
 
- function deleteAmbienceTrack(trackId) {
- const target = ambienceTracks.find(t => t.id === trackId);
- ambienceTracks = ambienceTracks.filter(t => t.id !== trackId);
- if (currentTrackIndex === trackId) {
- currentTrackIndex = -1;
- const audioEl = getGalleryAudioElement();
- audioEl.pause();
- audioEl.removeAttribute('src');
- if (isSoundEnabled && getEnabledAmbienceTracks().length > 0) {
- playAmbienceTrackById(null, true, new Set());
+ function requestGalleryScrollUpdate() {
+ if (galleryScrollRafId) return;
+ galleryScrollRafId = requestAnimationFrame(updateGalleryCardsOnScroll);
+ }
+
+ function initGalleryCardAnimations() {
+ updateGalleryCardsOnScroll();
+ if (!window._talScrollBound) {
+ window._talScrollBound = true;
+ window.addEventListener('scroll', requestGalleryScrollUpdate, { passive: true });
+ window.addEventListener('resize', requestGalleryScrollUpdate, { passive: true });
+ }
+
+ document.querySelectorAll('#artworks-masonry-grid .tilt-card').forEach(card => {
+ if (card.dataset.tiltBound === 'true') return;
+ card.dataset.tiltBound = 'true';
+ const glare = card.querySelector('.tilt-glare');
+
+ card.addEventListener('pointerenter', () => {
+ card.classList.add('is-pointer-lit');
+ card.style.opacity = '1';
+ card.style.filter = 'blur(0px) saturate(1.04)';
+ if (glare) glare.style.opacity = '1';
+ });
+
+ card.addEventListener('pointermove', (e) => {
+ const rect = card.getBoundingClientRect();
+ if (!rect.width || !rect.height) return;
+ const px = (e.clientX - rect.left) / rect.width;
+ const py = (e.clientY - rect.top) / rect.height;
+ const rotY = (px - 0.5) * 9;
+ const rotX = (0.5 - py) * 9;
+ card.style.transform = `perspective(900px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translate3d(0, -4px, 0)`;
+ if (glare) {
+ glare.style.background = `radial-gradient(circle at ${(px * 100).toFixed(0)}% ${(py * 100).toFixed(0)}%, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0) 68%)`;
+ }
+ playArtworkDragWhisper(Math.hypot(px - 0.5, py - 0.5));
+ });
+
+ card.addEventListener('pointerleave', () => {
+ card.classList.remove('is-pointer-lit');
+ card.style.transform = '';
+ if (glare) glare.style.opacity = '0';
+ requestGalleryScrollUpdate();
+ });
+ });
+ }
+
+ // ==================== LIGHTBOX & INQUIRY ====================
+ let currentLightboxId = null;
+ let isLightboxNavigating = false;
+
+ function getVisibleLightboxArtworks() {
+ const artistWorks = getArtistArtworks(activeArtistId);
+ return activeCategory === 'All'
+ ? artistWorks
+ : artistWorks.filter(a => a.category === activeCategory);
+ }
+
+ function populateLightboxContent(art) {
+ const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
+ const artistName = artist ? artist.name : 'MT. Oung';
+ const isSold = (art.status || 'Available').toLowerCase() === 'sold' || (art.status || '').toLowerCase() === 'collected';
+ const list = getVisibleLightboxArtworks();
+
+ const imgEl = document.getElementById('lightbox-img');
+ const dotEl = document.getElementById('lightbox-status-dot');
+ const statusTextEl = document.getElementById('lightbox-status-text');
+ const counterEl = document.getElementById('lightbox-counter');
+ const catEl = document.getElementById('lightbox-category');
+ const titleEl = document.getElementById('lightbox-title');
+ const placardEl = document.getElementById('lightbox-placard');
+ const descEl = document.getElementById('lightbox-desc');
+ const priceEl = document.getElementById('lightbox-price');
+ const inquiryBtn = document.getElementById('lightbox-inquiry-btn');
+ const wallBtn = document.getElementById('lightbox-wall-btn');
+
+ if (imgEl) {
+ imgEl.src = art.image;
+ imgEl.alt = art.title || 'Enlarged Artwork';
+ imgEl.onerror = () => applyArtFallback(imgEl, art.title, art.category, art.aspect || '3/4');
+ }
+ if (dotEl) dotEl.className = `w-2.5 h-2.5 rounded-full ${isSold ? 'bg-red-500' : 'bg-emerald-400'}`;
+ if (statusTextEl) {
+ statusTextEl.textContent = isSold ? 'Collected' : 'Available';
+ statusTextEl.className = `text-[10px] uppercase tracking-[0.25em] font-medium ${isSold ? 'text-red-300' : 'text-emerald-300'}`;
+ }
+ if (counterEl && list.length > 0) {
+ const idx = list.findIndex(w => w.id === art.id);
+ counterEl.textContent = `${idx >= 0 ? idx + 1 : 1} of ${list.length}`;
+ }
+ if (catEl) catEl.textContent = `${artistName} • ${art.category || 'Fine Art'}`;
+ if (titleEl) titleEl.textContent = art.title || 'Untitled';
+ if (placardEl) placardEl.textContent = [art.medium, art.size, art.year, art.provenance].filter(Boolean).join(' • ');
+ if (descEl) descEl.textContent = art.description || '';
+ if (priceEl) {
+ priceEl.textContent = isSold ? 'In Private Collection' : (art.price ? `Price: ${art.price}` : 'Price on Request');
+ }
+ if (inquiryBtn) {
+ inquiryBtn.classList.toggle('hidden', isSold);
+ inquiryBtn.onclick = (e) => {
+ e.stopPropagation();
+ closeLightbox();
+ inquireAboutArtwork(art.title, artistName);
+ };
+ }
+ if (wallBtn) {
+ wallBtn.onclick = (e) => {
+ e.stopPropagation();
+ closeLightbox();
+ openWallPreviewById(art.id);
+ };
+ }
+ }
+
+ function openLightboxById(id) {
+ const art = artworks.find(a => a.id === id);
+ if (!art) return;
+ playSoftGalleryChime('open');
+ trackVisitorEvent('view_artwork', art.title || id);
+ currentLightboxId = art.id;
+
+ const modal = document.getElementById('lightbox-modal');
+ populateLightboxContent(art);
+
+ modal.classList.remove('hidden', 'is-open');
+ void modal.offsetWidth;
+ requestAnimationFrame(() => {
+ modal.classList.add('is-open');
+ });
+ document.body.style.overflow = 'hidden';
+ }
+
+ function navigateLightbox(direction, event) {
+ if (event) event.stopPropagation();
+ if (isLightboxNavigating) return;
+ const list = getVisibleLightboxArtworks();
+ if (list.length <= 1) return;
+ const currentIdx = list.findIndex(a => a.id === currentLightboxId);
+ const nextIdx = (currentIdx + direction + list.length) % list.length;
+ const nextArt = list[nextIdx];
+ if (!nextArt) return;
+
+ playSoftGalleryChime('select');
+ trackVisitorEvent('view_artwork', nextArt.title || nextArt.id);
+ isLightboxNavigating = true;
+ currentLightboxId = nextArt.id;
+
+ const imgEl = document.getElementById('lightbox-img');
+ const capEl = document.getElementById('lightbox-caption');
+ const outCls = direction >= 0 ? 'lightbox-slide-out-left' : 'lightbox-slide-out-right';
+ const inCls = direction >= 0 ? 'lightbox-slide-in-from-right' : 'lightbox-slide-in-from-left';
+
+ if (imgEl) {
+ imgEl.classList.remove('lightbox-slide-out-left', 'lightbox-slide-out-right', 'lightbox-slide-in-from-right', 'lightbox-slide-in-from-left');
+ void imgEl.offsetWidth;
+ imgEl.classList.add(outCls);
+ }
+ if (capEl) capEl.classList.add('lightbox-caption-out');
+
+ Promise.all([
+ new Promise(resolve => setTimeout(resolve, 260)),
+ preloadImagePromise(nextArt.image)
+ ]).then(() => {
+ populateLightboxContent(nextArt);
+ if (imgEl) {
+ imgEl.classList.remove(outCls);
+ imgEl.classList.add(inCls);
+ void imgEl.offsetWidth;
+ }
+ if (capEl) {
+ capEl.classList.remove('lightbox-caption-out');
+ capEl.classList.add('lightbox-caption-in');
+ }
+ requestAnimationFrame(() => {
+ requestAnimationFrame(() => {
+ if (imgEl) imgEl.classList.remove(inCls);
+ if (capEl) capEl.classList.remove('lightbox-caption-in');
+ setTimeout(() => {
+ isLightboxNavigating = false;
+ }, 420);
+ });
+ });
+ });
+ }
+
+ function closeLightbox(event) {
+ if (event) event.stopPropagation();
+ const modal = document.getElementById('lightbox-modal');
+ if (!modal || modal.classList.contains('hidden')) return;
+ playSoftGalleryChime('close');
+ modal.classList.remove('is-open');
+ setTimeout(() => {
+ modal.classList.add('hidden');
+ const wallOpen = !document.getElementById('wall-preview-modal').classList.contains('hidden');
+ if (!wallOpen) {
+ document.body.style.overflow = '';
+ }
+ }, 450);
+ }
+
+ function inquireAboutArtwork(title, artistName = '') {
+ playSoftGalleryChime('select');
+ trackVisitorEvent('inquire_artwork', title || '');
+ if (currentSalonMember) {
+ recordSalonMemberActivity('Price Inquiry', title || '');
+ }
+ showSection('contact');
+ const msgBox = document.getElementById('contact-message');
+ if (msgBox) {
+ const artistPart = artistName ? ` by ${artistName}` : '';
+ msgBox.value = `Hello, I would like to inquire about the availability and pricing for "${title}"${artistPart}.`;
+ msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+ msgBox.focus();
+ }
+ }
+
+ function inquireAboutArtworkWithFrame(title, artistName = '', frameName = '') {
+ playSoftGalleryChime('select');
+ trackVisitorEvent('inquire_artwork', `${title || ''} [${frameName}]`);
+ if (currentSalonMember) {
+ recordSalonMemberActivity('Frame & Price Inquiry', `${title || ''} (${frameName})`);
+ }
+ showSection('contact');
+ const msgBox = document.getElementById('contact-message');
+ if (msgBox) {
+ const artistPart = artistName ? ` by ${artistName}` : '';
+ const framePart = frameName ? ` with ${frameName} framing` : '';
+ msgBox.value = `Hello, I would like to inquire about "${title}"${artistPart}${framePart} (Room Light: ${currentWallRoomBrightnessPct}%, Wall: ${currentWallColorName}).`;
+ msgBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+ msgBox.focus();
+ }
+ }
+
+ function toggleWallFurniture() {
+ playSoftGalleryChime('select');
+ isWallFurnitureOn = !isWallFurnitureOn;
+ const el = document.getElementById('wall-furniture-silhouette');
+ const btn = document.getElementById('wall-furniture-btn');
+ if (el) el.style.opacity = isWallFurnitureOn ? '1' : '0';
+ if (btn) btn.textContent = isWallFurnitureOn ? 'Interior: On' : 'Interior: Off';
+ const art = artworks.find(a => a.id === currentWallArtworkId);
+ if (art) applyProportionalWallSizing(art, currentWallScalePct);
+ }
+
+ window.addEventListener('resize', () => {
+ const wallModal = document.getElementById('wall-preview-modal');
+ if (wallModal && !wallModal.classList.contains('hidden') && currentWallArtworkId) {
+ const art = artworks.find(a => a.id === currentWallArtworkId);
+ if (art) applyProportionalWallSizing(art, currentWallScalePct);
+ }
+ });
+
+ document.addEventListener('keydown', (e) => {
+ const wallModal = document.getElementById('wall-preview-modal');
+ const lightboxModal = document.getElementById('lightbox-modal');
+ const isWallOpen = wallModal && !wallModal.classList.contains('hidden');
+ const isLightboxOpen = lightboxModal && !lightboxModal.classList.contains('hidden');
+
+ if (e.key === 'Escape') {
+ if (isWallOpen) closeWallPreview();
+ else if (isLightboxOpen) closeLightbox();
+ else if (isAdminUnlocked || !document.getElementById('admin-modal').classList.contains('hidden')) closeAdminModal();
+ } else if (isWallOpen) {
+ if (e.key === 'ArrowLeft') navigateWallPreview(-1);
+ else if (e.key === 'ArrowRight') navigateWallPreview(1);
+ } else if (isLightboxOpen) {
+ if (e.key === 'ArrowLeft') navigateLightbox(-1);
+ else if (e.key === 'ArrowRight') navigateLightbox(1);
+ }
+ });
+
+ // ==================== CONTACT FORM SUBMISSION ====================
+ async function handleContactSubmit(event) {
+ event.preventDefault();
+ if (document.getElementById('contact-botcheck')?.checked) return;
+ const name = document.getElementById('contact-name').value.trim();
+ const email = document.getElementById('contact-email').value.trim();
+ const message = document.getElementById('contact-message').value.trim();
+ const btn = document.getElementById('contact-submit-btn');
+ const feedback = document.getElementById('contact-feedback');
+
+ if (!name || !email || !message) return;
+
+ btn.disabled = true;
+ btn.textContent = 'Sending...';
+ if (feedback) feedback.classList.add('hidden');
+
+ try {
+ const res = await fetch(API_ENDPOINTS.contact, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ name, email, message })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || data.ok === false) {
+ throw new Error(data.error || `Message failed (${res.status})`);
+ }
+
+ playSoftGalleryChime('success');
+ trackVisitorEvent('contact_submit', name);
+ if (currentSalonMember) {
+ recordSalonMemberActivity('Sent Inquiry', message.slice(0, 80));
+ }
+ document.getElementById('contact-form').reset();
+ if (feedback) {
+ feedback.className = 'p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-center text-sm text-emerald-800 dark:text-emerald-200';
+ feedback.textContent = 'Thank you! Your message has been sent to our gallery team. We will respond shortly.';
+ feedback.classList.remove('hidden');
+ }
+ } catch (err) {
+ if (feedback) {
+ feedback.className = 'p-4 rounded-2xl bg-red-500/15 border border-red-400/40 text-center text-sm text-red-700 dark:text-red-300';
+ feedback.textContent = 'Could not send message right now: ' + (err.message || 'Please try again.');
+ feedback.classList.remove('hidden');
+ }
+ } finally {
+ btn.disabled = false;
+ btn.textContent = 'Send Message';
+ }
+ }
+
+ // ==================== ADMIN CONSOLE MODAL, TABS & CRUD ====================
+ function showAdminFeedback(message, isError = false) {
+ const el = document.getElementById('admin-publish-feedback');
+ if (!el) return;
+ el.textContent = message;
+ el.className = isError
+ ? 'p-4 rounded-2xl bg-red-500/15 border border-red-400/40 text-xs font-medium text-red-700 dark:text-red-300'
+ : 'p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-xs font-medium text-emerald-800 dark:text-emerald-200';
+ el.classList.remove('hidden');
+ }
+
+ function openAdminModal() {
+ playSoftGalleryChime('open');
+ const modal = document.getElementById('admin-modal');
+ if (!modal) return;
+ modal.classList.remove('hidden');
+ document.body.style.overflow = 'hidden';
+
+ const savedToken = getSavedAdminToken();
+ if (savedToken && !isAdminUnlocked) {
+ verifyStoredAdminToken(savedToken);
+ } else if (isAdminUnlocked) {
+ showUnlockedAdminDashboard();
  } else {
- updateNowPlayingLabel(null);
+ showAdminLoginGate();
  }
- }
- persistAudioConfigToCloud({
- action: 'Deleted',
- name: target?.title || 'Ambience Track',
- details: 'Removed from ambience playlist'
- });
  }
 
- async function uploadAudioFileToR2(file) {
+ function closeAdminModal() {
+ playSoftGalleryChime('close');
+ const modal = document.getElementById('admin-modal');
+ if (modal) modal.classList.add('hidden');
+ const lightboxOpen = !document.getElementById('lightbox-modal').classList.contains('hidden');
+ const wallOpen = !document.getElementById('wall-preview-modal').classList.contains('hidden');
+ if (!lightboxOpen && !wallOpen) {
+ document.body.style.overflow = '';
+ }
+ }
+
+ function showAdminLoginGate(errorMsg = '') {
+ isAdminUnlocked = false;
+ document.getElementById('admin-login-view')?.classList.remove('hidden');
+ document.getElementById('admin-dashboard-view')?.classList.add('hidden');
+ const errEl = document.getElementById('admin-pin-error');
+ if (errEl) {
+ if (errorMsg) {
+ errEl.textContent = errorMsg;
+ errEl.classList.remove('hidden');
+ } else {
+ errEl.classList.add('hidden');
+ }
+ }
+ }
+
+ function showUnlockedAdminDashboard() {
+ isAdminUnlocked = true;
+ document.getElementById('admin-login-view')?.classList.add('hidden');
+ document.getElementById('admin-dashboard-view')?.classList.remove('hidden');
+ populateAdminArtistDropdown();
+ populateAdminCategoryDropdown();
+ renderAdminArtworksList();
+ renderAdminArtistsList();
+ populateGalleryAboutAdminForm();
+ populateExperienceAdminUI();
+ populateBackdropAdminUI();
+ renderAdminAudioManager();
+ renderAdminSalonManager();
+ renderAdminEditLogsList();
+ updateAnalyticsExclusionButtonUI();
+ loadEditLogsFromCloud();
+ loadSalonAdminData();
+ }
+
+ async function verifyStoredAdminToken(token) {
+ try {
+ const res = await fetch(API_ENDPOINTS.logs, {
+ headers: { 'x-admin-token': token, 'Authorization': `Bearer ${token}` },
+ cache: 'no-store'
+ });
+ if (res.ok) {
+ setSavedAdminToken(token);
+ showUnlockedAdminDashboard();
+ return;
+ }
+ } catch (e) {}
+ showAdminLoginGate();
+ }
+
+ async function verifyAdminPin(event) {
+ event.preventDefault();
+ const input = document.getElementById('admin-pin-input');
+ const btn = document.getElementById('admin-gate-submit-btn');
+ const token = String(input?.value || '').trim();
+ if (!token) return;
+
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Verifying...';
+ }
+ document.getElementById('admin-pin-error')?.classList.add('hidden');
+
+ try {
+ const res = await fetch(API_ENDPOINTS.logs, {
+ headers: { 'x-admin-token': token, 'Authorization': `Bearer ${token}` },
+ cache: 'no-store'
+ });
+ if (!res.ok) {
+ throw new Error(res.status === 401 ? 'Invalid Admin API Token. Please check Cloudflare Pages secrets.' : `Verification failed (${res.status})`);
+ }
+ setSavedAdminToken(token);
+ if (input) input.value = '';
+ showUnlockedAdminDashboard();
+ } catch (err) {
+ showAdminLoginGate(err.message || 'Invalid Admin API Token.');
+ } finally {
+ if (btn) {
+ btn.disabled = false;
+ btn.textContent = 'Unlock Console';
+ }
+ }
+ }
+
+ function lockAdminSession() {
+ isAdminUnlocked = false;
+ setSavedAdminToken('');
+ const input = document.getElementById('admin-pin-input');
+ if (input) input.value = '';
+ showAdminLoginGate();
+ }
+
+ function switchAdminTab(tabName) {
+ playSoftGalleryChime('select');
+ const panels = ['artworks', 'artists', 'gallery', 'experience', 'backdrop', 'audio', 'salon', 'visitors', 'logs'];
+ panels.forEach(name => {
+ const panel = document.getElementById('admin-panel-' + name);
+ const btn = document.getElementById('admin-tab-btn-' + name);
+ const active = name === tabName;
+ if (panel) panel.classList.toggle('hidden', !active);
+ if (btn) {
+ btn.className = active
+ ? 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F]'
+ : 'admin-tab-btn px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium border border-[#A69076]/40 text-[#2C2C2C]/75 dark:text-[#EDE7DA]/75 hover:border-[#2C2C2C]';
+ }
+ });
+
+ if (tabName === 'visitors') loadVisitorActivityFromCloud();
+ else if (tabName === 'salon') loadSalonAdminData();
+ else if (tabName === 'logs') loadEditLogsFromCloud();
+ else if (tabName === 'experience') populateExperienceAdminUI();
+ else if (tabName === 'backdrop') populateBackdropAdminUI();
+ }
+
+ function updateComputedSizePreview() {
+ const hVal = parseFloat(document.getElementById('art-height-in-input')?.value || '');
+ const wVal = parseFloat(document.getElementById('art-width-in-input')?.value || '');
+ const preview = document.getElementById('art-computed-size-preview');
+ if (!preview) return;
+ if (Number.isFinite(hVal) && Number.isFinite(wVal) && hVal > 0 && wVal > 0) {
+ const hCm = (hVal * 2.54).toFixed(1).replace(/\.0$/, '');
+ const wCm = (wVal * 2.54).toFixed(1).replace(/\.0$/, '');
+ preview.textContent = `${hVal} × ${wVal} in (${hCm} × ${wCm} cm)`;
+ } else {
+ preview.textContent = 'Enter height & width in inches (H × W cm auto-calculated)';
+ }
+ }
+
+ function populateAdminArtistDropdown() {
+ const sel = document.getElementById('art-artist-select');
+ if (!sel) return;
+ sel.innerHTML = artists.map(a => `<option value="${escapeHTML(a.id)}">${escapeHTML(a.name)}</option>`).join('');
+ if (activeArtistId && artists.some(a => a.id === activeArtistId)) {
+ sel.value = activeArtistId;
+ }
+ }
+
+ function populateAdminCategoryDropdown() {
+ const sel = document.getElementById('art-category-select');
+ if (!sel) return;
+ const existingCats = [...new Set(artworks.map(w => w.category).filter(Boolean))];
+ const defaults = ['Landscapes', 'Portraits', 'Sacred Art', 'Abstract', 'Fine Art'];
+ const allCats = [...new Set([...existingCats, ...defaults])];
+ sel.innerHTML = allCats.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+ }
+
+ async function uploadFileToR2(file, folder = 'artworks') {
+ const isAudio = (file.type || '').startsWith('audio/');
+ const prepared = isAudio ? { file } : await compressImageFile(file);
  const formData = new FormData();
- formData.append('file', file);
- formData.append('folder', 'audio');
+ formData.append('file', prepared.file);
+ formData.append('folder', folder);
 
  const res = await fetch(API_ENDPOINTS.upload, {
  method: 'POST',
@@ -6444,560 +5103,908 @@
  });
  const data = await res.json().catch(() => ({}));
  if (!res.ok || !data.ok || !data.url) {
- throw new Error(data.error || `Audio upload failed (${res.status})`);
+ throw new Error(data.error || `Upload failed (${res.status})`);
  }
- return data.url;
+ return { url: data.url, aspect: prepared.aspect || '3/4' };
  }
 
- async function addAmbienceTrackFromAdmin(event) {
+ async function saveArtworkFromAdmin(event) {
  event.preventDefault();
- const btn = document.getElementById('save-audio-track-btn');
- const titleInput = document.getElementById('audio-title-input');
- const urlInput = document.getElementById('audio-url-input');
- const fileInput = document.getElementById('audio-file-input');
- const statusEl = document.getElementById('audio-file-status');
-
- const rawTitle = titleInput.value.trim();
- let finalUrl = urlInput.value.trim();
-
- if (!finalUrl && !(fileInput.files && fileInput.files[0])) {
- showAdminFeedback('Please choose an MP3 file to upload to R2 or enter an audio URL.', true);
- return;
- }
-
+ const btn = document.getElementById('save-artwork-btn');
  if (btn) {
  btn.disabled = true;
- btn.textContent = 'Uploading to R2...';
+ btn.textContent = 'Publishing...';
  }
 
  try {
+ const editId = document.getElementById('edit-artwork-id').value.trim();
+ const artistId = document.getElementById('art-artist-select').value || activeArtistId || 'mt-oung';
+ const artistObj = artists.find(a => a.id === artistId);
+ const title = document.getElementById('art-title-input').value.trim();
+ const customCat = document.getElementById('art-new-category-input').value.trim();
+ const category = customCat || document.getElementById('art-category-select').value || 'Fine Art';
+ const medium = document.getElementById('art-medium-input').value.trim() || 'Oil on Canvas';
+ const hIn = parseFloat(document.getElementById('art-height-in-input').value);
+ const wIn = parseFloat(document.getElementById('art-width-in-input').value);
+ const hCm = (hIn * 2.54).toFixed(1).replace(/\.0$/, '');
+ const wCm = (wIn * 2.54).toFixed(1).replace(/\.0$/, '');
+ const dimensions = `${hIn} × ${wIn} in (${hCm} × ${wCm} cm)`;
+ const year = document.getElementById('art-year-input').value.trim();
+ const provenance = document.getElementById('art-provenance-input').value.trim();
+ const status = document.getElementById('art-status-select').value || 'Available';
+ const price = document.getElementById('art-price-input').value.trim();
+ const description = document.getElementById('art-desc-input').value.trim();
+ const urlVal = document.getElementById('art-url-input').value.trim();
+ const fileInput = document.getElementById('art-file-input');
+
+ const existing = editId ? artworks.find(w => w.id === editId) : null;
+ let imageUrl = urlVal || (existing ? existing.image : '');
+ let aspect = existing ? existing.aspect : (wIn > hIn ? '4/3' : '3/4');
+
  if (fileInput.files && fileInput.files[0]) {
- finalUrl = await uploadAudioFileToR2(fileInput.files[0]);
+ const uploaded = await uploadFileToR2(fileInput.files[0], 'artworks');
+ imageUrl = uploaded.url;
+ aspect = uploaded.aspect;
  }
- const derivedTitle = rawTitle
- || (fileInput.files && fileInput.files[0] ? fileInput.files[0].name.replace(/\.[^/.]+$/, '') : '')
- || `Ambience ${ambienceTracks.length + 1}`;
+ if (!imageUrl) {
+ imageUrl = createArtPlaceholderDataURL(title, category, aspect);
+ }
 
- const normalizedAudioUrl = String(finalUrl).trim().replace(
- 'https://pub-e3da9cedadea4c628207765e7f273b79.r2.dev',
- 'https://media.theartistsloftmm.art'
- );
- const newTrack = {
- id: 'amb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 5),
- title: derivedTitle,
- url: normalizedAudioUrl,
- enabled: true
- };
- ambienceTracks.push(newTrack);
+ const docId = editId || ('art-' + Date.now());
+ const minOrder = artworks.reduce((min, item) => Math.min(min, typeof item.order === 'number' ? item.order : 0), 0);
+ const sortOrder = existing && typeof existing.order === 'number' ? existing.order : (minOrder - 1);
 
- await persistAudioConfigToCloud({
- action: 'Added',
- name: derivedTitle,
- details: finalUrl
+ const res = await fetch(API_ENDPOINTS.artworks, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({
+ id: docId,
+ title,
+ artist_id: artistId,
+ artist_name: artistObj ? artistObj.name : '',
+ category,
+ medium,
+ dimensions,
+ year,
+ provenance,
+ status,
+ price,
+ image_url: imageUrl,
+ description,
+ sort_order: sortOrder
+ })
  });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Artwork save failed (${res.status})`);
+ }
 
- titleInput.value = '';
- urlInput.value = '';
- fileInput.value = '';
- if (statusEl) statusEl.classList.add('hidden');
- showAdminFeedback(`Added "${derivedTitle}" to Ambient Playlist!`);
+ await recordEditLog(editId ? 'Updated' : 'Published', 'Artwork', title, `${artistObj?.name || artistId} • ${dimensions}`);
+ resetAdminForm();
+ await loadCloudGallery(false);
+ showAdminFeedback(`"${title}" has been published to the live gallery!`);
  } catch (err) {
- showAdminFeedback('Audio add failed: ' + (err.message || 'Check ADMIN_API_TOKEN & /api/upload.'), true);
+ showAdminFeedback('Could not save artwork: ' + (err.message || 'Check ADMIN_API_TOKEN & D1 binding.'), true);
  } finally {
  if (btn) {
  btn.disabled = false;
- btn.textContent = 'Add & Save Track';
+ btn.textContent = 'Publish to Live Gallery';
  }
  }
  }
 
- // Soft, delicate tone for UI & scroll interactions
- async function triggerGentleTone(freq, startOffset = 0, duration = 0.45, peakGain = 0.045, endFreq = null) {
- if (!isSoundEnabled) return;
+ function editArtworkInAdmin(id) {
+ const art = artworks.find(w => w.id === id);
+ if (!art) return;
+ switchAdminTab('artworks');
+ document.getElementById('admin-form-heading').textContent = 'Edit Artwork';
+ document.getElementById('edit-artwork-id').value = art.id;
+ document.getElementById('art-artist-select').value = art.artistId || 'mt-oung';
+ document.getElementById('art-title-input').value = art.title || '';
+ populateAdminCategoryDropdown();
+ document.getElementById('art-category-select').value = art.category || 'Fine Art';
+ document.getElementById('art-new-category-input').value = '';
+ document.getElementById('art-medium-input').value = art.medium || 'Oil on Canvas';
+
+ const parsed = parseArtworkPhysicalDimensions(art.size, art.aspect || '3/4');
+ document.getElementById('art-height-in-input').value = String(Number(parsed.heightIn.toFixed(1)));
+ document.getElementById('art-width-in-input').value = String(Number(parsed.widthIn.toFixed(1)));
+ updateComputedSizePreview();
+
+ document.getElementById('art-year-input').value = art.year || '';
+ document.getElementById('art-provenance-input').value = art.provenance || '';
+ document.getElementById('art-status-select').value = (art.status || '').toLowerCase() === 'sold' ? 'Sold' : 'Available';
+ document.getElementById('art-price-input').value = art.price || '';
+ document.getElementById('art-url-input').value = String(art.image || '').startsWith('data:') ? '' : (art.image || '');
+ document.getElementById('art-desc-input').value = art.description || '';
+ document.getElementById('cancel-edit-btn').classList.remove('hidden');
+ document.getElementById('admin-form-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+ }
+
+ function resetAdminForm() {
+ document.getElementById('admin-form-heading').textContent = 'Add New Artwork';
+ document.getElementById('admin-artwork-form')?.reset();
+ document.getElementById('edit-artwork-id').value = '';
+ document.getElementById('art-medium-input').value = 'Oil on Canvas';
+ document.getElementById('art-file-status')?.classList.add('hidden');
+ document.getElementById('cancel-edit-btn')?.classList.add('hidden');
+ updateComputedSizePreview();
+ }
+
+ async function deleteArtworkFromAdmin(id) {
+ const target = artworks.find(w => w.id === id);
+ if (!target) return;
+ if (!window.confirm(`Delete "${target.title}" from the live gallery?`)) return;
  try {
- const ctx = await ensureAudioContext();
- if (!ctx || ctx.state !== 'running') return;
-
- const now = ctx.currentTime + Math.max(0, startOffset);
- const osc = ctx.createOscillator();
- osc.type = 'sine';
- osc.frequency.setValueAtTime(freq, now);
- if (endFreq && endFreq !== freq) {
- osc.frequency.exponentialRampToValueAtTime(Math.max(80, endFreq), now + duration);
- }
-
- const filter = ctx.createBiquadFilter();
- filter.type = 'lowpass';
- filter.frequency.setValueAtTime(2400, now);
-
- const gain = ctx.createGain();
- const safePeak = Math.max(0.005, Math.min(0.08, peakGain));
- gain.gain.setValueAtTime(0.0001, now);
- gain.gain.linearRampToValueAtTime(safePeak, now + Math.min(0.035, duration * 0.2));
- gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
- osc.connect(filter);
- filter.connect(gain);
- gain.connect(masterGain || ctx.destination);
-
- osc.start(now);
- osc.stop(now + duration + 0.03);
- } catch (e) {}
- }
-
- async function playSoftGalleryChime(type = 'nav') {
- if (!isSoundEnabled) return;
- if (type === 'artist') {
- triggerGentleTone(440.00, 0, 0.55, 0.042, 493.88);
- triggerGentleTone(659.25, 0.09, 0.65, 0.036, 659.25);
- return;
- }
- if (type === 'select' || type === 'filter') {
- triggerGentleTone(523.25, 0, 0.28, 0.038, 587.33);
- return;
- }
- if (type === 'click' || type === 'open') {
- triggerGentleTone(392.00, 0, 0.34, 0.042, 440.00);
- return;
- }
- if (type === 'close') {
- triggerGentleTone(440.00, 0, 0.30, 0.034, 349.23);
- return;
- }
- if (type === 'success') {
- triggerGentleTone(523.25, 0, 0.32, 0.040);
- triggerGentleTone(659.25, 0.08, 0.42, 0.036);
- return;
- }
- triggerGentleTone(493.88, 0, 0.30, 0.036, 523.25);
- }
-
- function handleGentleScrollSound() {
- if (!isSoundEnabled) return;
- const nowMs = Date.now();
- const currentY = window.scrollY || 0;
- const deltaY = Math.abs(currentY - lastScrollY);
- lastScrollY = currentY;
-
- if (deltaY < 14 || nowMs - lastScrollChimeTime < 220) return;
- lastScrollChimeTime = nowMs;
-
- const pitch = 360 + ((currentY % 180) * 0.5);
- triggerGentleTone(pitch, 0, 0.16, 0.016, pitch * 1.04);
- }
-
- function bindGentleScrollSound() {
- if (scrollChimeBound) return;
- scrollChimeBound = true;
- lastScrollY = window.scrollY || 0;
- window.addEventListener('scroll', handleGentleScrollSound, { passive: true });
- }
-
- async function playArtworkDragWhisper(intensity = 0.4) {
- if (!isSoundEnabled) return;
- const nowMs = Date.now();
- if (nowMs - lastDragWhisperTime < 220) return;
- lastDragWhisperTime = nowMs;
- const scaledGain = 0.004 + (Math.max(0, Math.min(1, intensity)) * 0.005);
- triggerGentleTone(392.00, 0, 0.18, scaledGain, 415.30);
- }
-
- function bindFirstInteractionAudioUnlock() {
- if (audioUnlockBound) return;
- audioUnlockBound = true;
- const unlock = async () => {
- if (isSoundEnabled) {
- await ensureAudioContext();
- startAmbientSoundscape();
- }
- ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
- window.removeEventListener(evt, unlock);
+ const res = await fetch(`${API_ENDPOINTS.artworks}?id=${encodeURIComponent(id)}`, {
+ method: 'DELETE',
+ headers: getAdminAuthHeaders()
  });
- };
- ['pointerdown', 'touchstart', 'keydown'].forEach(evt => {
- window.addEventListener(evt, unlock, { passive: true });
- });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Delete failed (${res.status})`);
  }
-
- // ==================== GLOBAL BACKDROP ARTWORKS, OPACITY & LAYOUT CONTROLS ====================
- function loadLocalBackdropConfig() {
- try {
- const raw = localStorage.getItem(BACKDROP_STORAGE_KEY);
- if (!raw) return;
- const parsed = JSON.parse(raw);
- backdropConfig = { ...DEFAULT_BACKDROP_CONFIG, ...parsed };
- } catch (e) {}
- }
-
- function applyGlobalBackdropConfig(sectionOverride = null) {
- if (sectionOverride) currentActiveSectionId = sectionOverride;
- const container = document.getElementById('global-art-backdrop');
- const img1 = document.getElementById('home-bg-1');
- const img2 = document.getElementById('home-bg-2');
- if (!container || !img1 || !img2) return;
-
- const isDark = document.documentElement.classList.contains('dark');
- const rawPct = isDark ? Number(backdropConfig.darkOpacity ?? 44) : Number(backdropConfig.lightOpacity ?? 34);
- const effectiveOpacity = Math.max(0, Math.min(0.85, rawPct / 100));
-
- const hideOnNonHome = backdropConfig.layout === 'home-only' && currentActiveSectionId !== 'home';
- container.style.display = hideOnNonHome ? 'none' : 'flex';
-
- const leftSrc = backdropConfig.leftImage || '05582-mtoung3.jpg';
- const rightSrc = backdropConfig.rightImage || '8899c-mtoung4.jpg';
- if (img1.getAttribute('src') !== leftSrc) {
- img1.dataset.fallbackApplied = 'false';
- img1.src = leftSrc;
- }
- if (img2.getAttribute('src') !== rightSrc) {
- img2.dataset.fallbackApplied = 'false';
- img2.src = rightSrc;
- }
-
- img1.style.transition = 'none';
- img2.style.transition = 'none';
- img1.style.transform = 'none';
- img2.style.transform = 'none';
- img1.style.opacity = effectiveOpacity.toFixed(3);
- img2.style.opacity = effectiveOpacity.toFixed(3);
-
- if (backdropConfig.layout === 'single') {
- img1.classList.remove('w-1/2');
- img1.classList.add('w-full');
- img2.classList.add('hidden');
- } else {
- img1.classList.remove('w-full');
- img1.classList.add('w-1/2');
- img2.classList.remove('hidden');
- }
- }
-
- function populateBackdropAdminUI() {
- const leftSelect = document.getElementById('backdrop-left-select');
- const rightSelect = document.getElementById('backdrop-right-select');
- const leftUrlInput = document.getElementById('backdrop-left-url-input');
- const rightUrlInput = document.getElementById('backdrop-right-url-input');
- const leftPrev = document.getElementById('backdrop-left-preview');
- const rightPrev = document.getElementById('backdrop-right-preview');
- const lightSlider = document.getElementById('backdrop-light-opacity-slider');
- const darkSlider = document.getElementById('backdrop-dark-opacity-slider');
- const lightLabel = document.getElementById('backdrop-light-opacity-label');
- const darkLabel = document.getElementById('backdrop-dark-opacity-label');
-
- const buildOptions = (defaultFile, defaultLabel) => {
- const defaultOpt = `<option value="${escapeHTML(defaultFile)}">${escapeHTML(defaultLabel)}</option>`;
- const artOpts = artworks.map(a =>
- `<option value="${escapeHTML(a.image)}">${escapeHTML(a.title)} (${escapeHTML(a.category || 'Fine Art')})</option>`
- ).join('');
- return defaultOpt + artOpts;
- };
-
- if (leftSelect) {
- leftSelect.innerHTML = buildOptions('05582-mtoung3.jpg', 'Default: Lotus Study I (05582-mtoung3.jpg)');
- const matchL = Array.from(leftSelect.options).some(o => o.value === backdropConfig.leftImage);
- if (matchL) {
- leftSelect.value = backdropConfig.leftImage;
- if (leftUrlInput) leftUrlInput.value = '';
- } else if (leftUrlInput) {
- leftUrlInput.value = backdropConfig.leftImage || '';
- }
- }
- if (rightSelect) {
- rightSelect.innerHTML = buildOptions('8899c-mtoung4.jpg', 'Default: Lotus Study II (8899c-mtoung4.jpg)');
- const matchR = Array.from(rightSelect.options).some(o => o.value === backdropConfig.rightImage);
- if (matchR) {
- rightSelect.value = backdropConfig.rightImage;
- if (rightUrlInput) rightUrlInput.value = '';
- } else if (rightUrlInput) {
- rightUrlInput.value = backdropConfig.rightImage || '';
- }
- }
- if (leftPrev) leftPrev.src = backdropConfig.leftImage || '05582-mtoung3.jpg';
- if (rightPrev) rightPrev.src = backdropConfig.rightImage || '8899c-mtoung4.jpg';
-
- const lPct = Number(backdropConfig.lightOpacity ?? 34);
- const dPct = Number(backdropConfig.darkOpacity ?? 44);
- if (lightSlider) lightSlider.value = String(lPct);
- if (darkSlider) darkSlider.value = String(dPct);
- if (lightLabel) lightLabel.textContent = `${lPct}%`;
- if (darkLabel) darkLabel.textContent = `${dPct}%`;
-
- updateBackdropLayoutButtonsUI();
- }
-
- function updateBackdropLayoutButtonsUI() {
- ['split', 'single', 'home-only'].forEach(mode => {
- const btn = document.getElementById('backdrop-layout-btn-' + mode);
- if (!btn) return;
- const isSelected = (backdropConfig.layout || 'split') === mode;
- btn.className = isSelected
- ? 'backdrop-layout-choice-btn p-3.5 rounded-xl border-2 border-[#26231F] dark:border-[#D4B483] bg-white dark:bg-[#1B1916] text-left transition-all shadow-sm'
- : 'backdrop-layout-choice-btn p-3.5 rounded-xl border border-[#A69076]/35 bg-white/60 dark:bg-[#1B1916]/60 text-left transition-all opacity-75 hover:opacity-100';
- });
- const rightBox = document.getElementById('backdrop-right-picker-box');
- if (rightBox) {
- rightBox.style.opacity = backdropConfig.layout === 'single' ? '0.45' : '1';
- }
- }
-
- function setBackdropLayoutChoice(layoutMode) {
- playSoftGalleryChime('select');
- backdropConfig.layout = layoutMode;
- updateBackdropLayoutButtonsUI();
- applyGlobalBackdropConfig();
- }
-
- function previewBackdropOpacity(themeType, pctVal) {
- const pct = Math.max(0, Math.min(80, Number(pctVal) || 0));
- if (themeType === 'dark') {
- backdropConfig.darkOpacity = pct;
- const lbl = document.getElementById('backdrop-dark-opacity-label');
- if (lbl) lbl.textContent = `${pct}%`;
- } else {
- backdropConfig.lightOpacity = pct;
- const lbl = document.getElementById('backdrop-light-opacity-label');
- if (lbl) lbl.textContent = `${pct}%`;
- }
- applyGlobalBackdropConfig();
- }
-
- function onBackdropSelectChange(side, val) {
- if (side === 'left') {
- backdropConfig.leftImage = val;
- const prev = document.getElementById('backdrop-left-preview');
- const urlIn = document.getElementById('backdrop-left-url-input');
- if (prev) prev.src = val;
- if (urlIn) urlIn.value = '';
- } else {
- backdropConfig.rightImage = val;
- const prev = document.getElementById('backdrop-right-preview');
- const urlIn = document.getElementById('backdrop-right-url-input');
- if (prev) prev.src = val;
- if (urlIn) urlIn.value = '';
- }
- applyGlobalBackdropConfig();
- }
-
- function onBackdropCustomUrlInput(side, urlVal) {
- const clean = String(urlVal || '').trim();
- if (!clean) return;
- if (side === 'left') {
- backdropConfig.leftImage = clean;
- const prev = document.getElementById('backdrop-left-preview');
- if (prev) prev.src = clean;
- } else {
- backdropConfig.rightImage = clean;
- const prev = document.getElementById('backdrop-right-preview');
- if (prev) prev.src = clean;
- }
- applyGlobalBackdropConfig();
- }
-
- async function uploadBackdropFileToR2(side, inputEl) {
- const file = inputEl?.files?.[0];
- if (!file) return;
- const statusEl = document.getElementById(side === 'left' ? 'backdrop-left-upload-status' : 'backdrop-right-upload-status');
- if (statusEl) {
- statusEl.textContent = `Uploading ${file.name} to R2...`;
- statusEl.classList.remove('hidden');
- }
- try {
- const uploaded = await uploadFileToR2(file, 'backdrops');
- if (side === 'left') {
- backdropConfig.leftImage = uploaded.url;
- const prev = document.getElementById('backdrop-left-preview');
- const urlIn = document.getElementById('backdrop-left-url-input');
- if (prev) prev.src = uploaded.url;
- if (urlIn) urlIn.value = uploaded.url;
- } else {
- backdropConfig.rightImage = uploaded.url;
- const prev = document.getElementById('backdrop-right-preview');
- const urlIn = document.getElementById('backdrop-right-url-input');
- if (prev) prev.src = uploaded.url;
- if (urlIn) urlIn.value = uploaded.url;
- }
- applyGlobalBackdropConfig();
- if (statusEl) {
- statusEl.textContent = 'Uploaded to R2! Click "Save Backdrop & Layout" below to publish.';
- }
+ await recordEditLog('Deleted', 'Artwork', target.title, target.category || '');
+ await loadCloudGallery(false);
+ showAdminFeedback(`Deleted "${target.title}".`);
  } catch (err) {
- if (statusEl) {
- statusEl.textContent = 'Upload failed: ' + (err.message || 'Check ADMIN_API_TOKEN.');
- }
- showAdminFeedback('Backdrop upload failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ showAdminFeedback('Could not delete artwork: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
  }
  }
 
- function resetBackdropSettingsToDefault() {
- playSoftGalleryChime('select');
- backdropConfig = { ...DEFAULT_BACKDROP_CONFIG };
- populateBackdropAdminUI();
- applyGlobalBackdropConfig();
+ function renderAdminArtworksList() {
+ const countEl = document.getElementById('admin-total-count');
+ const listEl = document.getElementById('admin-artworks-list');
+ if (countEl) countEl.textContent = artworks.length;
+ if (!listEl) return;
+
+ if (artworks.length === 0) {
+ listEl.innerHTML = `<p class="col-span-full text-xs opacity-60 py-6 text-center">No artworks in collection yet.</p>`;
+ return;
  }
 
- async function saveBackdropSettingsToCloud() {
- const btn = document.getElementById('save-backdrop-btn');
+ listEl.innerHTML = artworks.map(art => {
+ const artist = artists.find(a => a.id === (art.artistId || 'mt-oung'));
+ const safeId = escapeHTML(art.id);
+ const safeTitle = escapeHTML(art.title);
+ const safeArtist = escapeHTML(artist ? artist.name : art.artistId);
+ const safeSize = escapeHTML(art.size || '');
+ const safeImg = escapeHTML(art.image);
+ return `
+ <div class="p-3.5 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/25 flex items-center justify-between gap-3">
+ <div class="flex items-center gap-3 min-w-0">
+ <img src="${safeImg}" alt="${safeTitle}" data-title="${safeTitle}" onerror="handleCardImageError(this)" class="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-[#E7E0D2]">
+ <div class="min-w-0">
+ <h6 class="font-serif text-sm font-medium truncate">${safeTitle}</h6>
+ <p class="text-[11px] opacity-65 truncate">${safeArtist} • ${escapeHTML(art.category || 'Fine Art')}</p>
+ ${safeSize ? `<p class="text-[10px] text-[#9C8265] dark:text-[#D4B483] truncate">${safeSize}</p>` : ''}
+ </div>
+ </div>
+ <div class="flex items-center gap-1.5 flex-shrink-0">
+ <button type="button" onclick="editArtworkInAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">Edit</button>
+ <button type="button" onclick="deleteArtworkFromAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">Delete</button>
+ </div>
+ </div>
+ `;
+ }).join('');
+ }
+
+ async function saveArtistFromAdmin(event) {
+ event.preventDefault();
+ const btn = document.getElementById('save-artist-btn');
  if (btn) {
  btn.disabled = true;
  btn.textContent = 'Saving...';
  }
  try {
- try { localStorage.setItem(BACKDROP_STORAGE_KEY, JSON.stringify(backdropConfig)); } catch (e) {}
+ const editId = document.getElementById('edit-artist-id').value.trim();
+ const name = document.getElementById('artist-name-input').value.trim();
+ const subtitle = document.getElementById('artist-subtitle-input').value.trim();
+ const bio = document.getElementById('artist-bio-input').value.trim();
+ const urlVal = document.getElementById('artist-url-input').value.trim();
+ const fileIn = document.getElementById('artist-file-input');
+
+ const existing = editId ? artists.find(a => a.id === editId) : null;
+ let portraitUrl = urlVal || (existing ? existing.image : 'artist.jpg');
+ if (fileIn.files && fileIn.files[0]) {
+ const uploaded = await uploadFileToR2(fileIn.files[0], 'artists');
+ portraitUrl = uploaded.url;
+ }
+
+ const artistId = editId || (name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || ('artist-' + Date.now()));
+ const combinedBio = subtitle ? `${subtitle}\n\n${bio}` : bio;
+
+ const res = await fetch(API_ENDPOINTS.artists, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({
+ id: artistId,
+ name,
+ bio: combinedBio,
+ portrait_url: portraitUrl,
+ sort_order: existing?.order || (artists.length + 1)
+ })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Artist save failed (${res.status})`);
+ }
+
+ await recordEditLog(editId ? 'Updated' : 'Added', 'Artist', name, subtitle);
+ resetArtistForm();
+ await loadCloudGallery(false);
+ showAdminFeedback(`Saved artist profile for "${name}".`);
+ } catch (err) {
+ showAdminFeedback('Could not save artist: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ } finally {
+ if (btn) {
+ btn.disabled = false;
+ btn.textContent = 'Save Artist Profile';
+ }
+ }
+ }
+
+ function editArtistInAdmin(id) {
+ const artist = artists.find(a => a.id === id);
+ if (!artist) return;
+ document.getElementById('admin-artist-form-heading').textContent = 'Edit Artist Profile';
+ document.getElementById('edit-artist-id').value = artist.id;
+ document.getElementById('artist-name-input').value = artist.name || '';
+ document.getElementById('artist-subtitle-input').value = artist.subtitle || '';
+ document.getElementById('artist-url-input').value = String(artist.image || '').startsWith('data:') ? '' : (artist.image || '');
+ document.getElementById('artist-bio-input').value = artist.bio || '';
+ document.getElementById('cancel-artist-edit-btn').classList.remove('hidden');
+ }
+
+ function resetArtistForm() {
+ document.getElementById('admin-artist-form-heading').textContent = 'Add New Artist Profile';
+ document.getElementById('admin-artist-form')?.reset();
+ document.getElementById('edit-artist-id').value = '';
+ document.getElementById('artist-file-status')?.classList.add('hidden');
+ document.getElementById('cancel-artist-edit-btn')?.classList.add('hidden');
+ }
+
+ async function deleteArtistFromAdmin(id) {
+ if (artists.length <= 1) {
+ showAdminFeedback('At least one artist profile must remain in the gallery.', true);
+ return;
+ }
+ const target = artists.find(a => a.id === id);
+ if (!target || !window.confirm(`Delete artist "${target.name}"?`)) return;
+ try {
+ const res = await fetch(`${API_ENDPOINTS.artists}?id=${encodeURIComponent(id)}`, {
+ method: 'DELETE',
+ headers: getAdminAuthHeaders()
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Delete failed (${res.status})`);
+ }
+ if (activeArtistId === id) {
+ activeArtistId = artists.find(a => a.id !== id)?.id || 'mt-oung';
+ }
+ await recordEditLog('Deleted', 'Artist', target.name, '');
+ await loadCloudGallery(false);
+ showAdminFeedback(`Deleted artist "${target.name}".`);
+ } catch (err) {
+ showAdminFeedback('Could not delete artist: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ }
+ }
+
+ function renderAdminArtistsList() {
+ const countEl = document.getElementById('admin-artists-count');
+ const listEl = document.getElementById('admin-artists-list');
+ if (countEl) countEl.textContent = artists.length;
+ if (!listEl) return;
+
+ listEl.innerHTML = artists.map(a => {
+ const safeId = escapeHTML(a.id);
+ const safeName = escapeHTML(a.name);
+ const safeSub = escapeHTML(a.subtitle || '');
+ const safeImg = escapeHTML(a.image || 'artist.jpg');
+ return `
+ <div class="p-3.5 rounded-2xl bg-white dark:bg-[#141210] border border-[#A69076]/25 flex items-center justify-between gap-3">
+ <div class="flex items-center gap-3 min-w-0">
+ <img src="${safeImg}" alt="${safeName}" data-artist-name="${safeName}" onerror="handleArtistFallback(this, '${safeName.replace(/'/g, "\\'")}')" class="w-12 h-14 rounded-xl object-cover flex-shrink-0 bg-[#E7E0D2]">
+ <div class="min-w-0">
+ <h6 class="font-serif text-sm font-medium truncate">${safeName}</h6>
+ <p class="text-[11px] opacity-65 truncate">${safeSub}</p>
+ </div>
+ </div>
+ <div class="flex items-center gap-1.5 flex-shrink-0">
+ <button type="button" onclick="editArtistInAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-[#A69076]/40 text-xs hover:bg-[#A69076] hover:text-white transition-colors">Edit</button>
+ <button type="button" onclick="deleteArtistFromAdmin('${safeId}')" class="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs hover:bg-red-50 transition-colors">Delete</button>
+ </div>
+ </div>
+ `;
+ }).join('');
+ }
+
+ function populateGalleryAboutAdminForm() {
+ const hIn = document.getElementById('about-heading-input');
+ const sIn = document.getElementById('about-subtitle-input');
+ const bIn = document.getElementById('about-body-input');
+ if (hIn) hIn.value = galleryAbout.heading || DEFAULT_GALLERY_ABOUT.heading;
+ if (sIn) sIn.value = galleryAbout.subtitle || DEFAULT_GALLERY_ABOUT.subtitle;
+ if (bIn) bIn.value = galleryAbout.body || DEFAULT_GALLERY_ABOUT.body;
+ }
+
+ async function saveGalleryAboutFromAdmin(event) {
+ event.preventDefault();
+ const heading = document.getElementById('about-heading-input').value.trim();
+ const subtitle = document.getElementById('about-subtitle-input').value.trim();
+ const body = document.getElementById('about-body-input').value.trim();
+ if (!heading || !body) return;
+
+ try {
+ const updated = { heading, subtitle, body };
+ const res = await fetch(API_ENDPOINTS.settings, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({ key: 'gallery_about', value: updated })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Save failed (${res.status})`);
+ }
+ galleryAbout = updated;
+ renderGalleryAboutSection();
+ await recordEditLog('Updated', 'Gallery About', heading, '');
+ showAdminFeedback('Gallery About page updated!');
+ } catch (err) {
+ showAdminFeedback('Could not update Gallery About: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ }
+ }
+
+ // ==================== ADMIN TAB: GALLERY EXPERIENCE ====================
+ let experienceSaveStatusTimer = null;
+
+ function setExperienceSaveStatus(message, isError = false) {
+ const statusEl = document.getElementById('experience-save-status');
+ if (!statusEl) return;
+ statusEl.textContent = message;
+ statusEl.className = isError
+ ? 'text-xs text-red-600 dark:text-red-300 font-medium'
+ : 'text-xs text-[#9C8265] dark:text-[#D4B483] font-medium';
+ clearTimeout(experienceSaveStatusTimer);
+ experienceSaveStatusTimer = setTimeout(() => {
+ statusEl.textContent = 'Recommended: Soft Greige · 65% room light · 42–72% scroll opacity.';
+ statusEl.className = 'text-xs opacity-70';
+ }, 4000);
+ }
+
+ function updateExperienceColorReadout(hexValue) {
+ const cleanHex = String(hexValue || DEFAULT_GALLERY_EXPERIENCE.defaultWallColor).trim().toUpperCase();
+ const hexEl = document.getElementById('experience-wall-hex');
+ const presetEl = document.getElementById('experience-wall-preset-name');
+ if (hexEl) hexEl.textContent = cleanHex;
+ if (presetEl) {
+ const match = WALL_COLOR_PRESETS.find(item => item.hex.toUpperCase() === cleanHex);
+ presetEl.textContent = match ? match.name : 'Custom Wall';
+ }
+ }
+
+ function syncExperienceControls(cfg) {
+ const normalized = normalizeGalleryExperience(cfg);
+ const colorInput = document.getElementById('experience-wall-color');
+ const lightInput = document.getElementById('experience-room-light');
+ const minInput = document.getElementById('experience-scroll-min');
+ const maxInput = document.getElementById('experience-scroll-max');
+ const spotIntInput = document.getElementById('experience-spotlight-intensity');
+ const spotSoftInput = document.getElementById('experience-spotlight-softness');
+
+ if (colorInput) colorInput.value = normalized.defaultWallColor;
+ if (lightInput) lightInput.value = String(normalized.roomBrightness);
+ if (minInput) minInput.value = String(normalized.scrollOpacityMin);
+ if (maxInput) maxInput.value = String(normalized.scrollOpacityMax);
+ if (spotIntInput) spotIntInput.value = String(normalized.spotlightIntensity);
+ if (spotSoftInput) spotSoftInput.value = String(normalized.spotlightSoftness);
+
+ const lightLabel = document.getElementById('experience-room-light-label');
+ const minLabel = document.getElementById('experience-scroll-min-label');
+ const maxLabel = document.getElementById('experience-scroll-max-label');
+ const spotIntLabel = document.getElementById('experience-spotlight-intensity-label');
+ const spotSoftLabel = document.getElementById('experience-spotlight-softness-label');
+
+ if (lightLabel) lightLabel.textContent = `${normalized.roomBrightness}%`;
+ if (minLabel) minLabel.textContent = `${normalized.scrollOpacityMin}%`;
+ if (maxLabel) maxLabel.textContent = `${normalized.scrollOpacityMax}%`;
+ if (spotIntLabel) spotIntLabel.textContent = `${normalized.spotlightIntensity}%`;
+ if (spotSoftLabel) spotSoftLabel.textContent = `${normalized.spotlightSoftness} px`;
+ updateExperienceColorReadout(normalized.defaultWallColor);
+ }
+
+ function populateExperienceAdminUI() {
+ syncExperienceControls(galleryExperience);
+ }
+
+ function readExperienceFormValues() {
+ return normalizeGalleryExperience({
+ defaultWallColor: document.getElementById('experience-wall-color')?.value,
+ roomBrightness: document.getElementById('experience-room-light')?.value,
+ scrollOpacityMin: document.getElementById('experience-scroll-min')?.value,
+ scrollOpacityMax: document.getElementById('experience-scroll-max')?.value,
+ spotlightIntensity: document.getElementById('experience-spotlight-intensity')?.value,
+ spotlightSoftness: document.getElementById('experience-spotlight-softness')?.value
+ });
+ }
+
+ function previewGalleryExperienceSettings() {
+ galleryExperience = readExperienceFormValues();
+ syncExperienceControls(galleryExperience);
+ applyGalleryExperienceSettings();
+ }
+
+ function resetGalleryExperienceAdmin() {
+ playSoftGalleryChime('select');
+ galleryExperience = { ...DEFAULT_GALLERY_EXPERIENCE };
+ syncExperienceControls(galleryExperience);
+ applyGalleryExperienceSettings();
+ setExperienceSaveStatus('Restored recommended defaults. Click Save Experience Settings to store.');
+ }
+
+ async function saveGalleryExperienceFromAdmin() {
+ const btn = document.getElementById('save-experience-btn');
+ const normalized = readExperienceFormValues();
+ galleryExperience = normalized;
+ syncExperienceControls(normalized);
+ applyGalleryExperienceSettings();
+
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Saving...';
+ }
+ try {
  const res = await fetch(API_ENDPOINTS.settings, {
  method: 'POST',
  headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
  body: JSON.stringify({
- key: 'backdrop_config',
- value: { ...backdropConfig, updatedAt: Date.now() }
+ key: 'gallery_experience',
+ value: { ...normalized, updatedAt: Date.now() }
  })
  });
  const data = await res.json().catch(() => ({}));
  if (!res.ok || !data.ok) {
  throw new Error(data.error || `Settings save failed (${res.status})`);
  }
- applyGlobalBackdropConfig();
- showAdminFeedback('Backdrop images, opacity & layout saved to Cloudflare D1!');
- await recordEditLog('Updated', 'Backdrop & Layout', backdropConfig.layout, `Light ${backdropConfig.lightOpacity}% • Dark ${backdropConfig.darkOpacity}%`);
+ setExperienceSaveStatus('Saved gallery experience settings.');
+ showAdminFeedback('Gallery viewing experience settings saved!');
+ await recordEditLog('Updated', 'Experience', 'Gallery Viewing Experience', `Light ${normalized.roomBrightness}% • Scroll ${normalized.scrollOpacityMin}-${normalized.scrollOpacityMax}%`);
  } catch (err) {
- showAdminFeedback('Backdrop save failed: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ setExperienceSaveStatus(err.message || 'Could not save experience settings.', true);
+ showAdminFeedback('Could not save experience settings: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
  } finally {
  if (btn) {
  btn.disabled = false;
- btn.textContent = 'Save Backdrop & Layout';
+ btn.textContent = 'Save Experience Settings';
  }
  }
  }
 
- loadLocalBackdropConfig();
- applyGlobalBackdropConfig('home');
- loadLocalAudioConfig();
- bindGentleScrollSound();
+ // ==================== ADMIN TAB: VISITOR ACTIVITY & EDIT LOG ====================
+ let uniqueVisitorsPanelOpen = false;
 
- // Expose functions globally for inline HTML event handlers
- window.setBackdropLayoutChoice = setBackdropLayoutChoice;
- window.previewBackdropOpacity = previewBackdropOpacity;
- window.onBackdropSelectChange = onBackdropSelectChange;
- window.onBackdropCustomUrlInput = onBackdropCustomUrlInput;
- window.uploadBackdropFileToR2 = uploadBackdropFileToR2;
- window.resetBackdropSettingsToDefault = resetBackdropSettingsToDefault;
- window.saveBackdropSettingsToCloud = saveBackdropSettingsToCloud;
- window.selectArtist = selectArtist;
- window.scrollToArtistWorks = scrollToArtistWorks;
- window.filterByCategory = filterByCategory;
- window.inquireAboutArtwork = inquireAboutArtwork;
- window.inquireAboutArtworkWithFrame = inquireAboutArtworkWithFrame;
- window.openWallPreviewById = openWallPreviewById;
- window.selectWallArtworkById = selectWallArtworkById;
- window.navigateWallPreview = navigateWallPreview;
- window.closeWallPreview = closeWallPreview;
- window.setWallPreviewColor = setWallPreviewColor;
- window.setWallPreviewFrame = setWallPreviewFrame;
- window.setWallPreviewScale = setWallPreviewScale;
- window.setWallRoomBrightness = setWallRoomBrightness;
- window.cycleWallSpotlight = cycleWallSpotlight;
- window.toggleWallFurniture = toggleWallFurniture;
- window.resetWallAutoScale = resetWallAutoScale;
- window.openLightboxById = openLightboxById;
- window.navigateLightbox = navigateLightbox;
- window.closeLightbox = closeLightbox;
- window.openAdminModal = openAdminModal;
- window.closeAdminModal = closeAdminModal;
- window.lockAdminSession = lockAdminSession;
- window.verifyAdminPin = verifyAdminPin;
- window.switchAdminTab = switchAdminTab;
- window.saveArtworkFromAdmin = saveArtworkFromAdmin;
- window.editArtworkInAdmin = editArtworkInAdmin;
- window.resetAdminForm = resetAdminForm;
- window.deleteArtworkFromAdmin = deleteArtworkFromAdmin;
- window.updateComputedSizePreview = updateComputedSizePreview;
- window.saveArtistFromAdmin = saveArtistFromAdmin;
- window.editArtistInAdmin = editArtistInAdmin;
- window.resetArtistForm = resetArtistForm;
- window.deleteArtistFromAdmin = deleteArtistFromAdmin;
- window.saveGalleryAboutFromAdmin = saveGalleryAboutFromAdmin;
- window.loadVisitorActivityFromCloud = loadVisitorActivityFromCloud;
- window.toggleUniqueVisitorsPanel = toggleUniqueVisitorsPanel;
- window.triggerMonthlyReportNow = triggerMonthlyReportNow;
- window.downloadEditLogsCSV = downloadEditLogsCSV;
- window.downloadEditLogsJSON = downloadEditLogsJSON;
- window.exportArtworksJSON = exportArtworksJSON;
- window.handleContactSubmit = handleContactSubmit;
- window.switchSalonAuthMode = switchSalonAuthMode;
- window.handleSalonMemberSubmit = handleSalonMemberSubmit;
- window.handleSalonResetConfirm = handleSalonResetConfirm;
- window.requestSalonNewsletterConfirmation = requestSalonNewsletterConfirmation;
- window.showSalonEmailLinkFeedback = showSalonEmailLinkFeedback;
- window.loadSalonAdminData = loadSalonAdminData;
- window.migrateLegacySalonMembers = migrateLegacySalonMembers;
- window.sendAdminNewsletter = sendAdminNewsletter;
- window.signOutSalonMember = signOutSalonMember;
- window.togglePrivateSalonVisibility = togglePrivateSalonVisibility;
- window.reserveVipArtwork = reserveVipArtwork;
- window.inspectVipArtwork = inspectVipArtwork;
- window.toggleSuspendSalonMember = toggleSuspendSalonMember;
- window.resetMemberPasscodeByAdmin = resetMemberPasscodeByAdmin;
- window.copyIssuedMemberPasscode = copyIssuedMemberPasscode;
- window.editVipArtworkInAdmin = editVipArtworkInAdmin;
- window.resetVipArtForm = resetVipArtForm;
- window.deleteVipArtworkFromAdmin = deleteVipArtworkFromAdmin;
- window.moveVipArtworkToPublicArtworks = moveVipArtworkToPublicArtworks;
- window.revokeSalonMember = revokeSalonMember;
- window.exportSalonMembersCSV = exportSalonMembersCSV;
- window.exportSalonActivityCSV = exportSalonActivityCSV;
- window.previewNextRandomAmbience = previewNextRandomAmbience;
- window.addAmbienceTrackFromAdmin = addAmbienceTrackFromAdmin;
- window.selectAndPlayAmbienceTrack = selectAndPlayAmbienceTrack;
- window.toggleAmbienceTrackEnabled = toggleAmbienceTrackEnabled;
- window.deleteAmbienceTrack = deleteAmbienceTrack;
- window.playSoftGalleryChime = playSoftGalleryChime;
- window.playArtworkDragWhisper = playArtworkDragWhisper;
- window.initGalleryCardAnimations = initGalleryCardAnimations;
- window.trackVisitorEvent = trackVisitorEvent;
- window.toggleAnalyticsExclusion = toggleAnalyticsExclusion;
- window.formatMyanmarTime = formatMyanmarTime;
-
- // Initial Render & Cloudflare D1 Startup
- loadLocalSalonState();
- loadSalonSession();
- const hasSalonResetParam =
-   new URLSearchParams(window.location.search).has("salon-reset") ||
-   window.location.hash.includes("salon-reset");
- processSalonEmailLinks();
- renderGalleryAboutSection();
- renderArtistSelectorBar();
- renderSelectedArtistProfile();
- renderCategoryFilterBar();
- renderArtworksGrid();
- renderSalonView();
- if (!hasSalonResetParam) {
-   const loginTabBtn = Array.from(document.querySelectorAll("button")).find(
-     el => /^\s*member\s+login\s*$/i.test(el.textContent || "")
-   );
-   if (loginTabBtn) loginTabBtn.click();
+ function toggleUniqueVisitorsPanel(forceState = null) {
+ const panel = document.getElementById('unique-visitors-dropdown-panel');
+ const chev = document.getElementById('unique-visitors-chevron');
+ if (!panel) return;
+ uniqueVisitorsPanelOpen = typeof forceState === 'boolean' ? forceState : !uniqueVisitorsPanelOpen;
+ panel.classList.toggle('hidden', !uniqueVisitorsPanelOpen);
+ if (chev) chev.textContent = uniqueVisitorsPanelOpen ? '▴ Hide' : '▾ View';
  }
+
+ async function loadVisitorActivityFromCloud() {
+ if (!getSavedAdminToken()) return;
+ try {
+ const res = await fetch(API_ENDPOINTS.activity, {
+ headers: getAdminAuthHeaders(),
+ cache: 'no-store'
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Visitor activity load failed (${res.status})`);
+ }
+ visitorActivityData = {
+ logs: Array.isArray(data.logs) ? data.logs : [],
+ topArtworks: Array.isArray(data.topArtworks) ? data.topArtworks : [],
+ topCountries: Array.isArray(data.topCountries) ? data.topCountries : []
+ };
+ renderVisitorActivityAdmin();
+ } catch (err) {
+ const listEl = document.getElementById('admin-visitor-logs-list');
+ if (listEl) listEl.innerHTML = `<p class="text-xs text-red-600 py-3 text-center">${escapeHTML(err.message)}</p>`;
+ }
+ }
+
+ function renderVisitorActivityAdmin() {
+ const logs = visitorActivityData.logs || [];
+ const totalEventsEl = document.getElementById('visitor-stat-events');
+ const uniqueEl = document.getElementById('visitor-stat-unique');
+ const topSourceEl = document.getElementById('visitor-stat-top-source');
+ const devicesEl = document.getElementById('visitor-stat-devices');
+ const sourcesBox = document.getElementById('visitor-top-sources');
+ const artsBox = document.getElementById('visitor-top-artworks');
+ const countriesBox = document.getElementById('visitor-top-countries');
+ const logsListEl = document.getElementById('admin-visitor-logs-list');
+ const uniqueListEl = document.getElementById('unique-visitors-list-container');
+
+ const visitorMap = new Map();
+ const sourceCounts = {};
+ let mobileCount = 0;
+ let desktopCount = 0;
+
+ logs.forEach(row => {
+ const meta = parseVisitorMetadataFromRow(row);
+ const devCategory = String(row.device || '').toLowerCase() === 'mobile' ? 'Mobile' : 'Desktop';
+ if (devCategory === 'Mobile') mobileCount++;
+ else desktopCount++;
+
+ const srcKey = meta.source || 'Direct';
+ sourceCounts[srcKey] = (sourceCounts[srcKey] || 0) + 1;
+
+ const vKey = meta.visitorId || 'Guest';
+ if (!visitorMap.has(vKey)) {
+ visitorMap.set(vKey, {
+ visitorId: vKey,
+ source: srcKey,
+ deviceDetail: meta.deviceDetail,
+ country: row.country || 'XX',
+ events: 0,
+ artworks: new Set(),
+ lastSeen: row.timestamp || ''
+ });
+ }
+ const entry = visitorMap.get(vKey);
+ entry.events++;
+ if (row.event_type === 'view_artwork' && meta.cleanItem && meta.cleanItem !== '-') {
+ entry.artworks.add(meta.cleanItem);
+ }
+ if (!entry.lastSeen || String(row.timestamp || '') > String(entry.lastSeen)) {
+ entry.lastSeen = row.timestamp || entry.lastSeen;
+ }
+ });
+
+ const sortedSources = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1]);
+ if (totalEventsEl) totalEventsEl.textContent = String(logs.length);
+ if (uniqueEl) uniqueEl.textContent = String(visitorMap.size);
+ if (topSourceEl) topSourceEl.textContent = sortedSources[0] ? `${sortedSources[0][0]} (${sortedSources[0][1]})` : '—';
+ if (devicesEl) devicesEl.textContent = `${mobileCount} / ${desktopCount}`;
+
+ if (sourcesBox) {
+ sourcesBox.innerHTML = sortedSources.length
+ ? sortedSources.slice(0, 5).map(([k, v]) => `<div class="flex justify-between"><span>${escapeHTML(k)}</span><strong>${v}</strong></div>`).join('')
+ : '<p class="opacity-60">No sources yet.</p>';
+ }
+
+ if (artsBox) {
+ const topArts = visitorActivityData.topArtworks || [];
+ artsBox.innerHTML = topArts.length
+ ? topArts.map(item => `<div class="flex justify-between gap-2"><span class="truncate">${escapeHTML(item.item_name)}</span><strong>${Number(item.views || 0)}</strong></div>`).join('')
+ : '<p class="opacity-60">No artwork views yet.</p>';
+ }
+
+ if (countriesBox) {
+ const topC = visitorActivityData.topCountries || [];
+ countriesBox.innerHTML = topC.length
+ ? topC.map(item => `<div class="flex justify-between"><span>${escapeHTML(item.country || 'XX')}</span><strong>${Number(item.count || 0)}</strong></div>`).join('')
+ : '<p class="opacity-60">No region data yet.</p>';
+ }
+
+ if (uniqueListEl) {
+ const uniqueArr = Array.from(visitorMap.values()).sort((a, b) => String(b.lastSeen).localeCompare(String(a.lastSeen)));
+ uniqueListEl.innerHTML = uniqueArr.length
+ ? uniqueArr.map(v => `
+ <div class="p-3 rounded-xl bg-white dark:bg-[#1B1916] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+ <div class="min-w-0">
+ <div class="flex flex-wrap items-center gap-1.5">
+ <strong class="font-mono text-[11px] text-[#9C8265] dark:text-[#D4B483]">${escapeHTML(v.visitorId)}</strong>
+ <span>•</span>
+ <span>${escapeHTML(v.deviceDetail)}</span>
+ <span>•</span>
+ <span>Src: <strong>${escapeHTML(v.source)}</strong></span>
+ <span>•</span>
+ <span>${escapeHTML(v.country)}</span>
+ </div>
+ ${v.artworks.size > 0 ? `<p class="text-[11px] opacity-75 truncate mt-0.5">Viewed: ${escapeHTML(Array.from(v.artworks).join(', '))}</p>` : ''}
+ </div>
+ <div class="text-[11px] opacity-65 flex-shrink-0">${v.events} events • ${escapeHTML(formatMyanmarTime(v.lastSeen))}</div>
+ </div>
+ `).join('')
+ : '<p class="text-xs opacity-60 py-3 text-center">No unique visitor records yet.</p>';
+ }
+
+ if (logsListEl) {
+ logsListEl.innerHTML = logs.length
+ ? logs.slice(0, 80).map(row => {
+ const meta = parseVisitorMetadataFromRow(row);
+ return `
+ <div class="p-3 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/15 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+ <div class="min-w-0">
+ <span class="px-2 py-0.5 rounded-full text-[10px] uppercase bg-[#9C8265]/15 mr-1.5">${escapeHTML(row.event_type || 'visit')}</span>
+ <span class="font-medium">${escapeHTML(meta.cleanItem)}</span>
+ <span class="opacity-65 ml-1">(${escapeHTML(meta.source)} • ${escapeHTML(meta.deviceDetail)} • ${escapeHTML(row.country || 'XX')})</span>
+ </div>
+ <span class="text-[11px] opacity-60 flex-shrink-0">${escapeHTML(formatMyanmarTime(row.timestamp))}</span>
+ </div>
+ `;
+ }).join('')
+ : '<p class="text-xs opacity-60 py-4 text-center">No visitor activity recorded yet.</p>';
+ }
+ }
+
+ async function triggerMonthlyReportNow() {
+ const btn = document.getElementById('archive-report-now-btn');
+ if (!window.confirm('Send monthly visitor report email and purge archived logs now?')) return;
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Sending...';
+ }
+ try {
+ const res = await fetch(API_ENDPOINTS.activity, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({ action: 'archive_now' })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Report action failed (${res.status})`);
+ }
+ showAdminFeedback(data.sent ? `Archived and emailed ${data.count} visitor events.` : (data.reason || 'Report check completed.'));
+ await loadVisitorActivityFromCloud();
+ } catch (err) {
+ showAdminFeedback('Report action failed: ' + (err.message || 'Check WEB3FORMS_ACCESS_KEY.'), true);
+ } finally {
+ if (btn) {
+ btn.disabled = false;
+ btn.textContent = 'Email Report & Purge Now';
+ }
+ }
+ }
+
+ function renderAdminEditLogsList() {
+ const countEl = document.getElementById('admin-log-count');
+ const listEl = document.getElementById('admin-edit-logs-list');
+ if (countEl) countEl.textContent = editLogs.length;
+ if (!listEl) return;
+
+ if (!editLogs.length) {
+ listEl.innerHTML = `<p class="text-xs opacity-60 py-6 text-center">No edit activity recorded yet.</p>`;
+ return;
+ }
+
+ listEl.innerHTML = editLogs.map(item => `
+ <div class="p-3.5 rounded-xl bg-[#FAF9F6] dark:bg-[#12110F] border border-[#A69076]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+ <div>
+ <span class="px-2.5 py-0.5 rounded-full text-[10px] uppercase bg-[#9C8265]/15 mr-2 font-medium">${escapeHTML(item.action || 'Edit')}</span>
+ <strong>${escapeHTML(item.targetType || '')}:</strong>
+ <span>${escapeHTML(item.targetName || '')}</span>
+ ${item.details ? `<span class="opacity-65 ml-1">• ${escapeHTML(item.details)}</span>` : ''}
+ </div>
+ <span class="text-[11px] opacity-60 flex-shrink-0">${escapeHTML(formatMyanmarTime(item.timestamp))}</span>
+ </div>
+ `).join('');
+ }
+
+ function downloadEditLogsCSV() {
+ const headers = ['Timestamp_MMT', 'Action', 'TargetType', 'TargetName', 'Details'];
+ const rows = editLogs.map(item => [
+ formatMyanmarTime(item.timestamp),
+ item.action || '',
+ item.targetType || '',
+ item.targetName || '',
+ item.details || ''
+ ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(','));
+ const blob = new Blob([[headers.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.csv`;
+ a.click();
+ URL.revokeObjectURL(url);
+ }
+
+ function downloadEditLogsJSON() {
+ const blob = new Blob([JSON.stringify(editLogs, null, 2)], { type: 'application/json' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `the-artists-loft-edit-log-${new Date().toISOString().slice(0, 10)}.json`;
+ a.click();
+ URL.revokeObjectURL(url);
+ }
+
+ function exportArtworksJSON() {
+ const backup = {
+ exportedAt: new Date().toISOString(),
+ artists,
+ artworks,
+ galleryAbout,
+ galleryExperience,
+ backdropConfig
+ };
+ const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `the-artists-loft-backup-${new Date().toISOString().slice(0, 10)}.json`;
+ a.click();
+ URL.revokeObjectURL(url);
+ }
+
+ // ==================== STARTUP INITIALIZATION ====================
+ window.addEventListener('DOMContentLoaded', async () => {
+ const AUDIO_CONFIG_STORAGE_KEY = 'tal_ambient_audio_v1';
+ let isSoundEnabled = true;
+ let isAmbienceStarted = false;
+ let ambienceRandomMode = true;
+ let ambienceTargetVolume = 0.07;
+ let ambienceTracks = [];
+ let currentAmbienceTrackId = null;
+
+ function getGalleryAudioElement() {
+ return document.getElementById('gallery-bg-audio');
+ }
+
+ function updateNowPlayingLabel(track = null) {
+ const labelEl = document.getElementById('admin-now-playing-label');
+ if (!labelEl) return;
+ labelEl.textContent = track && track.title ? `Now Playing: ${track.title}` : 'Now Playing: —';
+ }
+
+ function syncVolumeSliderUI() {
+ const pct = Math.round(Math.max(0, Math.min(0.4, ambienceTargetVolume)) * 100);
+ const slider = document.getElementById('admin-ambience-volume');
+ const label = document.getElementById('admin-ambience-volume-label');
+ if (slider) slider.value = String(pct);
+ if (label) label.textContent = `${pct}%`;
+ }
+
+ function updateSoundButtonUI() {
+ const btn = document.getElementById('sound-toggle-btn');
+ const label = document.getElementById('sound-toggle-label');
+ if (btn) btn.classList.toggle('sound-paused', !isSoundEnabled);
+ if (label) label.textContent = isSoundEnabled ? 'Sound On' : 'Muted';
+ }
+
+ function getEnabledAmbienceTracks() {
+ return (Array.isArray(ambienceTracks) ? ambienceTracks : []).filter(t => t && t.url && t.enabled !== false);
+ }
+
+ function saveLocalAudioConfig() {
+ try {
+ localStorage.setItem(AUDIO_CONFIG_STORAGE_KEY, JSON.stringify({
+ tracks: ambienceTracks,
+ random: ambienceRandomMode,
+ volume: ambienceTargetVolume,
+ enabled: isSoundEnabled
+ }));
+ } catch (e) {}
+ }
+
+ function applySavedAudioConfig(cfg = {}) {
+ if (Array.isArray(cfg.tracks)) ambienceTracks = cfg.tracks;
+ if (typeof cfg.random === 'boolean') ambienceRandomMode = cfg.random;
+ if (typeof cfg.volume === 'number' && Number.isFinite(cfg.volume)) {
+ ambienceTargetVolume = Math.max(0, Math.min(0.4, cfg.volume));
+ }
+ if (typeof cfg.enabled === 'boolean') {
+ isSoundEnabled = cfg.enabled;
  updateSoundButtonUI();
- bindFirstInteractionAudioUnlock();
- startAmbientSoundscape();
- initVisitorCounter();
- trackVisitorEvent('page_view', 'home');
- loadCloudGallery(true);
- if (hasSalonResetParam) {
-   setTimeout(() => {
-     if (typeof switchTab === "function") {
-       switchTab("vip-salon");
-     } else if (typeof openSalonView === "function") {
-       openSalonView();
-     } else {
-       const salonTrigger = Array.from(document.querySelectorAll("button, a, [role='button']")).find(
-         el => /private\s*salon/i.test(el.textContent || "")
-       );
-       if (salonTrigger) salonTrigger.click();
-     }
-     const salonSection = document.getElementById("vip-salon") || document.getElementById("salon-view");
-     if (salonSection) salonSection.scrollIntoView({ behavior: "smooth", block: "start" });
-   }, 50);
  }
+ syncVolumeSliderUI();
+ const randomToggle = document.getElementById('admin-ambience-random-toggle');
+ if (randomToggle) randomToggle.checked = ambienceRandomMode;
+ }
+
+ function loadLocalAudioConfig() {
+ try {
+ const raw = localStorage.getItem(AUDIO_CONFIG_STORAGE_KEY);
+ if (raw) {
+ const parsed = JSON.parse(raw);
+ if (parsed && typeof parsed === 'object') applySavedAudioConfig(parsed);
+ }
+ } catch (e) {}
+ syncVolumeSliderUI();
+ }
+
+ function fadeAmbienceTo(targetVol, durationMs = 600) {
+ const audioEl = getGalleryAudioElement();
+ if (!audioEl) return;
+ const startVol = Number.isFinite(audioEl.volume) ? audioEl.volume : 0;
+ const endVol = Math.max(0, Math.min(1, targetVol));
+ if (durationMs <= 0) {
+ audioEl.volume = endVol;
+ return;
+ }
+ const startTime = performance.now();
+ function step(now) {
+ const t = Math.min(1, (now - startTime) / durationMs);
+ audioEl.volume = startVol + (endVol - startVol) * t;
+ if (t < 1) requestAnimationFrame(step);
+ }
+ requestAnimationFrame(step);
+ }
+
+ function playAmbienceTrackById(trackId) {
+ const enabled = getEnabledAmbienceTracks();
+ if (!enabled.length) return;
+ const chosen = enabled.find(t => t.id === trackId) || enabled[0];
+ const audioEl = getGalleryAudioElement();
+ if (!audioEl || !chosen || !chosen.url) return;
+ currentAmbienceTrackId = chosen.id;
+ audioEl.src = chosen.url;
+ audioEl.loop = enabled.length === 1;
+ audioEl.volume = 0.002;
+ updateNowPlayingLabel(chosen);
+ if (typeof renderAdminAudioManager === 'function') renderAdminAudioManager();
+ if (isSoundEnabled) {
+ const p = audioEl.play();
+ if (p && typeof p.then === 'function') {
+ p.then(() => {
+ isAmbienceStarted = true;
+ fadeAmbienceTo(ambienceTargetVolume, 900);
+ }).catch(() => {});
+ } else {
+ isAmbienceStarted = true;
+ fadeAmbienceTo(ambienceTargetVolume, 900);
+ }
+ }
+ }
+
+ window.toggleGallerySound = function() {
+ isSoundEnabled = !isSoundEnabled;
+ updateSoundButtonUI();
+ saveLocalAudioConfig();
+ const audioEl = getGalleryAudioElement();
+ if (!audioEl) return;
+ if (isSoundEnabled) {
+ if (!audioEl.src) {
+ playAmbienceTrackById(currentAmbienceTrackId);
+ } else {
+ audioEl.play().then(() => {
+ isAmbienceStarted = true;
+ fadeAmbienceTo(ambienceTargetVolume, 600);
+ }).catch(() => {});
+ }
+ } else {
+ audioEl.pause();
+ }
+ };
+
+ window.startAmbientSoundscape = function() {
+ if (!isSoundEnabled || isAmbienceStarted) return;
+ const enabled = getEnabledAmbienceTracks();
+ if (!enabled.length) return;
+ const chosen = ambienceRandomMode
+ ? enabled[Math.floor(Math.random() * enabled.length)]
+ : (enabled.find(t => t.id === currentAmbienceTrackId) || enabled[0]);
+ if (chosen) playAmbienceTrackById(chosen.id);
+ };
+
+ function bindFirstInteractionAudioUnlock() {
+ const unlock = () => {
+ if (isSoundEnabled && !isAmbienceStarted) startAmbientSoundscape();
+ window.removeEventListener('pointerdown', unlock);
+ window.removeEventListener('keydown', unlock);
+ };
+ window.addEventListener('pointerdown', unlock, { passive: true });
+ window.addEventListener('keydown', unlock, { passive: true });
+ }
+
+ function bindGentleScrollSound() {}
+
+ loadLocalAudioConfig();
+ updateSoundButtonUI();
+ applyPrivateSalonVisibility();
+ applyGalleryExperienceSettings();
+ bindFirstInteractionAudioUnlock();
+ bindGentleScrollSound();
+ initVisitorCounter();
+ await loadCloudGallery(true);
+ await processSalonEmailLinks();
+ await loadSalonSession();
+ trackVisitorEvent('page_view', 'home');
+ });
  </script>
- 
 </body>
 </html>
