@@ -2934,9 +2934,11 @@
  // Hide/show navigation button, its adjacent separator dots, and Contact section's Collector's Circle card
  document.querySelectorAll('.nav-link[data-target="salon"]').forEach(btn => {
  btn.classList.toggle('hidden', !enabled);
+ btn.style.display = enabled ? '' : 'none';
  });
  document.querySelectorAll('.nav-salon-dot').forEach(dot => {
  dot.classList.toggle('hidden', !enabled);
+ dot.style.display = enabled ? '' : 'none';
  });
  const circleBox = document.getElementById('collectors-circle-box');
  if (circleBox) circleBox.classList.toggle('hidden', !enabled);
