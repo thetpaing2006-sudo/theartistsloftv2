@@ -1729,6 +1729,22 @@
 
  <!-- ==================== ADMIN TAB 4B: VIP SALON & MEMBERS ==================== -->
  <div id="admin-panel-salon" class="hidden space-y-8">
+ <!-- Private Salon Public Visibility Toggle -->
+ <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+ <div>
+ <div class="flex items-center gap-2 mb-1">
+ <span id="admin-salon-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+ <h4 class="font-serif text-xl">Private Salon Public Access</h4>
+ </div>
+ <p id="admin-salon-status-desc" class="text-xs text-[#2C2C2C]/65 dark:text-[#EDE7DA]/65">
+ Currently <strong>ON</strong> — Visitors can see the Private Salon menu and Collector's Circle card.
+ </p>
+ </div>
+ <button type="button" id="admin-toggle-salon-visibility-btn" onclick="togglePrivateSalonVisibility()" class="px-6 py-2.5 rounded-xl bg-[#2C2C2C] dark:bg-[#D4B483] text-[#FAF9F6] dark:text-[#12110F] hover:bg-[#A69076] text-xs uppercase tracking-[0.18em] font-medium transition-colors flex-shrink-0">
+ Turn OFF Private Salon
+ </button>
+ </div>
+
  <!-- Add / Edit VIP Exclusive Artwork -->
  <div class="bg-white dark:bg-[#141210] p-6 rounded-2xl border border-[#A69076]/25 dark:border-[#D4B483]/20 shadow-sm space-y-5">
  <div>
@@ -2350,6 +2366,7 @@
  darkOpacity: 44
  };
  let backdropConfig = { ...DEFAULT_BACKDROP_CONFIG };
+ let isPrivateSalonEnabled = true;
  let currentActiveSectionId = 'home';
 
  // Default Artist Profile (MT. Oung)
@@ -2848,6 +2865,10 @@
  if (data.settings.vip_salon_data && typeof data.settings.vip_salon_data === 'object') {
  renderSalonView();
  }
+ if (data.settings.private_salon_enabled !== undefined) {
+ isPrivateSalonEnabled = data.settings.private_salon_enabled !== false && data.settings.private_salon_enabled !== 'false';
+ applyPrivateSalonVisibility();
+ }
  }
 
  isLoadingArtworks = false;
@@ -2907,6 +2928,67 @@
  };
  let currentSalonMember = null;
  let currentSalonAuthMode = 'login';
+
+ function applyPrivateSalonVisibility() {
+ const enabled = Boolean(isPrivateSalonEnabled);
+ // Hide/show navigation button and Contact section's Collector's Circle card
+ document.querySelectorAll('.nav-link[data-target="salon"]').forEach(btn => {
+ btn.classList.toggle('hidden', !enabled);
+ });
+ const circleBox = document.getElementById('collectors-circle-box');
+ if (circleBox) circleBox.classList.toggle('hidden', !enabled);
+
+ // If currently viewing #section-salon while turned off, redirect safely to Home
+ const salonSection = document.getElementById('section-salon');
+ if (!enabled && salonSection && !salonSection.classList.contains('hidden')) {
+ showSection('home');
+ }
+
+ // Sync Admin Console toggle UI
+ const dot = document.getElementById('admin-salon-status-dot');
+ const desc = document.getElementById('admin-salon-status-desc');
+ const toggleBtn = document.getElementById('admin-toggle-salon-visibility-btn');
+ if (dot) {
+ dot.className = `w-2.5 h-2.5 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-amber-500'}`;
+ }
+ if (desc) {
+ desc.innerHTML = enabled
+ ? 'Currently <strong>ON</strong> — Visitors can see the Private Salon menu and Collector\'s Circle card.'
+ : 'Currently <strong>OFF</strong> — Private Salon is hidden from public navigation and Contact page.';
+ }
+ if (toggleBtn) {
+ toggleBtn.textContent = enabled ? 'Turn OFF Private Salon' : 'Turn ON Private Salon';
+ }
+ }
+
+ async function togglePrivateSalonVisibility() {
+ const btn = document.getElementById('admin-toggle-salon-visibility-btn');
+ const nextState = !isPrivateSalonEnabled;
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = 'Updating...';
+ }
+ try {
+ const res = await fetch(API_ENDPOINTS.settings, {
+ method: 'POST',
+ headers: getAdminAuthHeaders({ 'Content-Type': 'application/json' }),
+ body: JSON.stringify({ key: 'private_salon_enabled', value: nextState })
+ });
+ const data = await res.json().catch(() => ({}));
+ if (!res.ok || !data.ok) {
+ throw new Error(data.error || `Settings save failed (${res.status})`);
+ }
+ isPrivateSalonEnabled = nextState;
+ applyPrivateSalonVisibility();
+ showAdminFeedback(`Private Salon is now ${nextState ? 'ON (Visible)' : 'OFF (Hidden)'}.`);
+ await recordEditLog('Updated', 'VIP Salon', 'Public Visibility', nextState ? 'Enabled Private Salon' : 'Disabled Private Salon');
+ } catch (err) {
+ showAdminFeedback('Could not update Private Salon visibility: ' + (err.message || 'Check ADMIN_API_TOKEN.'), true);
+ applyPrivateSalonVisibility();
+ } finally {
+ if (btn) btn.disabled = false;
+ }
+ }
 
  function recordSalonMemberActivity(actionLabel, details = '') {
    if (!currentSalonMember) return;
@@ -3313,6 +3395,7 @@
  }
 
  function renderAdminSalonManager() {
+   applyPrivateSalonVisibility();
    const memberCountEl = document.getElementById('admin-salon-member-count');
    const artistSelect = document.getElementById('vip-art-artist-select');
    const artListEl = document.getElementById('admin-vip-art-list');
@@ -6841,6 +6924,7 @@
  window.migrateLegacySalonMembers = migrateLegacySalonMembers;
  window.sendAdminNewsletter = sendAdminNewsletter;
  window.signOutSalonMember = signOutSalonMember;
+ window.togglePrivateSalonVisibility = togglePrivateSalonVisibility;
  window.reserveVipArtwork = reserveVipArtwork;
  window.inspectVipArtwork = inspectVipArtwork;
  window.toggleSuspendSalonMember = toggleSuspendSalonMember;
